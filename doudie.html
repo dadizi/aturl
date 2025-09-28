@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>味蕾指南 - 亲测美食教程导航</title>
+    <style>
+        /* 基础样式 */
+        :root {
+            --primary-color: #e74c3c;
+            --secondary-color: #f39c12;
+            --light-color: #f9f9f9;
+            --dark-color: #333;
+            --gray-color: #777;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #fff;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        /* 头部样式 */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 0.2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin-left: 1.5rem;
+        }
+        
+        nav a {
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        nav a:hover {
+            opacity: 0.8;
+        }
+        
+        /* 主内容区 */
+        .hero {
+            padding: 3rem 0;
+            text-align: center;
+            background-color: var(--light-color);
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--gray-color);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        /* 筛选器 */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* 内容网格 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .recipe-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+        
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .card-content {
+            padding: 1.5rem;
+        }
+        
+        .platform {
+            display: inline-block;
+            background-color: #f0f0f0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .recipe-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+        }
+        
+        .recipe-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tag {
+            display: inline-block;
+            background-color: #e8f4fd;
+            color: #2980b9;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .tag.difficulty-easy {
+            background-color: #e8f6f3;
+            color: #27ae60;
+        }
+        
+        .tag.difficulty-medium {
+            background-color: #fef9e7;
+            color: #f39c12;
+        }
+        
+        .tag.difficulty-hard {
+            background-color: #fdedec;
+            color: #e74c3c;
+        }
+        
+        .recipe-description {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .recipe-link {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .recipe-link:hover {
+            background-color: #c0392b;
+        }
+        
+        /* 底部 */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section a {
+            color: #ddd;
+            transition: var(--transition);
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #34495e;
+            margin-top: 1.5rem;
+            color: #bdc3c7;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+            }
+            
+            nav li {
+                margin: 0 0.5rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-area">
+                    <div class="logo">味蕾指南</div>
+                    <div class="tagline">亲测美食教程导航 · 帮你找到最靠谱的菜谱</div>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#">首页</a></li>
+                        <li><a href="#">本周精选</a></li>
+                        <li><a href="#">新手入门</a></li>
+                        <li><a href="#">关于我们</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container">
+        <section class="hero">
+            <h1>告别选择困难，直达优质美食教程</h1>
+            <p>我们亲自测试各类美食教程，为你筛选出最靠谱、最易成功的菜谱。无论是厨房新手还是烹饪达人，都能在这里找到适合自己的美食指南。</p>
+            
+            <!-- 筛选器 -->
+            <div class="filters">
+                <div class="filter-group">
+                    <span>分类：</span>
+                    <button class="filter-btn active" data-filter="all">全部</button>
+                    <button class="filter-btn" data-filter="chinese">中餐</button>
+                    <button class="filter-btn" data-filter="western">西餐</button>
+                    <button class="filter-btn" data-filter="dessert">甜点</button>
+                    <button class="filter-btn" data-filter="quick">快手菜</button>
+                </div>
+                <div class="filter-group">
+                    <span>难度：</span>
+                    <button class="filter-btn" data-filter="easy">新手友好</button>
+                    <button class="filter-btn" data-filter="medium">中等难度</button>
+                    <button class="filter-btn" data-filter="hard">高手挑战</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 内容网格 -->
+        <section class="content-grid" id="recipe-grid">
+            <!-- 食谱卡片将通过JavaScript动态生成 -->
+        </section>
+    </main>
+
+    <!-- 底部 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>味蕾指南</h3>
+                    <p>专注于美食教程的垂直导航网站，所有推荐均经过亲测验证，为你节省筛选时间。</p>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <ul>
+                        <li><a href="#">首页</a></li>
+                        <li><a href="#">本周精选</a></li>
+                        <li><a href="#">新手入门指南</a></li>
+                        <li><a href="#">投稿推荐</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>联系我们</h3>
+                    <ul>
+                        <li><a href="#">意见反馈</a></li>
+                        <li><a href="#">商务合作</a></li>
+                        <li><a href="#">关于我们</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2023 味蕾指南 - 亲测美食教程导航。保留所有权利。
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 食谱数据
+        const recipes = [
+            {
+                id: 1,
+                title: "家常红烧肉 - 肥而不腻的秘诀",
+                platform: "B站",
+                author: "老饭骨",
+                image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                category: "chinese",
+                difficulty: "medium",
+                tags: ["中餐", "家常菜", "下饭菜"],
+                description: "经过三次测试，这个教程的火候控制讲解最详细，特别适合新手掌握糖色技巧。",
+                link: "#"
+            },
+            {
+                id: 2,
+                title: "完美戚风蛋糕 - 零失败配方",
+                platform: "小红书",
+                author: "烘焙小仙女",
+                image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                category: "dessert",
+                difficulty: "medium",
+                tags: ["甜点", "烘焙", "下午茶"],
+                description: "蛋白打发和烤箱温度是关键，这个教程的细节提示非常到位，亲测三次全部成功。",
+                link: "#"
+            },
+            {
+                id: 3,
+                title: "番茄炒蛋 - 国民菜的终极做法",
+                platform: "抖音",
+                author: "美食作家王刚",
+                image: "https://images.unsplash.com/photo-1582450871972-ab5ca641643d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                category: "chinese",
+                difficulty: "easy",
+                tags: ["快手菜", "家常菜", "新手友好"],
+                description: "简单却不简单，这个教程教会你如何做出餐厅水平的番茄炒蛋，鸡蛋嫩滑有技巧。",
+                link: "#"
+            },
+            {
+                id: 4,
+                title: "意大利肉酱面 - 地道做法详解",
+                platform: "YouTube",
+                author: "小高姐的Magic Ingredients",
+                image: "https://images.unsplash.com/photo-1598866594230-a7c12756260f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                category: "western",
+                difficulty: "medium",
+                tags: ["西餐", "意大利菜", "主食"],
+                description: "肉酱熬制时间是关键，这个教程的慢炖方法让肉酱风味十足，值得多花时间。",
+                link: "#"
+            },
+            {
+                id: 5,
+                title: "蒜蓉西兰花 - 5分钟快手菜",
+                platform: "下厨房",
+                author: "小白素食记录",
+                image: "https://images.unsplash.com/photo-1570197788417-0e82375c9371?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                category: "quick",
+                difficulty: "easy",
+                tags: ["素食", "快手菜", "健康"],
+                description: "焯水和爆香的顺序很重要，这个教程让平凡的西兰花变得异常美味。",
+                link: "#"
+            },
+            {
+                id: 6,
+                title: "法式舒芙蕾 - 轻盈如云的秘诀",
+                platform: "B站",
+                author: "绵羊料理",
+                image: "https://images.unsplash.com/photo-1555507039-7a6dc4469da1?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                category: "dessert",
+                difficulty: "hard",
+                tags: ["甜点", "法式", "高级"],
+                description: "难度较高但成功率最高的教程，蛋白打发和烘烤时间的把控讲解非常细致。",
+                link: "#"
+            }
+        ];
+
+        // 渲染食谱卡片
+        function renderRecipes(recipesToRender) {
+            const grid = document.getElementById('recipe-grid');
+            grid.innerHTML = '';
+            
+            recipesToRender.forEach(recipe => {
+                const card = document.createElement('div');
+                card.className = 'recipe-card';
+                card.setAttribute('data-category', recipe.category);
+                card.setAttribute('data-difficulty', recipe.difficulty);
+                
+                // 难度标签样式类
+                let difficultyClass = '';
+                if (recipe.difficulty === 'easy') difficultyClass = 'difficulty-easy';
+                if (recipe.difficulty === 'medium') difficultyClass = 'difficulty-medium';
+                if (recipe.difficulty === 'hard') difficultyClass = 'difficulty-hard';
+                
+                card.innerHTML = `
+                    <div class="card-image" style="background-image: url('${recipe.image}')"></div>
+                    <div class="card-content">
+                        <div class="platform">${recipe.platform} · ${recipe.author}</div>
+                        <h3 class="recipe-title">${recipe.title}</h3>
+                        <div class="recipe-tags">
+                            <span class="tag ${difficultyClass}">${getDifficultyText(recipe.difficulty)}</span>
+                            ${recipe.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                        <p class="recipe-description">${recipe.description}</p>
+                        <a href="${recipe.link}" class="recipe-link" target="_blank">查看教程</a>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        // 获取难度文本
+        function getDifficultyText(difficulty) {
+            switch(difficulty) {
+                case 'easy': return '新手友好';
+                case 'medium': return '中等难度';
+                case 'hard': return '高手挑战';
+                default: return '';
+            }
+        }
+        
+        // 筛选功能
+        function setupFilters() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // 移除所有按钮的active类
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // 给当前点击的按钮添加active类
+                    btn.classList.add('active');
+                    
+                    // 获取筛选条件
+                    const categoryFilter = document.querySelector('.filter-group:first-child .filter-btn.active').dataset.filter;
+                    const difficultyFilter = document.querySelector('.filter-group:last-child .filter-btn.active').dataset.filter;
+                    
+                    // 筛选食谱
+                    let filteredRecipes = recipes;
+                    
+                    if (categoryFilter !== 'all') {
+                        filteredRecipes = filteredRecipes.filter(recipe => recipe.category === categoryFilter);
+                    }
+                    
+                    if (difficultyFilter && difficultyFilter !== 'all') {
+                        filteredRecipes = filteredRecipes.filter(recipe => recipe.difficulty === difficultyFilter);
+                    }
+                    
+                    // 重新渲染
+                    renderRecipes(filteredRecipes);
+                });
+            });
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRecipes(recipes);
+            setupFilters();
+        });
+    </script>
+</body>
+</html>
