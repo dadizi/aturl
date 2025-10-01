@@ -113,10 +113,17 @@
         }
         
         .section-title {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
+            padding-left: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-left: 4px solid #1a73e8;
+            background-color: #f0f7ff;
+            color: #1a73e8;
+            font-weight: 700;
+            border-radius: 0 4px 4px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -136,6 +143,11 @@
             transition: all 0.3s;
             position: relative;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 15px;
+            box-sizing: border-box;
+            min-height: 240px; /* 设置统一的最小高度 */
+            display: flex;
+            flex-direction: column;
         }
         
         .card:hover {
@@ -143,20 +155,31 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
         
-        .card-img {
-            height: 130px;
-            background-size: cover;
-            background-position: center;
-        }
-        
         .card-content {
-            padding: 15px;
+            padding: 0;
+            margin: 0;
         }
         
         .card-title {
             font-size: 1.1rem;
             margin-bottom: 6px;
             font-weight: 600;
+            margin-left: 0;
+            text-indent: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* 标题最多显示2行 */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.2rem; /* 确保标题区域高度一致 */
+        }
+        
+        /* 标题保持靠左显示，前面不留空 */
+        .card-title {
+            text-align: left;
+            padding-left: 0;
+            margin-left: 0;
+            margin-top: 0;
+            margin-right: 0;
         }
         
         .card-desc {
@@ -168,12 +191,16 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             line-height: 1.6;
+            text-align: left;
+            padding-left: 0;
+            min-height: 3.2rem; /* 确保描述区域高度一致 */
         }
         
         .card-links {
-            margin-top: 12px;
+            margin-top: auto; /* 自动填充剩余空间，将链接区域推到底部 */
             padding-top: 12px;
             border-top: 1px solid #f0f0f0;
+            overflow: hidden;
         }
         
         .link-group {
@@ -424,8 +451,46 @@
                 margin-bottom: 25px;
             }
             
-            .card-content {
+            .card {
                 padding: 12px;
+                min-height: 220px; /* 移动设备上的最小高度 */
+            }
+            
+            .card-content {
+                padding: 0;
+                margin: 0;
+            }
+            
+            .card-title {
+                font-size: 1rem; /* 适当缩小移动设备上的标题字体 */
+                margin-left: 0;
+                text-indent: 0;
+            }
+            
+            /* 移动设备上标题保持靠左显示，前面不留空 */
+            .card-title {
+                text-align: left;
+                padding-left: 0;
+            }
+            
+            /* 移动设备上，为有标签的卡片标题添加右侧内边距，防止文本被标签遮挡 */
+            .card:has(.priority-badge) .card-title {
+                padding-right: 55px; /* 为右侧标签留出空间 */
+            }
+            
+            /* 移动设备上，确保简介也靠左对齐 */
+            .card-desc {
+                text-align: left;
+                padding-left: 0;
+            }
+            
+            .priority-badge {
+                top: 12px;
+                right: 14px; /* 移动设备上标签靠右显示 */
+                font-size: 0.7rem;
+                padding: 2px 6px;
+                border-radius: 3px;
+                z-index: 1;
             }
             
             .back-to-top {
@@ -477,15 +542,23 @@
         /* 优先级标识 */
         .priority-badge {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 12px;
+            right: 15px; /* 标签靠右显示 */
             background: #ff6b6b;
             color: white;
-            padding: 3px 6px;
-            border-radius: 3px;
+            padding: 3px 8px;
+            border-radius: 4px;
             font-size: 0.75rem;
             font-weight: bold;
+            z-index: 1;
         }
+        
+        /* 为有标签的卡片标题添加右侧内边距，防止文本被标签遮挡 */
+        .card:has(.priority-badge) .card-title {
+            padding-right: 70px; /* 为右侧标签留出空间 */
+        }
+        
+
         
         /* 弱化视频来源样式 */
         .link-group:has(.video-source) .link-group-title {
@@ -552,7 +625,6 @@
             <div class="card-container">
                 <div class="card" data-title="海姆立克急救法" data-desc="针对不同人群的正确急救手法，关键时刻能救命。" data-tags="急救,窒息,儿童,成人,婴儿,肥胖体型,独自一人" data-priority="high">
                     <div class="priority-badge">必备技能</div>
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=1')"></div>
                     <div class="card-content">
                         <div class="card-title">海姆立克急救法 - 不同情况下的操作</div>
                         <div class="card-desc">针对不同人群的正确急救手法，关键时刻能救命。</div>
@@ -584,7 +656,6 @@
                 
                 <div class="card" data-title="心肺复苏" data-desc="从判断意识到胸外按压、人工呼吸的全流程演示。" data-tags="急救,心肺复苏,CPR,成人,儿童,婴儿" data-priority="high">
                     <div class="priority-badge">必备技能</div>
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=2')"></div>
                     <div class="card-content">
                         <div class="card-title">心肺复苏(CPR)完整教程</div>
                         <div class="card-desc">从判断意识到胸外按压、人工呼吸的全流程演示。</div>
@@ -612,7 +683,7 @@
                 </div>
                 
                 <div class="card" data-title="家庭火灾逃生" data-desc="如何为家庭制定有效的火灾逃生计划并进行定期演练。" data-tags="火灾,逃生,家庭安全,高楼,平房" data-priority="medium">
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=3')"></div>
+
                     <div class="card-content">
                         <div class="card-title">家庭火灾逃生计划制定与演练</div>
                         <div class="card-desc">如何为家庭制定有效的火灾逃生计划并进行定期演练。</div>
@@ -647,7 +718,6 @@
             <div class="card-container">
                 <div class="card" data-title="烧烫伤紧急处理" data-desc="正确的烧烫伤急救方法，避免常见错误处理方式导致的二次伤害。" data-tags="急救,烧烫伤,家庭,一度,二度,三度" data-priority="high">
                     <div class="priority-badge">必备技能</div>
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=4')"></div>
                     <div class="card-content">
                         <div class="card-title">烧烫伤紧急处理五步法</div>
                         <div class="card-desc">正确的烧烫伤急救方法，避免常见错误处理方式导致的二次伤害。</div>
@@ -677,7 +747,6 @@
                 
                 <div class="card" data-title="止血包扎技巧" data-desc="不同部位出血的正确止血与包扎方法。" data-tags="急救,止血,包扎,动脉,静脉,毛细血管" data-priority="high">
                     <div class="priority-badge">必备技能</div>
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=5')"></div>
                     <div class="card-content">
                         <div class="card-title">止血包扎技巧大全</div>
                         <div class="card-desc">不同部位出血的正确止血与包扎方法。</div>
@@ -706,7 +775,7 @@
                 </div>
                 
                 <div class="card" data-title="中暑晕厥识别" data-desc="夏季高发疾病急救指南，如何快速识别中暑症状并采取正确措施。" data-tags="急救,中暑,晕厥,热射病,热衰竭" data-priority="medium">
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=6')"></div>
+
                     <div class="card-content">
                         <div class="card-title">中暑、晕厥的识别与急救</div>
                         <div class="card-desc">夏季高发疾病急救指南，如何快速识别中暑症状并采取正确措施。</div>
@@ -741,7 +810,6 @@
             <div class="card-container">
                 <div class="card" data-title="地震避险" data-desc="地震发生时如何利用黄金12秒采取正确避险措施，提高生存几率。" data-tags="地震,避险,自然灾害" data-priority="high">
                     <div class="priority-badge">必备技能</div>
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=7')"></div>
                     <div class="card-content">
                         <div class="card-title">地震避险黄金12秒行动指南</div>
                         <div class="card-desc">地震发生时如何利用黄金12秒采取正确避险措施，提高生存几率。</div>
@@ -769,7 +837,7 @@
                 </div>
                 
                 <div class="card" data-title="台风准备" data-desc="台风季节如何做好家庭防护，储备必要物资，确保家人安全。" data-tags="台风,准备,自然灾害" data-priority="medium">
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=8')"></div>
+
                     <div class="card-content">
                         <div class="card-title">台风来临前的准备工作</div>
                         <div class="card-desc">台风季节如何做好家庭防护，储备必要物资，确保家人安全。</div>
@@ -797,7 +865,7 @@
                 </div>
                 
                 <div class="card" data-title="洪水逃生" data-desc="遭遇洪水时如何正确选择逃生路线，制作简易救生工具，等待救援。" data-tags="洪水,逃生,自然灾害" data-priority="medium">
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=9')"></div>
+
                     <div class="card-content">
                         <div class="card-title">洪水逃生与自救方法</div>
                         <div class="card-desc">遭遇洪水时如何正确选择逃生路线，制作简易救生工具，等待救援。</div>
@@ -830,7 +898,7 @@
             <h2 class="section-title">公共卫生</h2>
             <div class="card-container">
                 <div class="card" data-title="传染病预防" data-desc="常见传染病的传播途径与预防措施，建立个人健康防护屏障。" data-tags="传染病,预防,公共卫生" data-priority="medium">
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=10')"></div>
+
                     <div class="card-content">
                         <div class="card-title">传染病预防基本知识</div>
                         <div class="card-desc">常见传染病的传播途径与预防措施，建立个人健康防护屏障。</div>
@@ -858,7 +926,7 @@
                 </div>
                 
                 <div class="card" data-title="食品安全" data-desc="如何辨别食品安全，食物中毒的识别方法与紧急处理步骤。" data-tags="食品安全,中毒,公共卫生" data-priority="medium">
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=11')"></div>
+
                     <div class="card-content">
                         <div class="card-title">食品安全与中毒处理</div>
                         <div class="card-desc">如何辨别食品安全，食物中毒的识别方法与紧急处理步骤。</div>
@@ -886,7 +954,7 @@
                 </div>
                 
                 <div class="card" data-title="日常消毒" data-desc="家庭日常消毒的正确方法，培养良好卫生习惯预防疾病。" data-tags="消毒,卫生,公共卫生" data-priority="low">
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=12')"></div>
+
                     <div class="card-content">
                         <div class="card-title">日常消毒与卫生习惯</div>
                         <div class="card-desc">家庭日常消毒的正确方法，培养良好卫生习惯预防疾病。</div>
@@ -919,7 +987,7 @@
             <h2 class="section-title">户外安全</h2>
             <div class="card-container">
                 <div class="card" data-title="徒步登山安全" data-desc="户外徒步登山前的准备事项，途中风险识别与应对方法。" data-tags="徒步,登山,户外安全" data-priority="medium">
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=13')"></div>
+
                     <div class="card-content">
                         <div class="card-title">徒步登山安全指南</div>
                         <div class="card-desc">户外徒步登山前的准备事项，途中风险识别与应对方法。</div>
@@ -947,7 +1015,7 @@
                 </div>
                 
                 <div class="card" data-title="野外求生" data-desc="迷失野外时的生存技巧，寻找水源、搭建庇护所、发出求救信号。" data-tags="野外,求生,户外安全" data-priority="medium">
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=14')"></div>
+
                     <div class="card-content">
                         <div class="card-title">野外求生基本技能</div>
                         <div class="card-desc">迷失野外时的生存技巧，寻找水源、搭建庇护所、发出求救信号。</div>
@@ -976,7 +1044,6 @@
                 
                 <div class="card" data-title="水域活动安全" data-desc="游泳、划船等水域活动的安全注意事项与溺水救援方法。" data-tags="水域,安全,溺水" data-priority="high">
                     <div class="priority-badge">必备技能</div>
-                    <div class="card-img" style="background-image: url('https://picsum.photos/400/200?random=15')"></div>
                     <div class="card-content">
                         <div class="card-title">水域活动安全须知</div>
                         <div class="card-desc">游泳、划船等水域活动的安全注意事项与溺水救援方法。</div>
@@ -1015,9 +1082,6 @@
                     <a href="#" class="platform-link"><i>📹</i> 视频号: 生活基础课</a>
                     <a href="#" class="platform-link"><i>🔔</i> B站: 生活基础课</a>
                 </div>
-            </div>
-            <div class="self-media-img">
-                扫码关注我们
             </div>
         </section>
     </main>
