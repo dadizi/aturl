@@ -1258,6 +1258,9 @@
                 searchCount.querySelector('span').textContent = resultCount;
                 searchResults.style.display = 'block';
                 noResults.style.display = 'none';
+                
+                // 移除全部导航项的高亮
+                document.querySelector('.nav-item[data-target="top"]').classList.remove('active');
             } else {
                 searchResults.style.display = 'none';
                 noResults.style.display = 'block';
@@ -1294,12 +1297,19 @@
                 }
             });
             
-            // 处理顶部区域
-            if (window.pageYOffset < 100) {
+            // 处理顶部区域，但在显示搜索结果时不自动高亮全部菜单
+            if (window.pageYOffset < 100 && (searchResults.style.display !== 'block' && noResults.style.display !== 'block')) {
                 navItems.forEach(item => {
                     item.classList.remove('active');
                 });
                 document.querySelector('.nav-item[data-target="top"]').classList.add('active');
+            }
+            
+            // 如果正在显示搜索结果，移除所有导航项的高亮
+            if (searchResults.style.display === 'block' || noResults.style.display === 'block') {
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                });
             }
         });
         
