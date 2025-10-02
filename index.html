@@ -3,433 +3,341 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>简洁网址导航</title>
+  <!-- 优化标题 -->
+  <title>网站传送门 | aturl.cn</title>
+  <!-- 添加性能优化meta标签 -->
+  <meta name="description" content="网站传送门 - 快速访问社交媒体、学习资源、工具网站和开发者工具">
+  <meta name="keywords" content="网站导航,常用网站,社交媒体,学习资源,工具网站,开发者工具">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="aturl.cn">
+  <!-- 添加preconnect和dns-prefetch以优化CDN加载 -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+  <!-- 使用Tailwind的JIT模式减小体积 -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   
-  <!-- Tailwind CSS 配置 -->
+  <!-- Tailwind CSS 配置 - 只保留必要的颜色定义 -->
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            primary: '#3B82F6',
-            secondary: '#10B981',
-            accent: '#F59E0B',
-            dark: '#1F2937'
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+            border: '#e6e6e6',
+            gray: '#9b9b9b',
+            category: '#666666',
+            linkText: '#37a',
+            decoration: '#007722',
+            leftBorder: '#007722',
           }
         }
       }
     }
   </script>
   
-  <!-- 自定义工具类 -->
+  <!-- 合并样式定义，减少冗余 -->
   <style type="text/tailwindcss">
     @layer utilities {
-      .content-auto {
-        content-visibility: auto;
+      .content-auto { content-visibility: auto; }
+      .link-item {
+        border: 1px dashed #e0e0e0;
+        border-left: 1px dashed theme('colors.leftBorder');
+        border-radius: 4px;
+        padding: 1rem; /* p-4 */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
       }
-      .flat-hover {
-        @apply transition-all duration-300 bg-gray-50 hover:bg-primary/10 hover:text-primary;
+      .link-item:hover {
+        background-color: #f5f7fa;
+        border-color: #d0d0d0;
+        border-left-color: #005518;
+      }
+      /* 简化网格布局的工具类 */
+      .link-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+      @screen sm {
+        .link-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @screen md {
+        .link-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      @screen lg {
+        .link-grid {
+          grid-template-columns: repeat(5, 1fr);
+        }
+      }
+      @screen xl {
+        .link-grid {
+          grid-template-columns: repeat(6, 1fr);
+        }
+      }
+      .category-title {
+        position: relative;
+        font-size: 1.25rem; /* text-xl */
+        font-weight: 700; /* font-bold */
+        color: theme('colors.category');
+        margin-bottom: 1.5rem; /* mb-6 */
+      }
+      .category-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background-color: theme('colors.decoration');
+        border-radius: 2px;
+      }
+      /* 链接标题样式 */
+      .link-title {
+        font-size: 1.125rem; /* text-lg */
+        font-weight: 500; /* font-medium */
+        color: theme('colors.linkText');
+      }
+      /* 链接域名样式 */
+      .link-domain {
+        font-size: 0.75rem; /* text-xs */
+        color: theme('colors.gray');
+        margin-top: 0.25rem; /* mt-1 */
       }
     }
-  </style>
-  
-  <!-- 全局样式 -->
-  <style>
+    
+    /* 内联关键CSS */
     body {
       background-color: #ffffff;
-      min-height: 100vh;
+      color: #37352f;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      font-display: swap; /* 优化字体显示 */
     }
     
-    /* 动画效果 */
-    .fade-in {
-      animation: fadeIn 0.4s ease-out;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    /* 平滑滚动 */
     html {
       scroll-behavior: smooth;
     }
   </style>
 </head>
-<body class="font-sans min-h-screen flex flex-col">
-  <!-- 头部 -->
-  <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-4">
-      <div class="flex flex-col items-center justify-center gap-4">
-        <h1 class="text-3xl font-bold text-dark">
-          <i class="fa fa-compass mr-2 text-primary"></i>简洁导航
-        </h1>
-        
-        <!-- 搜索框 -->
-        <div class="w-full max-w-2xl relative">
-          <input
-            type="text"
-            placeholder="搜索网站、工具或内容..."
-            class="w-full px-5 py-3 pl-12 rounded-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 bg-white"
-            id="search-input"
-          >
-          <i class="fa fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-          <button class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white px-4 py-1.5 rounded-md hover:bg-primary/90 transition-all duration-300">
-            搜索
-          </button>
-        </div>
+<body class="min-h-screen flex flex-col bg-white">
+  <!-- 头部导航 -->
+  <header class="bg-white border-b border-border">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col items-center justify-center py-6">
+        <!-- 标题 -->
+        <h1 class="text-2xl font-bold" style="color: #007722;">网站传送门</h1>
+        <div class="w-12 h-0.5 bg-decoration my-2"></div>
+        <p class="text-gray">aturl.cn</p>
       </div>
     </div>
   </header>
 
   <!-- 主内容 -->
   <main class="flex-grow container mx-auto px-4 py-8">
-    <!-- 快速访问 -->
-    <section class="mb-12 fade-in">
-      <h2 class="text-xl font-bold text-dark mb-4 flex items-center">
-          <i class="fa fa-star text-accent mr-2"></i>快速访问
-        </h2>
-      
-      <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-8 gap-4">
-        <!-- 快速访问项 -->
-        <a href="https://www.baidu.com" target="_blank" class="flat-hover p-4 flex flex-col items-center text-center">
-          <div class="w-14 h-14 rounded-md bg-blue-50 flex items-center justify-center mb-2">
-            <i class="fa fa-search text-blue-500 text-xl"></i>
-          </div>
-          <span class="text-sm font-medium">百度</span>
-        </a>
-        
-        <a href="https://www.bilibili.com" target="_blank" class="flat-hover p-4 flex flex-col items-center text-center">
-          <div class="w-14 h-14 rounded-md bg-pink-50 flex items-center justify-center mb-2">
-            <i class="fa fa-play-circle text-pink-500 text-xl"></i>
-          </div>
-          <span class="text-sm font-medium">B站</span>
-        </a>
-        
-        <a href="https://www.taobao.com" target="_blank" class="flat-hover p-4 flex flex-col items-center text-center">
-          <div class="w-14 h-14 rounded-md bg-red-50 flex items-center justify-center mb-2">
-            <i class="fa fa-shopping-bag text-red-500 text-xl"></i>
-          </div>
-          <span class="text-sm font-medium">淘宝</span>
-        </a>
-        
-        <a href="https://www.github.com" target="_blank" class="flat-hover p-4 flex flex-col items-center text-center">
-          <div class="w-14 h-14 rounded-md bg-gray-50 flex items-center justify-center mb-2">
-            <i class="fa fa-github text-gray-700 text-xl"></i>
-          </div>
-          <span class="text-sm font-medium">GitHub</span>
-        </a>
-        
-        <a href="https://www.csdn.net" target="_blank" class="flat-hover p-4 flex flex-col items-center text-center">
-          <div class="w-14 h-14 rounded-md bg-orange-50 flex items-center justify-center mb-2">
-            <i class="fa fa-code text-orange-500 text-xl"></i>
-          </div>
-          <span class="text-sm font-medium">CSDN</span>
-        </a>
-        
-        <a href="https://www.weibo.com" target="_blank" class="flat-hover p-4 flex flex-col items-center text-center">
-          <div class="w-14 h-14 rounded-md bg-red-50 flex items-center justify-center mb-2">
-            <i class="fa fa-weibo text-red-500 text-xl"></i>
-          </div>
-          <span class="text-sm font-medium">微博</span>
-        </a>
-        
-        <a href="https://www.zhihu.com" target="_blank" class="flat-hover p-4 flex flex-col items-center text-center">
-          <div class="w-14 h-14 rounded-md bg-blue-50 flex items-center justify-center mb-2">
-            <i class="fa fa-comments text-blue-500 text-xl"></i>
-          </div>
-          <span class="text-sm font-medium">知乎</span>
-        </a>
-        
-        <a href="#" class="flat-hover p-4 flex flex-col items-center text-center">
-          <div class="w-14 h-14 rounded-md bg-gray-50 flex items-center justify-center mb-2 border border-dashed border-gray-200">
-            <i class="fa fa-plus text-gray-400 text-xl"></i>
-          </div>
-          <span class="text-sm font-medium text-gray-500">添加</span>
-        </a>
-      </div>
-    </section>
-
     <!-- 分类导航 -->
-    <section class="mb-12">
-      <!-- 社交媒体 -->
-      <div class="mb-10 fade-in">
-        <h2 class="text-xl font-bold text-dark mb-4 flex items-center">
-          <i class="fa fa-users text-primary mr-2"></i>社交媒体
-        </h2>
+    
+    <!-- 社交媒体 -->
+    <div class="category-container mb-8">
+      <h2 class="category-title">社交媒体</h2>
+      <div class="link-grid">
+        <a href="https://www.weixin.qq.com" target="_blank" class="link-item">
+          <span class="link-title">微信</span>
+          <span class="link-domain">weixin.qq.com</span>
+        </a>
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-          <a href="https://www.weixin.qq.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-weixin text-green-500"></i>
-            <span>微信</span>
-          </a>
-          
-          <a href="https://www.qq.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-qq text-blue-500"></i>
-            <span>QQ</span>
-          </a>
-          
-          <a href="https://www.douban.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-leaf text-green-500"></i>
-            <span>豆瓣</span>
-          </a>
-          
-          <a href="https://www.tiktok.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-music text-black"></i>
-            <span>抖音</span>
-          </a>
-          
-          <a href="https://www.weibo.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-weibo text-red-500"></i>
-            <span>微博</span>
-          </a>
-          
-          <a href="https://www.zhihu.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-comments text-blue-500"></i>
-            <span>知乎</span>
-          </a>
-          
-          <a href="https://www.kuaishou.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-video-camera text-orange-500"></i>
-            <span>快手</span>
-          </a>
-          
-          <a href="https://www.bilibili.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-play-circle text-pink-500"></i>
-            <span>B站</span>
-          </a>
-          
-          <a href="https://www.xiaohongshu.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-book text-red-400"></i>
-            <span>小红书</span>
-          </a>
-          
-          <a href="https://www.kuaishou.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-picture-o text-purple-500"></i>
-            <span>快手</span>
-          </a>
-        </div>
+        <a href="https://www.qq.com" target="_blank" class="link-item">
+          <span class="link-title">QQ</span>
+          <span class="link-domain">qq.com</span>
+        </a>
+        
+        <a href="https://www.douban.com" target="_blank" class="link-item">
+          <span class="link-title">豆瓣</span>
+          <span class="link-domain">douban.com</span>
+        </a>
+        
+        <a href="https://www.tiktok.com" target="_blank" class="link-item">
+          <span class="link-title">抖音</span>
+          <span class="link-domain">tiktok.com</span>
+        </a>
+        
+        <a href="https://www.weibo.com" target="_blank" class="link-item">
+          <span class="link-title">微博</span>
+          <span class="link-domain">weibo.com</span>
+        </a>
+        
+        <a href="https://www.zhihu.com" target="_blank" class="link-item">
+          <span class="link-title">知乎</span>
+          <span class="link-domain">zhihu.com</span>
+        </a>
+        
+        <a href="https://www.kuaishou.com" target="_blank" class="link-item">
+          <span class="link-title">快手</span>
+          <span class="link-domain">kuaishou.com</span>
+        </a>
+        
+        <a href="https://www.bilibili.com" target="_blank" class="link-item">
+          <span class="link-title">B站</span>
+          <span class="link-domain">bilibili.com</span>
+        </a>
+        
+        <a href="https://www.xiaohongshu.com" target="_blank" class="link-item">
+          <span class="link-title">小红书</span>
+          <span class="link-domain">xiaohongshu.com</span>
+        </a>
       </div>
+    </div>
 
-      <!-- 学习资源 -->
-      <div class="mb-10 fade-in" style="animation-delay: 0.1s;">
-        <h2 class="text-xl font-bold text-dark mb-4 flex items-center">
-          <i class="fa fa-book text-secondary mr-2"></i>学习资源
-        </h2>
+    <!-- 学习资源 -->
+    <div class="category-container mb-8">
+      <h2 class="category-title">学习资源</h2>
+      <div class="link-grid">
+        <a href="https://www.icourse163.org" target="_blank" class="link-item">
+          <span class="link-title">中国大学MOOC</span>
+          <span class="link-domain">icourse163.org</span>
+        </a>
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-          <a href="https://www.icourse163.org" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-graduation-cap text-red-500"></i>
-            <span>中国大学MOOC</span>
-          </a>
-          
-          <a href="https://www.bilibili.com/video" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-video-camera text-pink-500"></i>
-            <span>B站学习</span>
-          </a>
-          
-          <a href="https://www.leetcode-cn.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-code-fork text-orange-500"></i>
-            <span>LeetCode</span>
-          </a>
-          
-          <a href="https://www.cnblogs.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-rss text-blue-500"></i>
-            <span>博客园</span>
-          </a>
-          
-          <a href="https://www.github.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-github text-gray-700"></i>
-            <span>GitHub</span>
-          </a>
-          
-          <a href="https://www.csdn.net" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-code text-orange-500"></i>
-            <span>CSDN</span>
-          </a>
-          
-          <a href="https://www.w3school.com.cn" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-book text-green-500"></i>
-            <span>W3School</span>
-          </a>
-          
-          <a href="https://www.imooc.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-laptop text-blue-400"></i>
-            <span>慕课网</span>
-          </a>
-          
-          <a href="https://www.nowcoder.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-terminal text-red-400"></i>
-            <span>牛客网</span>
-          </a>
-          
-          <a href="https://www.geeksforgeeks.org" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-book text-purple-500"></i>
-            <span>GeeksforGeeks</span>
-          </a>
-        </div>
+        <a href="https://www.bilibili.com/video" target="_blank" class="link-item">
+          <span class="link-title">B站学习</span>
+          <span class="link-domain">bilibili.com</span>
+        </a>
+        
+        <a href="https://www.leetcode-cn.com" target="_blank" class="link-item">
+          <span class="link-title">LeetCode</span>
+          <span class="link-domain">leetcode-cn.com</span>
+        </a>
+        
+        <a href="https://www.cnblogs.com" target="_blank" class="link-item">
+          <span class="link-title">博客园</span>
+          <span class="link-domain">cnblogs.com</span>
+        </a>
+        
+        <a href="https://www.github.com" target="_blank" class="link-item">
+          <span class="link-title">GitHub</span>
+          <span class="link-domain">github.com</span>
+        </a>
+        
+        <a href="https://www.csdn.net" target="_blank" class="link-item">
+          <span class="link-title">CSDN</span>
+          <span class="link-domain">csdn.net</span>
+        </a>
+        
+        <a href="https://www.w3school.com.cn" target="_blank" class="link-item">
+          <span class="link-title">W3School</span>
+          <span class="link-domain">w3school.com.cn</span>
+        </a>
+        
+        <a href="https://www.imooc.com" target="_blank" class="link-item">
+          <span class="link-title">慕课网</span>
+          <span class="link-domain">imooc.com</span>
+        </a>
+        
+        <a href="https://www.nowcoder.com" target="_blank" class="link-item">
+          <span class="link-title">牛客网</span>
+          <span class="link-domain">nowcoder.com</span>
+        </a>
       </div>
+    </div>
 
-      <!-- 工具网站 -->
-      <div class="mb-10 fade-in" style="animation-delay: 0.2s;">
-        <h2 class="text-xl font-bold text-dark mb-4 flex items-center">
-          <i class="fa fa-wrench text-accent mr-2"></i>工具网站
-        </h2>
+    <!-- 工具网站 -->
+    <div class="category-container mb-8">
+      <h2 class="category-title">工具网站</h2>
+      <div class="link-grid">
+        <a href="https://www.processon.com" target="_blank" class="link-item">
+          <span class="link-title">ProcessOn</span>
+          <span class="link-domain">processon.com</span>
+        </a>
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-          <a href="https://www.processon.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-sitemap text-purple-500"></i>
-            <span>ProcessOn</span>
-          </a>
-          
-          <a href="https://www.canva.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-paint-brush text-pink-500"></i>
-            <span>Canva</span>
-          </a>
-          
-          <a href="https://www.photopea.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-image text-blue-500"></i>
-            <span>Photopea</span>
-          </a>
-          
-          <a href="https://www.convertio.co" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-exchange text-green-500"></i>
-            <span>格式转换</span>
-          </a>
-          
-          <a href="https://www.baidupan.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-cloud-download text-orange-500"></i>
-            <span>百度网盘</span>
-          </a>
-          
-          <a href="https://www.figma.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-pencil text-blue-400"></i>
-            <span>Figma</span>
-          </a>
-          
-          <a href="https://www.gravit.io" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-object-group text-purple-400"></i>
-            <span>Gravit Designer</span>
-          </a>
-          
-          <a href="https://www.aiofile.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-file text-green-400"></i>
-            <span>文件转换</span>
-          </a>
-          
-          <a href="https://www.tinyjpg.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-compress text-red-400"></i>
-            <span>图片压缩</span>
-          </a>
-          
-          <a href="https://www.remove.bg" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-cut text-indigo-500"></i>
-            <span>抠图工具</span>
-          </a>
-        </div>
+        <a href="https://www.canva.com" target="_blank" class="link-item">
+          <span class="link-title">Canva</span>
+          <span class="link-domain">canva.com</span>
+        </a>
+        
+        <a href="https://www.photopea.com" target="_blank" class="link-item">
+          <span class="link-title">Photopea</span>
+          <span class="link-domain">photopea.com</span>
+        </a>
+        
+        <a href="https://www.convertio.co" target="_blank" class="link-item">
+          <span class="link-title">格式转换</span>
+          <span class="link-domain">convertio.co</span>
+        </a>
+        
+        <a href="https://www.baidupan.com" target="_blank" class="link-item">
+          <span class="link-title">百度网盘</span>
+          <span class="link-domain">baidupan.com</span>
+        </a>
+        
+        <a href="https://www.figma.com" target="_blank" class="link-item">
+          <span class="link-title">Figma</span>
+          <span class="link-domain">figma.com</span>
+        </a>
+        
+        <a href="https://www.gravit.io" target="_blank" class="link-item">
+          <span class="link-title">Gravit Designer</span>
+          <span class="link-domain">gravit.io</span>
+        </a>
+        
+        <a href="https://www.aiofile.com" target="_blank" class="link-item">
+          <span class="link-title">文件转换</span>
+          <span class="link-domain">aiofile.com</span>
+        </a>
       </div>
+    </div>
 
-      <!-- 开发者工具 -->
-      <div class="fade-in" style="animation-delay: 0.3s;">
-        <h2 class="text-xl font-bold text-dark mb-4 flex items-center">
-          <i class="fa fa-terminal text-dark mr-2"></i>开发者工具
-        </h2>
+    <!-- 开发者工具 -->
+    <div class="category-container mb-8">
+      <h2 class="category-title">开发者工具</h2>
+      <div class="link-grid">
+        <a href="https://www.npmjs.com" target="_blank" class="link-item">
+          <span class="link-title">NPM</span>
+          <span class="link-domain">npmjs.com</span>
+        </a>
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-          <a href="https://www.npmjs.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-cube text-red-500"></i>
-            <span>NPM</span>
-          </a>
-          
-          <a href="https://www.jsdelivr.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-cloud-download text-blue-500"></i>
-            <span>jsDelivr</span>
-          </a>
-          
-          <a href="https://www.stackoverflow.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-question-circle text-orange-500"></i>
-            <span>Stack Overflow</span>
-          </a>
-          
-          <a href="https://www.codepen.io" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-pencil-square-o text-purple-500"></i>
-            <span>CodePen</span>
-          </a>
-          
-          <a href="https://www.github.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-github text-gray-700"></i>
-            <span>GitHub</span>
-          </a>
-          
-          <a href="https://www.devdocs.io" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-book text-green-500"></i>
-            <span>DevDocs</span>
-          </a>
-          
-          <a href="https://www.regexr.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-code text-blue-400"></i>
-            <span>Regexr</span>
-          </a>
-          
-          <a href="https://www.lintcode.com" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-code-fork text-red-400"></i>
-            <span>LintCode</span>
-          </a>
-          
-          <a href="https://www.jsfiddle.net" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-play text-purple-400"></i>
-            <span>JSFiddle</span>
-          </a>
-          
-          <a href="https://www.typescriptlang.org" target="_blank" class="flat-hover flex items-center gap-2 p-3">
-            <i class="fa fa-code text-blue-600"></i>
-            <span>TypeScript</span>
-          </a>
-        </div>
+        <a href="https://www.jsdelivr.com" target="_blank" class="link-item">
+          <span class="link-title">jsDelivr</span>
+          <span class="link-domain">jsdelivr.com</span>
+        </a>
+        
+        <a href="https://www.stackoverflow.com" target="_blank" class="link-item">
+          <span class="link-title">Stack Overflow</span>
+          <span class="link-domain">stackoverflow.com</span>
+        </a>
+        
+        <a href="https://www.codepen.io" target="_blank" class="link-item">
+          <span class="link-title">CodePen</span>
+          <span class="link-domain">codepen.io</span>
+        </a>
+        
+        <a href="https://www.github.com" target="_blank" class="link-item">
+          <span class="link-title">GitHub</span>
+          <span class="link-domain">github.com</span>
+        </a>
+        
+        <a href="https://www.devdocs.io" target="_blank" class="link-item">
+          <span class="link-title">DevDocs</span>
+          <span class="link-domain">devdocs.io</span>
+        </a>
+        
+        <a href="https://www.regexr.com" target="_blank" class="link-item">
+          <span class="link-title">Regexr</span>
+          <span class="link-domain">regexr.com</span>
+        </a>
       </div>
-    </section>
+    </div>
   </main>
 
   <!-- 页脚 -->
-  <footer class="bg-white border-t border-gray-100 py-6 mt-10">
-    <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
-      <p>© 2023 简洁网址导航 | 一个专注于简洁高效的导航网站</p>
-      <p class="mt-2">
-        <a href="#" class="hover:text-primary transition-colors duration-300 mx-2">关于我们</a>
-        <a href="#" class="hover:text-primary transition-colors duration-300 mx-2">使用帮助</a>
-        <a href="#" class="hover:text-primary transition-colors duration-300 mx-2">反馈建议</a>
-      </p>
+  <footer class="bg-white border-t border-border py-6 mt-4">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-gray">© 2025 网站传送门｜aturl.cn</p>
     </div>
   </footer>
 
-  <!-- JavaScript -->
-  <script>
-    // 搜索功能
-    document.getElementById('search-input').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        const searchText = this.value.trim();
-        if (searchText) {
-          window.open(`https://www.baidu.com/s?wd=${encodeURIComponent(searchText)}`, '_blank');
-          this.value = '';
-        }
-      }
-    });
-    
-    // 页面加载动画
-    document.addEventListener('DOMContentLoaded', function() {
-      const categoryItems = document.querySelectorAll('.fade-in');
-      categoryItems.forEach((item, index) => {
-        setTimeout(() => {
-          item.style.opacity = '1';
-          item.style.transform = 'translateY(0)';
-        }, 100 * index);
-      });
-    });
-  </script>
+  <!-- 移除动画相关JavaScript -->
 </body>
 </html>
