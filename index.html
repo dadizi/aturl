@@ -10,136 +10,230 @@
   <meta name="keywords" content="网站导航,常用网站,社交媒体,学习资源,工具网站,开发者工具">
   <meta name="robots" content="index, follow">
   <meta name="author" content="aturl.cn">
-  <!-- 添加preconnect和dns-prefetch以优化CDN加载 -->
-  <link rel="preconnect" href="https://cdn.tailwindcss.com">
-  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
-  <!-- 使用Tailwind的JIT模式减小体积 -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Tailwind CSS 配置 - 只保留必要的颜色定义 -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            border: '#e6e6e6',
-            gray: '#9b9b9b',
-            category: '#666666',
-            linkText: '#37a',
-            decoration: '#007722',
-            leftBorder: '#007722',
-          }
-        }
-      }
-    }
-  </script>
-  
-  <!-- 合并样式定义，减少冗余 -->
-  <style type="text/tailwindcss">
-    @layer utilities {
-      .content-auto { content-visibility: auto; }
-      .link-item {
-        border: 1px dashed #e0e0e0;
-        border-left: 1px dashed theme('colors.leftBorder');
-        border-radius: 4px;
-        padding: 1rem; /* p-4 */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        background-color: #fcfefc;
-      }
-      .link-item:hover {
-        background-color: #f5f7fa;
-        border-color: #d0d0d0;
-        border-left-color: #005518;
-      }
-      /* 简化网格布局的工具类 */
-      .link-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-      }
-      @screen sm {
-        .link-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
-      @screen md {
-        .link-grid {
-          grid-template-columns: repeat(4, 1fr);
-        }
-      }
-      @screen lg {
-        .link-grid {
-          grid-template-columns: repeat(5, 1fr);
-        }
-      }
-      @screen xl {
-        .link-grid {
-          grid-template-columns: repeat(5, 1fr);
-        }
-      }
-      .category-title {
-        position: relative;
-        font-size: 1.25rem; /* text-xl */
-        font-weight: 700; /* font-bold */
-        color: theme('colors.category');
-        margin-bottom: 1.5rem; /* mb-6 */
-      }
-      .category-title::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 0;
-        width: 40px;
-        height: 3px;
-        background-color: theme('colors.decoration');
-        border-radius: 2px;
-      }
-      /* 链接标题样式 */
-      .link-title {
-        font-size: 1.125rem; /* text-lg */
-        font-weight: 400; /* font-normal */
-        color: theme('colors.linkText');
-      }
-      /* 链接域名样式 */
-      .link-domain {
-        font-size: 0.75rem; /* text-xs */
-        color: theme('colors.gray');
-        margin-top: 0.25rem; /* mt-1 */
-      }
-    }
-    
-    /* 内联关键CSS */
-    body {
-      background-color: #ffffff;
-      color: #37352f;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      font-display: swap; /* 优化字体显示 */
-    }
-    
-    html {
-      scroll-behavior: smooth;
-    }
+  <!-- 内联CSS样式 -->
+  <style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #ffffff;
+  color: #37352f;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-display: swap; /* 优化字体显示 */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 颜色变量定义 */
+:root {
+  --color-border: #e6e6e6;
+  --color-gray: #9b9b9b;
+  --color-category: #666666;
+  --color-link-text: #37a;
+  --color-decoration: #007722;
+  --color-left-border: #007722;
+  --color-hover-left-border: #005518;
+}
+
+/* 容器样式 */
+.container {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 头部导航 */
+header {
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-container {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0;
+}
+
+.header-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--color-decoration);
+}
+
+.header-divider {
+  width: 3rem;
+  height: 0.125rem;
+  background-color: var(--color-decoration);
+  margin: 0.5rem 0;
+}
+
+.header-subtitle {
+  color: var(--color-gray);
+}
+
+/* 主内容 */
+main {
+  flex-grow: 1;
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* 分类容器 */
+.category-container {
+  margin-bottom: 2rem;
+}
+
+/* 分类标题 */
+.category-title {
+  position: relative;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-category);
+  margin-bottom: 1.5rem;
+}
+
+.category-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background-color: var(--color-decoration);
+  border-radius: 2px;
+}
+
+/* 链接网格 */
+.link-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+/* 链接项 */
+.link-item {
+  border: 1px dashed #e0e0e0;
+  border-left: 1px dashed var(--color-left-border);
+  border-radius: 4px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #fcfefc;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  min-width: 0; /* 允许flex子元素缩小到内容宽度 */
+  width: 100%; /* 确保链接项填充整个网格单元格 */
+}
+
+.link-item:hover {
+  background-color: #f5f7fa;
+  border-color: #d0d0d0;
+  border-left-color: var(--color-hover-left-border);
+}
+
+/* 链接标题 */
+.link-title {
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: var(--color-link-text);
+}
+
+/* 链接域名 */
+.link-domain {
+  font-size: 0.75rem;
+  color: var(--color-gray);
+  margin-top: 0.25rem;
+}
+
+/* 页脚 */
+footer {
+  background-color: #ffffff;
+  border-top: 1px solid var(--color-border);
+  padding: 1.5rem 0;
+  margin-top: 1rem;
+}
+
+.footer-container {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.footer-text {
+  color: var(--color-gray);
+}
+
+/* 响应式设计 */
+/* Small screens (640px and up) */
+@media (min-width: 640px) {
+  .link-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Medium screens (768px and up) */
+@media (min-width: 768px) {
+  .link-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Large screens (1024px and up) */
+@media (min-width: 1024px) {
+  .link-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Extra large screens (1280px and up) */
+@media (min-width: 1280px) {
+  .link-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* 内容可见性优化 */
+.content-auto {
+  content-visibility: auto;
+}
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-white">
+  <body>
   <!-- 头部导航 -->
-  <header class="bg-white border-b border-border">
-    <div class="max-w-4xl mx-auto px-4">
-      <div class="flex flex-col items-center justify-center py-6">
+  <header>
+    <div class="header-container">
+      <div class="header-content">
         <!-- 标题 -->
-        <h1 class="text-2xl font-bold" style="color: #007722;">网站传送门</h1>
-        <div class="w-12 h-0.5 bg-decoration my-2"></div>
-        <p class="text-gray">atURL.cn</p>
+        <h1 class="header-title">网站传送门</h1>
+        <div class="header-divider"></div>
+        <p class="header-subtitle">atURL.cn</p>
       </div>
     </div>
   </header>
 
   <!-- 主内容 -->
-  <main class="flex-grow mx-auto px-4 py-8 max-w-4xl">
+  <main>
     <!-- 分类导航 -->
 
     <!-- 人工智能 -->
@@ -281,9 +375,9 @@
   </main>
 
   <!-- 页脚 -->
-  <footer class="bg-white border-t border-border py-6 mt-4">
-    <div class="container mx-auto px-4 text-center">
-      <p class="text-gray">© 2025 网站传送门｜atURL.cn</p>
+  <footer>
+    <div class="footer-container">
+      <p class="footer-text">© 2025 网站传送门｜atURL.cn</p>
     </div>
   </footer>
 
