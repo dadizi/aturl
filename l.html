@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>累了吗 - 你的线上精神休息站</title>
+    <meta name="description" content="累了就进来坐坐，发现治愈视频、放松图文和温暖瞬间">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+    <style>
+        /* CSS变量 - 设计系统 */
+        :root {
+            --primary-bg: #fefefe;
+            --card-bg: #ffffff;
+            --text-primary: #5c5c5c;
+            --text-secondary: #777777;
+            --text-dark: #333333;
+            --accent-color: #8fb3b3;
+            --accent-light: #d4a5a5;
+            --border-color: #e8e8e8;
+            --hover-bg: #f5f5f5;
+            --shadow: 0 2px 10px rgba(0,0,0,0.04);
+            --shadow-hover: 0 5px 20px rgba(0,0,0,0.08);
+            --radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 布局容器 - 单栏布局 */
+        .container {
+            max-width: 700px; /* 单栏宽度限制 */
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* 头部样式 */
+        header {
+            padding: 40px 0 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        /* 域名导航 */
+        .domain-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .domain-link {
+            padding: 8px 16px;
+            background: var(--hover-bg);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .domain-link:hover, .domain-link.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        /* 搜索区域 */
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            display: flex;
+            width: 100%;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-right: none;
+            border-radius: var(--radius) 0 0 var(--radius);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .search-btn {
+            padding: 0 20px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-btn:hover {
+            background: var(--accent-light);
+        }
+
+        /* 分类筛选 - 单行可滚动 */
+        .categories {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            background: var(--hover-bg);
+            border: none;
+            border-radius: 20px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        /* 单栏内容列表 */
+        .content-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .content-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-image {
+            position: relative;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 比例 */
+            overflow: hidden;
+        }
+
+        .card-image img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .content-card:hover .card-image img {
+            transform: scale(1.05);
+        }
+
+        .platform-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+            line-height: 1.4;
+        }
+
+        .card-desc {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            background: var(--hover-bg);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* 加载更多 */
+        .load-more {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .load-more-btn {
+            padding: 12px 35px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .load-more-btn:hover {
+            background: var(--accent-light);
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        /* 工具页面特定样式 */
+        .tool-section {
+            display: none;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+
+        .tool-section.active {
+            display: block;
+        }
+
+        .sound-mixer {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .sound-control {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .sound-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .sound-name {
+            font-weight: 500;
+        }
+
+        .sound-value {
+            color: var(--accent-color);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 5px;
+            background: var(--border-color);
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .play-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .play-btn, .stop-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .play-btn {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .stop-btn {
+            background: var(--hover-bg);
+            color: var(--text-primary);
+        }
+
+        /* 社区页面特定样式 */
+        .community-section {
+            display: none;
+            margin: 0 auto 40px;
+        }
+
+        .community-section.active {
+            display: block;
+        }
+
+        .share-box {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .share-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            resize: vertical;
+            font-family: inherit;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .share-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .share-btn {
+            padding: 10px 25px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .posts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .post-content {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .logo {
+                font-size: 2.2rem;
+            }
+            
+            .domain-nav {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .card-title {
+                font-size: 1.2rem;
+            }
+            
+            .card-content {
+                padding: 15px;
+            }
+            
+            .sound-mixer, .share-box, .post-card {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.8rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .card-title {
+                font-size: 1.1rem;
+            }
+            
+            .card-desc {
+                font-size: 0.95rem;
+            }
+            
+            .sound-mixer, .share-box, .post-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="logo">累了吗</h1>
+            <p class="tagline">你的线上精神休息站 · 累了就进来坐坐</p>
+            
+            <div class="domain-nav">
+                <a href="#content" class="domain-link active" data-section="content">发现治愈内容</a>
+                <a href="#tools" class="domain-link" data-section="tools">放松小工具</a>
+                <a href="#community" class="domain-link" data-section="community">温暖社区</a>
+            </div>
+        </header>
+        
+        <main>
+            <!-- 内容发现区域 -->
+            <section id="content-section" class="content-section active">
+                <div class="search-section">
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="搜索治愈内容...">
+                        <button class="search-btn">搜索</button>
+                    </div>
+                </div>
+                
+                <div class="categories">
+                    <button class="category-btn active" data-category="all">全部</button>
+                    <button class="category-btn" data-category="video">治愈视频</button>
+                    <button class="category-btn" data-category="image">放松图文</button>
+                    <button class="category-btn" data-category="sound">自然之声</button>
+                    <button class="category-btn" data-category="moment">温暖瞬间</button>
+                    <button class="category-btn" data-category="asmr">ASMR</button>
+                    <button class="category-btn" data-category="nature">自然风光</button>
+                    <button class="category-btn" data-category="animal">萌宠</button>
+                </div>
+                
+                <div class="content-list" id="content-list">
+                    <!-- 内容卡片将通过JavaScript动态生成 -->
+                </div>
+                
+                <div class="load-more">
+                    <button class="load-more-btn" id="load-more">加载更多</button>
+                </div>
+            </section>
+            
+            <!-- 工具区域 -->
+            <section id="tools-section" class="tool-section">
+                <h2 style="text-align: center; margin-bottom: 30px;">放松小工具</h2>
+                
+                <div class="sound-mixer">
+                    <h3 style="margin-bottom: 20px; text-align: center;">白噪音混合器</h3>
+                    
+                    <div class="sound-control">
+                        <div class="sound-label">
+                            <span class="sound-name">雨声</span>
+                            <span class="sound-value" id="rain-value">50%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="50" class="sound-slider" id="rain-slider">
+                    </div>
+                    
+                    <div class="sound-control">
+                        <div class="sound-label">
+                            <span class="sound-name">海浪</span>
+                            <span class="sound-value" id="wave-value">30%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="30" class="sound-slider" id="wave-slider">
+                    </div>
+                    
+                    <div class="sound-control">
+                        <div class="sound-label">
+                            <span class="sound-name">篝火</span>
+                            <span class="sound-value" id="fire-value">20%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="20" class="sound-slider" id="fire-slider">
+                    </div>
+                    
+                    <div class="sound-control">
+                        <div class="sound-label">
+                            <span class="sound-name">森林</span>
+                            <span class="sound-value" id="forest-value">40%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="40" class="sound-slider" id="forest-slider">
+                    </div>
+                    
+                    <div class="play-controls">
+                        <button class="play-btn" id="play-sounds">播放声音</button>
+                        <button class="stop-btn" id="stop-sounds">停止</button>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px;">
+                    <p>更多放松工具正在开发中...</p>
+                </div>
+            </section>
+            
+            <!-- 社区区域 -->
+            <section id="community-section" class="community-section">
+                <h2 style="text-align: center; margin-bottom: 30px;">温暖社区</h2>
+                
+                <div class="share-box">
+                    <textarea class="share-textarea" placeholder="分享你的温暖瞬间或疲惫时刻...（匿名发布）"></textarea>
+                    <div class="share-actions">
+                        <span style="font-size: 0.9rem; color: var(--text-secondary);">最多500字</span>
+                        <button class="share-btn">发布</button>
+                    </div>
+                </div>
+                
+                <div class="posts-list" id="posts-list">
+                    <!-- 社区帖子将通过JavaScript动态生成 -->
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>累了吗 · 你的线上精神休息站</p>
+            <p>所有内容均收集自公开网络，版权归原作者所有</p>
+            <p>© 2023 累了吗 | 备案号：ICP备00000000号</p>
+        </footer>
+    </div>
+
+    <script>
+        // 示例数据 - 在实际应用中，这些数据应该从API或数据库获取
+        const contentData = [
+            {
+                id: 1,
+                title: "4K沉浸式雪山风景，配上空灵的自然白噪音",
+                description: "一段没有旁白、没有音乐的纯净自然影像，只有风声、鸟鸣和远处雪崩的微弱回响。适合工作学习时作为背景，或睡前放松观看。这段视频长达30分钟，带你完全沉浸在大自然的宁静之中。",
+                image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "bilibili",
+                category: "video",
+                tags: ["自然", "白噪音", "4K", "雪山", "冥想"]
+            },
+            {
+                id: 2,
+                title: "手冲咖啡的治愈过程，从研磨到萃取",
+                description: "观看咖啡豆慢慢研磨成粉，热水缓缓注入，咖啡滴滤的过程。没有对话，只有器具碰撞的细微声响和咖啡流淌的声音。这种专注的手工过程能让人暂时忘记外界的喧嚣，专注于当下的每一个细节。",
+                image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "xiaohongshu",
+                category: "video",
+                tags: ["ASMR", "手工", "慢生活", "咖啡", "专注"]
+            },
+            {
+                id: 3,
+                title: "橘猫的午后悠闲时光，打哈欠伸懒腰全程记录",
+                description: "一只胖乎乎的橘猫在阳光充足的下午，从打盹到醒来，伸懒腰，整理毛发的一系列动作。简单却无比治愈。科学研究表明，观看猫咪的日常行为能够有效降低压力和焦虑水平。",
+                image: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "douyin",
+                category: "video",
+                tags: ["萌宠", "日常", "放松", "猫咪", "解压"]
+            },
+            {
+                id: 4,
+                title: "钢笔书写中文的韵律，笔墨与纸张的对话",
+                description: "观看钢笔尖在纸上滑动，墨水慢慢渗透，形成优美的汉字。只有笔尖与纸张摩擦的沙沙声，极度解压。这种传统书写方式在现代数字时代显得尤为珍贵，能带给人内心的平静。",
+                image: "https://images.unsplash.com/photo-1542435503-956c469947f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "bilibili",
+                category: "video",
+                tags: ["ASMR", "书写", "专注", "汉字", "传统文化"]
+            },
+            {
+                id: 5,
+                title: "雨中的森林漫步，每一片叶子都在呼吸",
+                description: "第一视角的森林徒步，细雨蒙蒙，脚步踩在落叶上的声音，雨水从叶片滑落的声音，营造出完全沉浸的自然体验。这种'森林浴'的概念源自日本，被证明对身心健康有诸多益处。",
+                image: "https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "xiaohongshu",
+                category: "video",
+                tags: ["自然", "徒步", "雨天", "森林浴", "沉浸式"]
+            },
+            {
+                id: 6,
+                title: "高原星空延时摄影，感受宇宙的浩瀚与宁静",
+                description: "在无光污染的高原上拍摄的星空延时，银河缓缓移动，偶尔有流星划过。配以空灵的背景音乐，让人忘却烦恼。仰望星空总能让人感受到自身的渺小与宇宙的宏大，从而获得内心的平静。",
+                image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "douyin",
+                category: "video",
+                tags: ["星空", "延时", "冥想", "宇宙", "宁静"]
+            },
+            {
+                id: 7,
+                title: "京都古寺的四季变化，禅意十足的视觉之旅",
+                description: "跟随镜头漫步京都的古寺，感受春樱、夏绿、秋枫、冬雪的不同景致。没有喧闹的游客，只有风铃轻响和落叶沙沙。这种宁静的视觉体验能有效缓解现代生活的压力。",
+                image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "bilibili",
+                category: "video",
+                tags: ["日本", "古寺", "四季", "禅意", "宁静"]
+            },
+            {
+                id: 8,
+                title: "水彩画创作过程，色彩在水中的舞蹈",
+                description: "观看艺术家用水彩创作一幅风景画，颜料在水中慢慢扩散、融合，形成意想不到的美丽效果。这种创作过程本身就具有疗愈效果，适合在疲惫时观看以放松心情。",
+                image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "xiaohongshu",
+                category: "video",
+                tags: ["艺术", "水彩", "创作", "色彩", "疗愈"]
+            }
+        ];
+
+        const communityPosts = [
+            {
+                id: 1,
+                content: "今天下班路上看到一对老夫妻，爷爷牵着奶奶的手慢慢走，奶奶手里拿着一支刚开的玉兰花。突然觉得，生活里的小确幸真的很治愈。不需要什么大富大贵，平平淡淡的相伴就是最温暖的时光。",
+                time: "2小时前",
+                likes: 24
+            },
+            {
+                id: 2,
+                content: "连续加班一周，感觉自己像个机器人。刚刚泡了杯热茶，站在窗前发了十分钟呆，看着楼下的车来车往，突然就释然了。累是累了点，但生活还得继续呀。有时候，我们需要的就是这样的小小停顿。",
+                time: "5小时前",
+                likes: 18
+            },
+            {
+                id: 3,
+                content: "分享一个减压小方法：准备一盆温水，放几滴薰衣草精油，闭上眼睛慢慢泡脚十分钟，同时听一些轻音乐。试过的都说好！这简单的仪式能让人从一天的疲惫中慢慢恢复过来。",
+                time: "1天前",
+                likes: 32
+            },
+            {
+                id: 4,
+                content: "今天看到一句话很受触动：'你不是懒，你只是累了。'现代社会总给我们太多压力，仿佛休息是可耻的。但其实，适当的休息和放松才是保持长期生产力的关键。",
+                time: "1天前",
+                likes: 29
+            }
+        ];
+
+        // 平台图标映射
+        const platformIcons = {
+            bilibili: "▶️",
+            xiaohongshu: "📕",
+            douyin: "🎵"
+        };
+
+        // 平台名称映射
+        const platformNames = {
+            bilibili: "B站",
+            xiaohongshu: "小红书",
+            douyin: "抖音"
+        };
+
+        // DOM 元素
+        const contentList = document.getElementById('content-list');
+        const postsList = document.getElementById('posts-list');
+        const domainLinks = document.querySelectorAll('.domain-link');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const loadMoreBtn = document.getElementById('load-more');
+        const searchInput = document.querySelector('.search-input');
+        const searchBtn = document.querySelector('.search-btn');
+
+        // 当前状态
+        let currentSection = 'content';
+        let currentCategory = 'all';
+        let displayedContent = 4; // 初始显示的内容数量
+
+        // 初始化页面
+        function initPage() {
+            renderContentList();
+            renderCommunityPosts();
+            setupEventListeners();
+        }
+
+        // 渲染内容列表
+        function renderContentList() {
+            contentList.innerHTML = '';
+            
+            const filteredData = contentData.filter(item => {
+                const matchesCategory = currentCategory === 'all' || item.category === currentCategory;
+                const matchesSearch = searchInput.value === '' || 
+                    item.title.toLowerCase().includes(searchInput.value.toLowerCase()) ||
+                    item.description.toLowerCase().includes(searchInput.value.toLowerCase());
+                
+                return matchesCategory && matchesSearch;
+            }).slice(0, displayedContent);
+            
+            if (filteredData.length === 0) {
+                contentList.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-secondary);">没有找到匹配的内容，试试其他关键词或分类</p>';
+                return;
+            }
+            
+            filteredData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'content-card';
+                card.innerHTML = `
+                    <div class="card-image">
+                        <img src="${item.image}" alt="${item.title}" loading="lazy">
+                        <div class="platform-tag">
+                            ${platformIcons[item.platform]} ${platformNames[item.platform]}
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">${item.title}</h3>
+                        <p class="card-desc">${item.description}</p>
+                        <div class="card-tags">
+                            ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                contentList.appendChild(card);
+            });
+            
+            // 控制"加载更多"按钮的显示
+            loadMoreBtn.style.display = 
+                displayedContent < contentData.length && 
+                filteredData.length === displayedContent ? 'block' : 'none';
+        }
+
+        // 渲染社区帖子
+        function renderCommunityPosts() {
+            postsList.innerHTML = '';
+            
+            communityPosts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post-card';
+                postElement.innerHTML = `
+                    <div class="post-content">${post.content}</div>
+                    <div class="post-meta">
+                        <span>${post.time}</span>
+                        <span>❤️ ${post.likes} 个暖心</span>
+                    </div>
+                `;
+                postsList.appendChild(postElement);
+            });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 域名导航切换
+            domainLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    switchSection(section);
+                    
+                    // 更新活动状态
+                    domainLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 分类筛选
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentCategory = this.getAttribute('data-category');
+                    displayedContent = 4; // 重置显示数量
+                    renderContentList();
+                });
+            });
+            
+            // 加载更多
+            loadMoreBtn.addEventListener('click', function() {
+                displayedContent += 4;
+                renderContentList();
+            });
+            
+            // 搜索功能
+            searchBtn.addEventListener('click', function() {
+                displayedContent = 4;
+                renderContentList();
+            });
+            
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    displayedContent = 4;
+                    renderContentList();
+                }
+            });
+            
+            // 白噪音工具
+            const sliders = document.querySelectorAll('.sound-slider');
+            sliders.forEach(slider => {
+                slider.addEventListener('input', function() {
+                    const valueElement = document.getElementById(`${this.id.replace('-slider', '-value')}`);
+                    valueElement.textContent = `${this.value}%`;
+                });
+            });
+            
+            const playBtn = document.getElementById('play-sounds');
+            const stopBtn = document.getElementById('stop-sounds');
+            
+            playBtn.addEventListener('click', function() {
+                alert('在实际网站中，这里会播放混合的白噪音');
+            });
+            
+            stopBtn.addEventListener('click', function() {
+                alert('在实际网站中，这里会停止所有声音');
+            });
+            
+            // 社区发布功能
+            const shareBtn = document.querySelector('.share-btn');
+            const shareTextarea = document.querySelector('.share-textarea');
+            
+            shareBtn.addEventListener('click', function() {
+                if (shareTextarea.value.trim() === '') {
+                    alert('请输入内容');
+                    return;
+                }
+                
+                if (shareTextarea.value.length > 500) {
+                    alert('内容不能超过500字');
+                    return;
+                }
+                
+                alert('在实际网站中，这里会将内容发布到社区');
+                shareTextarea.value = '';
+            });
+        }
+
+        // 切换页面区域
+        function switchSection(section) {
+            // 隐藏所有区域
+            document.querySelectorAll('.content-section, .tool-section, .community-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            
+            // 显示目标区域
+            document.getElementById(`${section}-section`).classList.add('active');
+            currentSection = section;
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
