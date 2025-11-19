@@ -117,25 +117,54 @@
             line-height: 1.6;
         }
         
-        /* 加载更多 */
-        .load-more {
+        /* 域名展示区域 */
+        .domains-section {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 40px 0;
             text-align: center;
-            margin-bottom: 60px;
         }
         
-        .load-more-btn {
-            padding: 12px 35px;
+        .domains-title {
+            font-size: 1.2rem;
+            color: #8fb3b3;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .domain-group {
+            margin-bottom: 25px;
+        }
+        
+        .domain-group-title {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .domain-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .domain-item {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .domain-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
             background: #8fb3b3;
             color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-        
-        .load-more-btn:hover {
-            background: #7a9c9c;
         }
         
         /* 页脚 */
@@ -156,6 +185,15 @@
             .card-content {
                 padding: 15px;
             }
+            
+            .domain-list {
+                gap: 10px;
+            }
+            
+            .domain-item {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -171,9 +209,37 @@
                 <!-- 内容将通过JavaScript动态生成 -->
             </div>
             
-            <div class="load-more">
-                <button class="load-more-btn" id="load-more">加载更多</button>
-            </div>
+            <!-- 域名展示区域 -->
+            <section class="domains-section">
+                <h3 class="domains-title">累了吗系列域名</h3>
+                
+                <div class="domain-group">
+                    <h4 class="domain-group-title">累了吗 (leilema)</h4>
+                    <div class="domain-list">
+                        <span class="domain-item">leilema.com</span>
+                        <span class="domain-item">leilema.cn</span>
+                        <span class="domain-item">leilema.net</span>
+                    </div>
+                </div>
+                
+                <div class="domain-group">
+                    <h4 class="domain-group-title">累不累 (leibulei)</h4>
+                    <div class="domain-list">
+                        <span class="domain-item">leibulei.com</span>
+                        <span class="domain-item">leibulei.cn</span>
+                        <span class="domain-item">leibulei.net</span>
+                    </div>
+                </div>
+                
+                <div class="domain-group">
+                    <h4 class="domain-group-title">累了吧 (leileba)</h4>
+                    <div class="domain-list">
+                        <span class="domain-item">leileba.com</span>
+                        <span class="domain-item">leileba.cn</span>
+                        <span class="domain-item">leileba.net</span>
+                    </div>
+                </div>
+            </section>
         </main>
         
         <footer>
@@ -183,7 +249,7 @@
     </div>
 
     <script>
-        // 示例数据
+        // 16个内容数据
         const contentData = [
             {
                 id: 1,
@@ -226,6 +292,76 @@
                 description: "在无光污染的高原上拍摄的星空延时，银河缓缓移动，偶尔有流星划过。配以空灵的背景音乐，让人忘却烦恼。仰望星空总能让人感受到自身的渺小与宇宙的宏大，从而获得内心的平静。",
                 image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                 platform: "抖音"
+            },
+            {
+                id: 7,
+                title: "京都古寺的四季变化，禅意十足的视觉之旅",
+                description: "跟随镜头漫步京都的古寺，感受春樱、夏绿、秋枫、冬雪的不同景致。没有喧闹的游客，只有风铃轻响和落叶沙沙。这种宁静的视觉体验能有效缓解现代生活的压力。",
+                image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "B站"
+            },
+            {
+                id: 8,
+                title: "水彩画创作过程，色彩在水中的舞蹈",
+                description: "观看艺术家用水彩创作一幅风景画，颜料在水中慢慢扩散、融合，形成意想不到的美丽效果。这种创作过程本身就具有疗愈效果，适合在疲惫时观看以放松心情。",
+                image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "小红书"
+            },
+            {
+                id: 9,
+                title: "深海世界的神秘探索，宁静的蓝色治愈",
+                description: "潜入深海，观看各种海洋生物在蔚蓝海水中悠然游动。没有解说，只有水流声和海洋生物的自然声响。这种沉浸式体验能带给人莫名的平静和放松。",
+                image: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "抖音"
+            },
+            {
+                id: 10,
+                title: "陶艺制作的完整过程，从泥土到艺术品",
+                description: "观看陶艺家将一块普通泥土在转盘上慢慢塑形成精美的陶器。整个过程没有对话，只有转盘转动声和手与泥土接触的声音。这种手工创作过程极具疗愈效果。",
+                image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "B站"
+            },
+            {
+                id: 11,
+                title: "晨雾中的竹林，宁静的东方美学",
+                description: "清晨的竹林，薄雾缭绕，竹叶随风轻轻摇曳。没有音乐，只有风吹竹叶的沙沙声和远处鸟鸣。这种东方美学意境能让人瞬间平静下来，忘记烦恼。",
+                image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "小红书"
+            },
+            {
+                id: 12,
+                title: "烘焙面包的全过程，温暖的食物治愈",
+                description: "从面粉到香喷喷的面包，观看面团发酵、整形、烘烤的完整过程。没有对话，只有面团揉捏声和烤箱的嗡嗡声。面包出炉时的香气仿佛能透过屏幕温暖人心。",
+                image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "抖音"
+            },
+            {
+                id: 13,
+                title: "山涧流水的声音，自然的白噪音疗法",
+                description: "山间小溪流水潺潺，清澈见底。镜头跟随水流从山顶到山脚，记录水声的变化。这种自然白噪音是很好的背景音，能帮助专注工作或放松入睡。",
+                image: "https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "B站"
+            },
+            {
+                id: 14,
+                title: "传统茶道表演，宁静的仪式感",
+                description: "观看茶艺师进行完整的茶道表演，从温具、置茶、冲泡到奉茶。动作优雅缓慢，没有对话，只有器具碰撞的细微声响。这种仪式感能让人慢下来，享受当下。",
+                image: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "小红书"
+            },
+            {
+                id: 15,
+                title: "城市夜景延时，灯火阑珊的宁静",
+                description: "从黄昏到深夜，城市天际线的变化过程。车流如织，灯火逐渐亮起，没有喧闹，只有舒缓的背景音乐。这种宏观视角能让人感受到城市的脉搏却又保持距离感。",
+                image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "抖音"
+            },
+            {
+                id: 16,
+                title: "盆栽微景观制作，小巧精致的世界",
+                description: "观看艺术家制作微型盆栽景观，从选材、布置到最终完成。没有对话，只有工具使用的细微声音。这种专注细节的创作过程能让人忘却时间，完全沉浸其中。",
+                image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                platform: "B站"
             }
         ];
 
@@ -259,37 +395,6 @@
 
         // 设置事件监听器
         function setupEventListeners() {
-            // 加载更多
-            const loadMoreBtn = document.getElementById('load-more');
-            loadMoreBtn.addEventListener('click', function() {
-                // 在实际应用中，这里会从服务器加载更多数据
-                // 这里我们简单复制现有数据来模拟加载更多
-                const newContent = [...contentData];
-                contentData.push(...newContent);
-                renderContentList();
-                
-                // 显示提示信息
-                const notification = document.createElement('div');
-                notification.textContent = '已加载更多内容';
-                notification.style.cssText = `
-                    position: fixed;
-                    bottom: 20px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: #8fb3b3;
-                    color: white;
-                    padding: 10px 20px;
-                    border-radius: 20px;
-                    font-size: 0.9rem;
-                    z-index: 1000;
-                `;
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 2000);
-            });
-            
             // 卡片点击效果
             document.addEventListener('click', function(e) {
                 const card = e.target.closest('.content-card');
