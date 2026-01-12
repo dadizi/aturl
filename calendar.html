@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>累了吗 - 疲劳日历</title>
+    <style>
+        /* 全局样式：复用首页风格，保持一致性 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: #F8F9FA;
+            min-height: 100vh;
+            padding: 20px 15px;
+        }
+        
+        /* 顶部区域：返回按钮+月份标题+统计图标 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            transform: scale(1.05);
+        }
+        .back-icon {
+            color: #4ECDC4;
+            font-size: 22px;
+        }
+        .month-title {
+            font-size: 20px;
+            color: #333333;
+            font-weight: 600;
+        }
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .stat-icon:hover {
+            transform: scale(1.05);
+        }
+        .stat-icon i {
+            color: #4ECDC4;
+            font-size: 22px;
+        }
+        
+        /* 日历区域：月视图 */
+        .calendar-container {
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .weekdays {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .weekday {
+            width: 14%;
+            text-align: center;
+            font-size: 12px;
+            color: #999999;
+        }
+        .days {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .day {
+            width: calc(14.28% - 5px);
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #333333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .day:hover {
+            background-color: #F1F9F8;
+        }
+        /* 打卡状态颜色：与首页一致 */
+        .day.relax {
+            background-color: #06D6A0;
+            color: #FFFFFF;
+        }
+        .day.little-tired {
+            background-color: #FFD166;
+            color: #FFFFFF;
+        }
+        .day.tired {
+            background-color: #FF8A65;
+            color: #FFFFFF;
+        }
+        .day.exhausted {
+            background-color: #FF6B6B;
+            color: #FFFFFF;
+        }
+        .day.today {
+            border: 2px solid #4ECDC4;
+            font-weight: 600;
+        }
+        .day.other-month {
+            color: #EEEEEE;
+        }
+        
+        /* 趋势图区域：本周疲劳趋势 */
+        .trend-container {
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .trend-title {
+            font-size: 16px;
+            color: #333333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .trend-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 150px;
+            gap: 10px;
+        }
+        .trend-bar {
+            width: 12%;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .trend-bar:hover {
+            transform: translateY(-5px);
+        }
+        .trend-date {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #999999;
+        }
+        
+        /* 分享按钮 */
+        .share-btn {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .share-btn button {
+            padding: 10px 24px;
+            background-color: #4ECDC4;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+        .share-btn button:hover {
+            background-color: #3DBFB5;
+        }
+        
+        /* 响应式适配 */
+        @media (min-width: 768px) {
+            .day {
+                height: 50px;
+                font-size: 16px;
+            }
+            .trend-container {
+                padding: 30px;
+            }
+            .trend-chart {
+                height: 200px;
+            }
+        }
+    </style>
+    <!-- 引入Font Awesome图标库（与首页一致） -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 顶部区域 -->
+    <div class="header">
+        <div class="back-btn" onclick="window.location.href='index.html'">
+            <i class="fa-solid fa-arrow-left back-icon"></i>
+        </div>
+        <div class="month-title" id="currentMonth">2026年1月</div>
+        <div class="stat-icon" onclick="showTrendTips()">
+            <i class="fa-solid fa-chart-line"></i>
+        </div>
+    </div>
+
+    <!-- 日历区域 -->
+    <div class="calendar-container">
+        <div class="weekdays">
+            <div class="weekday">日</div>
+            <div class="weekday">一</div>
+            <div class="weekday">二</div>
+            <div class="weekday">三</div>
+            <div class="weekday">四</div>
+            <div class="weekday">五</div>
+            <div class="weekday">六</div>
+        </div>
+        <div class="days" id="calendarDays"></div>
+    </div>
+
+    <!-- 趋势图区域 -->
+    <div class="trend-container">
+        <div class="trend-title">本周疲劳趋势</div>
+        <div class="trend-chart" id="trendChart"></div>
+    </div>
+
+    <!-- 分享按钮 -->
+    <div class="share-btn">
+        <button onclick="shareCalendar()">
+            <i class="fa-solid fa-share-nodes"></i>
+            分享日历
+        </button>
+    </div>
+
+    <script>
+        // 1. 初始化页面数据：读取本地存储的打卡记录
+        let checkinData = JSON.parse(localStorage.getItem('leilemaCheckin')) || {
+            today: new Date().toDateString(),
+            count: 0,
+            recentStatus: []
+        };
+        // 存储扩展的打卡记录（按日期分类）
+        let extendedCheckinData = JSON.parse(localStorage.getItem('leilemaExtendedCheckin')) || {};
+
+        // 2. 日历初始化：渲染当前月份日历
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth();
+        // 更新月份标题
+        document.getElementById('currentMonth').innerText = `${currentYear}年${currentMonth + 1}月`;
+
+        // 生成当前月份的日历天数
+        function renderCalendar(year, month) {
+            const daysContainer = document.getElementById('calendarDays');
+            daysContainer.innerHTML = '';
+
+            // 获取当月第一天是星期几（0=周日，6=周六）
+            const firstDay = new Date(year, month, 1).getDay();
+            // 获取当月最后一天的日期
+            const lastDate = new Date(year, month + 1, 0).getDate();
+            // 获取上月最后一天的日期
+            const lastMonthLastDate = new Date(year, month, 0).getDate();
+
+            // 渲染上月残留天数
+            for (let i = firstDay; i > 0; i--) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day other-month';
+                dayDiv.innerText = lastMonthLastDate - i + 1;
+                daysContainer.appendChild(dayDiv);
+            }
+
+            // 渲染当月天数
+            for (let i = 1; i <= lastDate; i++) {
+                const dayDiv = document.createElement('div');
+                const dateStr = new Date(year, month, i).toDateString();
+                dayDiv.className = 'day';
+                dayDiv.innerText = i;
+
+                // 标记今日
+                if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dayDiv.classList.add('today');
+                }
+
+                // 根据打卡记录添加对应状态类（颜色）
+                if (extendedCheckinData[dateStr]) {
+                    const status = extendedCheckinData[dateStr];
+                    dayDiv.classList.add(status);
+                }
+
+                daysContainer.appendChild(dayDiv);
+            }
+
+            // 计算需要补充的下月天数（使日历填满6行）
+            const totalDays = firstDay + lastDate;
+            const nextMonthDays = 42 - totalDays; // 6行×7列=42天
+            for (let i = 1; i<= nextMonthDays; i++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day other-month';
+                dayDiv.innerText = i;
+                daysContainer.appendChild(dayDiv);
+            }
+        }
+
+        // 3. 渲染趋势图：本周7天的疲劳状态
+        function renderTrend() {
+            const trendContainer = document.getElementById('trendChart');
+            trendContainer.innerHTML = '';
+
+            // 获取本周7天的日期和状态
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(today.getDate() - i);
+                const dateStr = date.toDateString();
+                const dateText = date.getDate(); // 显示日期数字
+                const status = extendedCheckinData[dateStr] || 'none';
+
+                // 创建趋势柱
+                const barDiv = document.createElement('div');
+                barDiv.className = 'trend-bar';
+                // 根据状态设置颜色和高度（高度代表疲劳程度：不累=30%，有点累=50%，非常累=70%，快扛不住=100%）
+                switch (status) {
+                    case 'relax':
+                        barDiv.style.backgroundColor = '#06D6A0';
+                        barDiv.style.height = '30%';
+                        break;
+                    case 'little-tired':
+                        barDiv.style.backgroundColor = '#FFD166';
+                        barDiv.style.height = '50%';
+                        break;
+                    case 'tired':
+                        barDiv.style.backgroundColor = '#FF8A65';
+                        barDiv.style.height = '70%';
+                        break;
+                    case 'exhausted':
+                        barDiv.style.backgroundColor = '#FF6B6B';
+                        barDiv.style.height = '100%';
+                        break;
+                    default:
+                        barDiv.style.backgroundColor = '#EEEEEE';
+                        barDiv.style.height = '10%';
+                        break;
+                }
+
+                // 添加日期标签
+                const dateDiv = document.createElement('div');
+                dateDiv.className = 'trend-date';
+                dateDiv.innerText = dateText;
+                barDiv.appendChild(dateDiv);
+
+                trendContainer.appendChild(barDiv);
+            }
+        }
+
+        // 4. 同步首页打卡数据到扩展记录（按日期存储每天最后一次打卡状态）
+        function syncCheckinData() {
+            const todayStr = today.toDateString();
+            // 如果今日有打卡，更新扩展记录（取最后一次打卡状态）
+            if (checkinData.count > 0) {
+                const lastStatus = checkinData.recentStatus[checkinData.recentStatus.length - 1];
+                extendedCheckinData[todayStr] = lastStatus;
+                // 保存到本地存储
+                localStorage.setItem('leilemaExtendedCheckin', JSON.stringify(extendedCheckinData));
+            }
+        }
+
+        // 5. 辅助功能：显示趋势图提示
+        function showTrendTips() {
+            alert('趋势图高度代表疲劳程度：绿色（不累）< 黄色（有点累）< 橙红（非常累）< 深红（快扛不住）');
+        }
+
+        // 6. 辅助功能：分享日历（简化版：生成截图提示）
+        function shareCalendar() {
+            alert('已生成日历截图，可直接保存分享（实际项目可集成html2canvas插件实现截图功能）');
+        }
+
+        // 页面加载时执行
+        window.onload = function() {
+            syncCheckinData();
+            renderCalendar(currentYear, currentMonth);
+            renderTrend();
+        };
+    </script>
+</body>
+</html>
