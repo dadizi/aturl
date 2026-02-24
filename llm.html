@@ -2,358 +2,234 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <!-- 优化移动端显示，防止缩放 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>累了吗 · 角落</title>  <!-- 标题修正为“累了吗” -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>累了吗 · 转一转</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        body {
-            background-color: #121212;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            color: #e0e0e0;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-
-        html {
-            height: 100%;
+        body {
+            background-color: #1a1a1a;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: none; /* 禁止页面滚动/缩放 */
         }
-
-        .view {
-            position: relative;
-            height: 100%;
+        canvas {
+            display: block;
             width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.2s ease;
-        }
-
-        #mainView {
-            flex-direction: column;
-        }
-
-        #cornerView {
-            display: none;
-            flex-direction: column;
-            padding: 20px;
-            padding-bottom: calc(20px + env(safe-area-inset-bottom)); /* 适配底部安全区 */
-            overflow-y: auto;
             height: 100%;
+            background: #1a1a1a; /* 深色背景，保护眼睛 */
         }
-
-        /* 大按钮 */
-        .tired-button {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: #1e1e1e;
-            border: none;
-            box-shadow: 0 0 20px #ffb34733, 0 0 40px #ffa72622;
-            font-size: 2.2rem;
-            font-weight: 300;
-            color: #ffb347;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: box-shadow 0.1s ease;
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            animation: breathe 4s infinite ease-in-out;
-        }
-
-        .tired-button.wee-hours {
-            animation: blinkSoft 1.2s infinite ease-in-out;
-        }
-
-        @keyframes breathe {
-            0% { box-shadow: 0 0 15px #ffb34744, 0 0 30px #ffa72622; transform: scale(1); }
-            50% { box-shadow: 0 0 30px #ffb34799, 0 0 50px #ffa72666; transform: scale(1.02); }
-            100% { box-shadow: 0 0 15px #ffb34744, 0 0 30px #ffa72622; transform: scale(1); }
-        }
-
-        @keyframes blinkSoft {
-            0% { opacity: 1; box-shadow: 0 0 20px #ffb347, 0 0 40px #ffa726; }
-            30% { opacity: 0.6; box-shadow: 0 0 10px #ffb347, 0 0 20px #ffa726; }
-            60% { opacity: 1; box-shadow: 0 0 25px #ffb347, 0 0 50px #ffa726; }
-            100% { opacity: 1; box-shadow: 0 0 20px #ffb347, 0 0 40px #ffa726; }
-        }
-
-        /* 角落按钮（始终可见） */
-        .corner-entry {
-            position: absolute;
-            bottom: 30px;
+        /* 极简角落入口（不打扰，但存在） */
+        .corner {
+            position: fixed;
+            bottom: 20px;
             right: 20px;
-            font-size: 15px;
-            color: #dddddd;
-            background: rgba(40, 40, 40, 0.7);
-            border: 0.5px solid #3f3f3f;
-            cursor: pointer;
-            padding: 12px 20px;
-            border-radius: 40px;
-            letter-spacing: 0.8px;
-            z-index: 5;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            transition: background 0.2s;
-            font-weight: 300;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-        .corner-entry:active {
-            background: rgba(60, 60, 60, 0.9);
-        }
-
-        /* 角落视图头部 */
-        .corner-header {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-            padding-top: 8px;
-            flex-shrink: 0; /* 防止被压缩 */
-        }
-        .back-button {
-            background: none;
-            border: none;
-            color: #cccccc;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 10px 14px;
-            border-radius: 30px;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .back-button:active { background: #2a2a2a; }
-        .back-button span { font-size: 20px; margin-right: 4px; }
-
-        .corner-title {
-            font-size: 16px;
-            font-weight: 300;
-            color: #b0b0b0;
-            letter-spacing: 1px;
-        }
-        .clear-button {
-            background: none;
-            border: 1px solid #4a4a4a;
-            color: #bbbbbb;
             font-size: 13px;
-            padding: 8px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: 0.2s;
-            -webkit-tap-highlight-color: transparent;
+            color: #333;
+            background: rgba(30,30,30,0.8);
+            padding: 8px 16px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 0.5px solid #2a2a2a;
+            letter-spacing: 0.5px;
+            z-index: 10;
         }
-        .clear-button:active {
-            background: #2a2a2a;
-            border-color: #6a6a6a;
-        }
-
-        /* 时间戳列表（自动撑开，可滚动） */
-        .timeline {
-            flex: 1;
-            width: 100%;
-            overflow-y: auto;
-            margin: 20px 0;
-            padding-right: 6px;
-            -webkit-overflow-scrolling: touch; /* 平滑滚动 */
-        }
-        .timeline-item {
-            padding: 16px 8px;
-            border-bottom: 0.5px solid #2a2a2a;
-            font-size: 18px;
-            font-weight: 300;
-            color: #d0d0d0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-variant-numeric: tabular-nums;
-        }
-        .timeline-item::before {
-            content: "•";
-            color: #ffb34755;
-            font-size: 24px;
-            line-height: 1;
-        }
-        .empty-message {
-            color: #3a3a3a;
-            font-size: 16px;
-            font-weight: 300;
-            text-align: center;
-            margin-top: 40px;
-            width: 100%;
-        }
-
-        /* 底部的极简支持（始终在底部，不随滚动消失） */
-        .coffee-support {
-            flex-shrink: 0; /* 防止被压缩 */
-            margin-top: 12px;
-            padding: 12px 0 8px;
-            font-size: 11px;
-            color: #3f3f3f;
-            text-align: center;
-            border-top: 0.5px solid #242424;
-            width: 100%;
-        }
-        .coffee-support a {
-            color: #5f5f5f;
+        .corner a {
+            color: #666;
             text-decoration: none;
-            border-bottom: 0.5px dotted #5f5f5f;
-            padding: 4px 0; /* 增加点击区域 */
-            display: inline-block;
-        }
-        .coffee-support a:active {
-            color: #8f8f8f;
-        }
-
-        .hidden {
-            display: none !important;
         }
     </style>
 </head>
 <body>
-    <!-- 主视图 -->
-    <div id="mainView" class="view">
-        <button class="tired-button" id="tiredBtn">累了</button>
-        <button class="corner-entry" id="cornerEntry">角落</button>
-    </div>
-
-    <!-- 角落视图 -->
-    <div id="cornerView" class="view">
-        <div class="corner-header">
-            <button class="back-button" id="backFromCorner"><span>←</span> 返回</button>
-            <span class="corner-title">角落</span>
-            <button class="clear-button" id="clearCorner">清空</button>
-        </div>
-
-        <div id="timelineList" class="timeline"></div>
-
-        <div class="coffee-support">
-            <a href="#" id="coffeeLink" target="_blank" rel="noopener">请它喝杯咖啡 · 无声支持</a>
-        </div>
-    </div>
+    <canvas id="canvas"></canvas>
+    <div class="corner"><a href="#" id="coffeeLink">▪</a></div>
 
     <script>
-        (function() {
-            const MAIN_VIEW = document.getElementById('mainView');
-            const CORNER_VIEW = document.getElementById('cornerView');
-            const TIRED_BTN = document.getElementById('tiredBtn');
-            const CORNER_ENTRY = document.getElementById('cornerEntry');
-            const BACK_BTN = document.getElementById('backFromCorner');
-            const CLEAR_BTN = document.getElementById('clearCorner');
-            const TIMELINE = document.getElementById('timelineList');
-            const COFFEE_LINK = document.getElementById('coffeeLink');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
 
-            const STORAGE_KEY = 'leilema_moments';
+        // 物理参数
+        const radius = 30;               // 小圆半径
+        const friction = 0.98;            // 摩擦力（每帧速度衰减）
+        const bounce = 0.6;               // 边界反弹系数（0~1）
+        const touchFactor = 0.2;           // 拖拽时目标位置的影响因子（越小越顺滑）
 
-            function formatTime(date) {
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                const hours = String(date.getHours()).padStart(2, '0');
-                const minutes = String(date.getMinutes()).padStart(2, '0');
-                return `${month}.${day} ${hours}:${minutes}`;
+        let pos = { x: 200, y: 200 };      // 当前位置
+        let v = { x: 0, y: 0 };            // 当前速度
+        let dragging = false;
+        let targetPos = { x: 200, y: 200 }; // 拖拽时的目标位置
+
+        // 初始化画布尺寸
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // 如果初始位置超出边界，拉回来
+            pos.x = Math.min(Math.max(pos.x, radius), canvas.width - radius);
+            pos.y = Math.min(Math.max(pos.y, radius), canvas.height - radius);
+            targetPos.x = pos.x;
+            targetPos.y = pos.y;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // 触摸事件处理
+        function handleStart(e) {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const canvasX = (clientX - rect.left) * scaleX;
+            const canvasY = (clientY - rect.top) * scaleY;
+
+            // 检查是否点中圆（增加点击区域，方便触摸）
+            const dx = canvasX - pos.x;
+            const dy = canvasY - pos.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < radius * 1.5) {  // 1.5倍半径，更容易抓住
+                dragging = true;
+                targetPos.x = canvasX;
+                targetPos.y = canvasY;
+                v.x = 0;
+                v.y = 0;
             }
+        }
 
-            function getStoredMoments() {
-                try {
-                    const stored = localStorage.getItem(STORAGE_KEY);
-                    return stored ? JSON.parse(stored) : [];
-                } catch (e) {
-                    return [];
+        function handleMove(e) {
+            if (!dragging) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const canvasX = (clientX - rect.left) * scaleX;
+            const canvasY = (clientY - rect.top) * scaleY;
+
+            // 更新目标位置
+            targetPos.x = canvasX;
+            targetPos.y = canvasY;
+        }
+
+        function handleEnd(e) {
+            if (dragging) {
+                dragging = false;
+                // 释放时给一个小的初速度，模拟惯性（基于移动速度）
+                // 这里简单起见，不计算移动速度，让物理自然衰减即可
+            }
+            e.preventDefault();
+        }
+
+        canvas.addEventListener('touchstart', handleStart, { passive: false });
+        canvas.addEventListener('touchmove', handleMove, { passive: false });
+        canvas.addEventListener('touchend', handleEnd);
+        canvas.addEventListener('touchcancel', handleEnd);
+        canvas.addEventListener('mousedown', handleStart);
+        canvas.addEventListener('mousemove', handleMove);
+        canvas.addEventListener('mouseup', handleEnd);
+        canvas.addEventListener('mouseleave', handleEnd); // 鼠标离开画布视为释放
+
+        // 物理更新
+        function update() {
+            if (dragging) {
+                // 拖拽时，位置向目标点平滑移动（带一点弹性）
+                const dx = targetPos.x - pos.x;
+                const dy = targetPos.y - pos.y;
+                // 加入惯性效果：距离越远，速度越快
+                v.x += dx * touchFactor;
+                v.y += dy * touchFactor;
+                // 限制最大速度，避免太飘
+                const maxSpeed = 15;
+                const speed = Math.sqrt(v.x*v.x + v.y*v.y);
+                if (speed > maxSpeed) {
+                    v.x = (v.x / speed) * maxSpeed;
+                    v.y = (v.y / speed) * maxSpeed;
                 }
             }
 
-            function saveMoments(moments) {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(moments));
+            // 应用摩擦力
+            v.x *= friction;
+            v.y *= friction;
+
+            // 更新位置
+            pos.x += v.x;
+            pos.y += v.y;
+
+            // 边界碰撞处理
+            if (pos.x < radius) {
+                pos.x = radius;
+                v.x = -v.x * bounce;
+            } else if (pos.x > canvas.width - radius) {
+                pos.x = canvas.width - radius;
+                v.x = -v.x * bounce;
+            }
+            if (pos.y < radius) {
+                pos.y = radius;
+                v.y = -v.y * bounce;
+            } else if (pos.y > canvas.height - radius) {
+                pos.y = canvas.height - radius;
+                v.y = -v.y * bounce;
             }
 
-            function addMoment() {
-                const moments = getStoredMoments();
-                moments.push(new Date().toISOString());
-                saveMoments(moments);
+            // 如果速度极小，就完全停止（避免微动）
+            if (Math.abs(v.x) < 0.01 && Math.abs(v.y) < 0.01 && !dragging) {
+                v.x = 0;
+                v.y = 0;
             }
+        }
 
-            function renderTimeline() {
-                const moments = getStoredMoments();
-                moments.sort((a, b) => new Date(b) - new Date(a));
+        // 绘制
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                if (moments.length === 0) {
-                    TIMELINE.innerHTML = '<div class="empty-message">这里存放你累的时刻</div>';
-                    return;
-                }
+            // 画小圆（带一点光晕）
+            ctx.shadowColor = '#ffb34766';
+            ctx.shadowBlur = 20;
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffb347';
+            ctx.fill();
 
-                let html = '';
-                moments.forEach(iso => {
-                    const date = new Date(iso);
-                    if (!isNaN(date.getTime())) {
-                        html += `<div class="timeline-item">${formatTime(date)}</div>`;
-                    }
-                });
-                TIMELINE.innerHTML = html;
+            // 画一个小高光
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(pos.x - 6, pos.y - 6, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff30';
+            ctx.fill();
+
+            // 如果拖拽中，显示一个淡淡的拖拽指示（可选）
+            if (dragging) {
+                ctx.beginPath();
+                ctx.arc(targetPos.x, targetPos.y, radius * 0.8, 0, Math.PI * 2);
+                ctx.strokeStyle = '#ffffff40';
+                ctx.lineWidth = 1;
+                ctx.stroke();
             }
+        }
 
-            function clearCorner() {
-                localStorage.removeItem(STORAGE_KEY);
-                renderTimeline();
-            }
+        // 动画循环
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+        loop();
 
-            function showMainView() {
-                MAIN_VIEW.style.display = 'flex';
-                CORNER_VIEW.style.display = 'none';
-            }
-
-            function showCornerView() {
-                renderTimeline();
-                MAIN_VIEW.style.display = 'none';
-                CORNER_VIEW.style.display = 'flex';
-            }
-
-            function updateWeeHourClass() {
-                const hour = new Date().getHours();
-                if (hour >= 1 && hour < 5) {
-                    TIRED_BTN.classList.add('wee-hours');
-                } else {
-                    TIRED_BTN.classList.remove('wee-hours');
-                }
-            }
-            updateWeeHourClass();
-            setInterval(updateWeeHourClass, 60000);
-
-            TIRED_BTN.addEventListener('click', addMoment);
-
-            CORNER_ENTRY.addEventListener('click', showCornerView);
-
-            BACK_BTN.addEventListener('click', showMainView);
-
-            CLEAR_BTN.addEventListener('click', function() {
-                if (confirm('清空所有记录？')) {
-                    clearCorner();
-                }
-            });
-
-            COFFEE_LINK.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('感谢心意。但角落只存放累，不需要咖啡。');
-            });
-
-            showMainView();
-        })();
+        // 咖啡链接（无打扰）
+        document.getElementById('coffeeLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('感谢你有这个心。继续转吧，别想太多。');
+        });
     </script>
 </body>
 </html>
