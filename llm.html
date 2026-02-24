@@ -2,234 +2,245 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>累了吗 · 转一转</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>累了吗 · 治愈清单</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
         body {
-            background-color: #1a1a1a;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
+            background-color: #f9f7f5;  /* 柔和的暖白 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #2e2e2e;
+            line-height: 1.5;
+            padding: 20px;
+            padding-bottom: 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        header {
+            text-align: left;
+            margin-bottom: 24px;
+            padding-top: 12px;
+        }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 350;
+            letter-spacing: 1px;
+            color: #1f1f1f;
+            margin-bottom: 6px;
+        }
+        .subhead {
+            font-size: 1rem;
+            color: #8b8b8b;
+            font-weight: 300;
+            border-left: 3px solid #f3b3a1;
+            padding-left: 12px;
+        }
+        .intro {
+            font-size: 0.95rem;
+            color: #6f6f6f;
+            margin: 16px 0 20px;
+            background: #f0eeec;
+            padding: 14px 16px;
+            border-radius: 20px;
+            line-height: 1.4;
+        }
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .card {
+            background: #ffffffd9;
+            backdrop-filter: blur(2px);
+            border-radius: 24px;
+            padding: 16px 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02), 0 1px 3px rgba(0,0,0,0.03);
+            transition: all 0.1s ease;
+            border: 0.5px solid #f0eae4;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card:hover {
+            background: #ffffff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        .card-info {
+            flex: 2 1 200px;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 420;
+            margin-bottom: 4px;
+            color: #1f1f1f;
             display: flex;
             align-items: center;
-            justify-content: center;
-            touch-action: none; /* 禁止页面滚动/缩放 */
+            gap: 8px;
         }
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            background: #1a1a1a; /* 深色背景，保护眼睛 */
-        }
-        /* 极简角落入口（不打扰，但存在） */
-        .corner {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            font-size: 13px;
-            color: #333;
-            background: rgba(30,30,30,0.8);
-            padding: 8px 16px;
+        .platform-badge {
+            display: inline-block;
+            background: #eae4de;
+            color: #5b5b5b;
+            font-size: 0.7rem;
+            padding: 4px 10px;
             border-radius: 40px;
-            backdrop-filter: blur(4px);
-            border: 0.5px solid #2a2a2a;
-            letter-spacing: 0.5px;
-            z-index: 10;
+            letter-spacing: 0.3px;
+            font-weight: 400;
+            white-space: nowrap;
         }
-        .corner a {
-            color: #666;
+        .card-desc {
+            font-size: 0.9rem;
+            color: #6b6b6b;
+            margin-bottom: 6px;
+            line-height: 1.4;
+            padding-right: 8px;
+        }
+        .card-link {
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+        .btn {
+            display: inline-block;
+            background: #f3e9e2;
+            color: #3d3d3d;
             text-decoration: none;
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: 0.5px solid #ddd6cf;
+            transition: background 0.15s;
+            white-space: nowrap;
+            font-weight: 400;
+        }
+        .btn:active {
+            background: #e5dbd2;
+        }
+        .footer-note {
+            margin-top: 36px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #b9b3ad;
+            border-top: 0.5px solid #e0dad4;
+            padding-top: 24px;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+        .footer-note a {
+            color: #a49e98;
+            text-decoration: none;
+            border-bottom: 0.5px dotted #b9b3ad;
+        }
+        .coffee {
+            filter: opacity(0.6);
+        }
+        /* 序号标记 */
+        .index-marker {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            background: #f3b3a1;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-size: 0.8rem;
+            margin-right: 8px;
+            flex-shrink: 0;
         }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <div class="corner"><a href="#" id="coffeeLink">▪</a></div>
+<div class="container">
+    <header>
+        <h1>累了吗</h1>
+        <div class="subhead">20个治愈角落 · 慢慢逛</div>
+    </header>
 
-    <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+    <div class="intro">
+        ⚡ 这里没有算法，只有精选。累了就点开一个，让眼睛和心休息几分钟。
+    </div>
 
-        // 物理参数
-        const radius = 30;               // 小圆半径
-        const friction = 0.98;            // 摩擦力（每帧速度衰减）
-        const bounce = 0.6;               // 边界反弹系数（0~1）
-        const touchFactor = 0.2;           // 拖拽时目标位置的影响因子（越小越顺滑）
+    <div class="grid" id="listContainer">
+        <!-- 列表将通过 JS 动态渲染，方便替换内容 -->
+    </div>
 
-        let pos = { x: 200, y: 200 };      // 当前位置
-        let v = { x: 0, y: 0 };            // 当前速度
-        let dragging = false;
-        let targetPos = { x: 200, y: 200 }; // 拖拽时的目标位置
+    <div class="footer-note">
+        <span class="coffee"><a href="#" id="coffeeLink">▪ 请它喝杯茶</a></span>
+        <span>· 收藏这一刻的温柔 ·</span>
+    </div>
+</div>
 
-        // 初始化画布尺寸
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            // 如果初始位置超出边界，拉回来
-            pos.x = Math.min(Math.max(pos.x, radius), canvas.width - radius);
-            pos.y = Math.min(Math.max(pos.y, radius), canvas.height - radius);
-            targetPos.x = pos.x;
-            targetPos.y = pos.y;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+<script>
+    // 在这里定义你的 20 个治愈作品/账号
+    // 每个条目包含：标题、描述、平台、链接
+    // 你可以自由替换成真正想分享的抖音/公众号/小红书链接
+    const items = [
+        { title: "日食记", desc: "治愈系美食视频，看着就暖和", platform: "抖音", url: "https://www.douyin.com/user/MS4wLjABAAAA3lq8rF8k9X8fWg3K8l8d5f8d5f8d5f8d" },
+        { title: "一条", desc: "生活美学短片，每集都像深呼吸", platform: "公众号", url: "https://mp.weixin.qq.com/s/example1" },
+        { title: "李子柒", desc: "田园牧歌，让心静下来", platform: "抖音", url: "https://www.douyin.com/user/MS4wLjABAAAA5nF8d9sDf8d5f8d5f8d5" },
+        { title: "猫与天空", desc: "云吸猫，顺便看看天空", platform: "小红书", url: "https://www.xiaohongshu.com/user/example2" },
+        { title: "深夜小酒馆", desc: "睡前听一个温暖故事", platform: "公众号", url: "https://mp.weixin.qq.com/s/example2" },
+        { title: "旅行者镜头", desc: "3分钟环游世界，治愈风景", platform: "抖音", url: "https://www.douyin.com/user/example3" },
+        { title: "薄荷心理学", desc: "简单心理小技巧，缓解焦虑", platform: "小红书", url: "https://www.xiaohongshu.com/user/example4" },
+        { title: "知心姐姐", desc: "每晚一句治愈晚安", platform: "公众号", url: "https://mp.weixin.qq.com/s/example3" },
+        { title: "萌宠幼儿园", desc: "每天一只萌宠，保证嘴角上扬", platform: "抖音", url: "https://www.douyin.com/user/example4" },
+        { title: "一人食", desc: "一个人也要好好吃饭，治愈孤独", platform: "小红书", url: "https://www.xiaohongshu.com/user/example5" },
+        { title: "晨间日记", desc: "温柔手写，开启一天好心情", platform: "公众号", url: "https://mp.weixin.qq.com/s/example4" },
+        { title: "治愈美术馆", desc: "名画赏析+温柔文案", platform: "抖音", url: "https://www.douyin.com/user/example5" },
+        { title: "森林来信", desc: "自然白噪音 + 手绘", platform: "小红书", url: "https://www.xiaohongshu.com/user/example6" },
+        { title: "解忧杂货铺", desc: "匿名交换心事的地方", platform: "公众号", url: "https://mp.weixin.qq.com/s/example5" },
+        { title: "造物集", desc: "手工DIY，解压又治愈", platform: "抖音", url: "https://www.douyin.com/user/example6" },
+        { title: "薄荷茶舍", desc: "禅意短文，读一段就安静", platform: "小红书", url: "https://www.xiaohongshu.com/user/example7" },
+        { title: "小森林", desc: "电影截图+治愈台词", platform: "抖音", url: "https://www.douyin.com/user/example7" },
+        { title: "晚安诗集", desc: "每晚一首诗，伴你入睡", platform: "公众号", url: "https://mp.weixin.qq.com/s/example6" },
+        { title: "猫の写真集", desc: "日本摄影师镜头下的猫", platform: "小红书", url: "https://www.xiaohongshu.com/user/example8" },
+        { title: "独处时光", desc: "一个人也能做的温暖小事", platform: "抖音", url: "https://www.douyin.com/user/example8" }
+    ];
 
-        // 触摸事件处理
-        function handleStart(e) {
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            const canvasX = (clientX - rect.left) * scaleX;
-            const canvasY = (clientY - rect.top) * scaleY;
+    const container = document.getElementById('listContainer');
 
-            // 检查是否点中圆（增加点击区域，方便触摸）
-            const dx = canvasX - pos.x;
-            const dy = canvasY - pos.y;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist < radius * 1.5) {  // 1.5倍半径，更容易抓住
-                dragging = true;
-                targetPos.x = canvasX;
-                targetPos.y = canvasY;
-                v.x = 0;
-                v.y = 0;
-            }
-        }
-
-        function handleMove(e) {
-            if (!dragging) return;
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            const canvasX = (clientX - rect.left) * scaleX;
-            const canvasY = (clientY - rect.top) * scaleY;
-
-            // 更新目标位置
-            targetPos.x = canvasX;
-            targetPos.y = canvasY;
-        }
-
-        function handleEnd(e) {
-            if (dragging) {
-                dragging = false;
-                // 释放时给一个小的初速度，模拟惯性（基于移动速度）
-                // 这里简单起见，不计算移动速度，让物理自然衰减即可
-            }
-            e.preventDefault();
-        }
-
-        canvas.addEventListener('touchstart', handleStart, { passive: false });
-        canvas.addEventListener('touchmove', handleMove, { passive: false });
-        canvas.addEventListener('touchend', handleEnd);
-        canvas.addEventListener('touchcancel', handleEnd);
-        canvas.addEventListener('mousedown', handleStart);
-        canvas.addEventListener('mousemove', handleMove);
-        canvas.addEventListener('mouseup', handleEnd);
-        canvas.addEventListener('mouseleave', handleEnd); // 鼠标离开画布视为释放
-
-        // 物理更新
-        function update() {
-            if (dragging) {
-                // 拖拽时，位置向目标点平滑移动（带一点弹性）
-                const dx = targetPos.x - pos.x;
-                const dy = targetPos.y - pos.y;
-                // 加入惯性效果：距离越远，速度越快
-                v.x += dx * touchFactor;
-                v.y += dy * touchFactor;
-                // 限制最大速度，避免太飘
-                const maxSpeed = 15;
-                const speed = Math.sqrt(v.x*v.x + v.y*v.y);
-                if (speed > maxSpeed) {
-                    v.x = (v.x / speed) * maxSpeed;
-                    v.y = (v.y / speed) * maxSpeed;
-                }
-            }
-
-            // 应用摩擦力
-            v.x *= friction;
-            v.y *= friction;
-
-            // 更新位置
-            pos.x += v.x;
-            pos.y += v.y;
-
-            // 边界碰撞处理
-            if (pos.x < radius) {
-                pos.x = radius;
-                v.x = -v.x * bounce;
-            } else if (pos.x > canvas.width - radius) {
-                pos.x = canvas.width - radius;
-                v.x = -v.x * bounce;
-            }
-            if (pos.y < radius) {
-                pos.y = radius;
-                v.y = -v.y * bounce;
-            } else if (pos.y > canvas.height - radius) {
-                pos.y = canvas.height - radius;
-                v.y = -v.y * bounce;
-            }
-
-            // 如果速度极小，就完全停止（避免微动）
-            if (Math.abs(v.x) < 0.01 && Math.abs(v.y) < 0.01 && !dragging) {
-                v.x = 0;
-                v.y = 0;
-            }
-        }
-
-        // 绘制
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 画小圆（带一点光晕）
-            ctx.shadowColor = '#ffb34766';
-            ctx.shadowBlur = 20;
-            ctx.beginPath();
-            ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
-            ctx.fillStyle = '#ffb347';
-            ctx.fill();
-
-            // 画一个小高光
-            ctx.shadowBlur = 0;
-            ctx.beginPath();
-            ctx.arc(pos.x - 6, pos.y - 6, 8, 0, Math.PI * 2);
-            ctx.fillStyle = '#ffffff30';
-            ctx.fill();
-
-            // 如果拖拽中，显示一个淡淡的拖拽指示（可选）
-            if (dragging) {
-                ctx.beginPath();
-                ctx.arc(targetPos.x, targetPos.y, radius * 0.8, 0, Math.PI * 2);
-                ctx.strokeStyle = '#ffffff40';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-        }
-
-        // 动画循环
-        function loop() {
-            update();
-            draw();
-            requestAnimationFrame(loop);
-        }
-        loop();
-
-        // 咖啡链接（无打扰）
-        document.getElementById('coffeeLink').addEventListener('click', (e) => {
-            e.preventDefault();
-            alert('感谢你有这个心。继续转吧，别想太多。');
+    function renderList() {
+        let html = '';
+        items.forEach((item, index) => {
+            html += `
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">
+                            <span class="index-marker">${index+1}</span>
+                            ${item.title}
+                            <span class="platform-badge">${item.platform}</span>
+                        </div>
+                        <div class="card-desc">${item.desc}</div>
+                    </div>
+                    <div class="card-link">
+                        <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn">去放松</a>
+                    </div>
+                </div>
+            `;
         });
-    </script>
+        container.innerHTML = html;
+    }
+
+    renderList();
+
+    // 角落支持链接（完全不打扰）
+    document.getElementById('coffeeLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('感谢你的温柔。希望这些角落能让你舒服一点。');
+    });
+</script>
 </body>
 </html>
