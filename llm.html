@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>累了吗 · 角落</title>
+    <title>累了么 · 角落</title>
     <style>
         * {
             margin: 0;
@@ -22,7 +22,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 主视图和角落视图共用容器 */
         .view {
             position: relative;
             height: 100%;
@@ -33,12 +32,10 @@
             transition: opacity 0.2s ease;
         }
 
-        /* 主视图 */
         #mainView {
             flex-direction: column;
         }
 
-        /* 角落视图默认隐藏 */
         #cornerView {
             display: none;
             flex-direction: column;
@@ -70,7 +67,6 @@
             animation: breathe 4s infinite ease-in-out;
         }
 
-        /* 凌晨1-5点的闪烁彩蛋 (动态添加类) */
         .tired-button.wee-hours {
             animation: blinkSoft 1.2s infinite ease-in-out;
         }
@@ -88,24 +84,29 @@
             100% { opacity: 1; box-shadow: 0 0 20px #ffb347, 0 0 40px #ffa726; }
         }
 
-        /* 角落入口 (极小) */
+        /* ---------- 修复后的角落按钮（移动端可见） ---------- */
         .corner-entry {
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;          /* 增加底部距离，避免被虚拟键遮挡 */
             right: 20px;
-            font-size: 12px;
-            color: #4f4f4f;
-            background: none;
-            border: none;
+            font-size: 15px;        /* 稍微增大 */
+            color: #dddddd;         /* 更亮的灰色，确保可见 */
+            background: rgba(40, 40, 40, 0.7); /* 半透明深色背景，让文字更突出 */
+            border: 0.5px solid #3f3f3f;       /* 极细边框，增加存在感 */
             cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 30px;
-            transition: color 0.2s;
-            letter-spacing: 0.5px;
+            padding: 12px 20px;     /* 增大点击区域 */
+            border-radius: 40px;
+            letter-spacing: 0.8px;
             z-index: 5;
+            backdrop-filter: blur(4px);        /* 轻微毛玻璃，不破坏极简 */
+            transition: background 0.2s;
+            -webkit-backdrop-filter: blur(4px);
+            font-weight: 300;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
-        .corner-entry:hover { color: #7f7f7f; }
-        .corner-entry:active { color: #a0a0a0; }
+        .corner-entry:active {
+            background: rgba(60, 60, 60, 0.9);  /* 触摸反馈 */
+        }
 
         /* 角落视图头部 */
         .corner-header {
@@ -119,10 +120,10 @@
         .back-button {
             background: none;
             border: none;
-            color: #a0a0a0;
+            color: #cccccc;
             font-size: 16px;
             cursor: pointer;
-            padding: 8px 12px;
+            padding: 10px 14px;      /* 增大点击区域 */
             border-radius: 30px;
             transition: background 0.2s;
             display: flex;
@@ -140,17 +141,17 @@
         }
         .clear-button {
             background: none;
-            border: 1px solid #3a3a3a;
-            color: #8f8f8f;
-            font-size: 12px;
-            padding: 6px 14px;
+            border: 1px solid #4a4a4a;
+            color: #bbbbbb;
+            font-size: 13px;
+            padding: 8px 18px;        /* 增大点击区域 */
             border-radius: 30px;
             cursor: pointer;
             transition: 0.2s;
         }
-        .clear-button:hover {
+        .clear-button:active {
             background: #2a2a2a;
-            border-color: #5a5a5a;
+            border-color: #6a6a6a;
         }
 
         /* 时间戳列表 */
@@ -166,7 +167,7 @@
             border-bottom: 0.5px solid #2a2a2a;
             font-size: 18px;
             font-weight: 300;
-            color: #c0c0c0;
+            color: #d0d0d0;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -192,21 +193,20 @@
             margin-top: 12px;
             padding: 12px 0 8px;
             font-size: 11px;
-            color: #2f2f2f;
+            color: #3f3f3f;
             text-align: center;
             border-top: 0.5px solid #242424;
             width: 100%;
         }
         .coffee-support a {
-            color: #4f4f4f;
+            color: #5f5f5f;
             text-decoration: none;
-            border-bottom: 0.5px dotted #4f4f4f;
+            border-bottom: 0.5px dotted #5f5f5f;
         }
-        .coffee-support a:hover {
-            color: #7f7f7f;
+        .coffee-support a:active {
+            color: #8f8f8f;
         }
 
-        /* 隐藏类 */
         .hidden {
             display: none !important;
         }
@@ -227,12 +227,8 @@
             <button class="clear-button" id="clearCorner">清空</button>
         </div>
 
-        <!-- 时间列表容器 -->
-        <div id="timelineList" class="timeline">
-            <!-- JS动态渲染 -->
-        </div>
+        <div id="timelineList" class="timeline"></div>
 
-        <!-- 极简支持入口 (不显眼) -->
         <div class="coffee-support">
             <a href="#" id="coffeeLink" target="_blank" rel="noopener">请它喝杯咖啡 · 无声支持</a>
         </div>
@@ -240,7 +236,6 @@
 
     <script>
         (function() {
-            // ----- 常量与元素 -----
             const MAIN_VIEW = document.getElementById('mainView');
             const CORNER_VIEW = document.getElementById('cornerView');
             const TIRED_BTN = document.getElementById('tiredBtn');
@@ -250,10 +245,8 @@
             const TIMELINE = document.getElementById('timelineList');
             const COFFEE_LINK = document.getElementById('coffeeLink');
 
-            // 存储key
             const STORAGE_KEY = 'leilema_moments';
 
-            // ----- 工具函数：格式化时间 (MM.DD HH:MM) -----
             function formatTime(date) {
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const day = String(date.getDate()).padStart(2, '0');
@@ -262,7 +255,6 @@
                 return `${month}.${day} ${hours}:${minutes}`;
             }
 
-            // ----- 读取所有记录 (数组) -----
             function getStoredMoments() {
                 try {
                     const stored = localStorage.getItem(STORAGE_KEY);
@@ -272,24 +264,18 @@
                 }
             }
 
-            // ----- 保存记录 -----
             function saveMoments(moments) {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(moments));
             }
 
-            // ----- 添加一条新记录 (当前时间) -----
             function addMoment() {
                 const moments = getStoredMoments();
-                const now = new Date();
-                moments.push(now.toISOString());  // 存ISO字符串保证可排序
+                moments.push(new Date().toISOString());
                 saveMoments(moments);
-                // 不刷新任何UI，因为主视图无变化
             }
 
-            // ----- 渲染角落列表 (倒序) -----
             function renderTimeline() {
                 const moments = getStoredMoments();
-                // 按时间倒序 (最新的在前)
                 moments.sort((a, b) => new Date(b) - new Date(a));
 
                 if (moments.length === 0) {
@@ -300,7 +286,6 @@
                 let html = '';
                 moments.forEach(iso => {
                     const date = new Date(iso);
-                    // 避免无效日期
                     if (!isNaN(date.getTime())) {
                         html += `<div class="timeline-item">${formatTime(date)}</div>`;
                     }
@@ -308,26 +293,22 @@
                 TIMELINE.innerHTML = html;
             }
 
-            // ----- 清空角落 -----
             function clearCorner() {
                 localStorage.removeItem(STORAGE_KEY);
-                renderTimeline();  // 立即更新列表
+                renderTimeline();
             }
 
-            // ----- 切换视图：显示主视图，隐藏角落 -----
             function showMainView() {
                 MAIN_VIEW.style.display = 'flex';
                 CORNER_VIEW.style.display = 'none';
             }
 
-            // ----- 切换视图：显示角落，并刷新列表 -----
             function showCornerView() {
                 renderTimeline();
                 MAIN_VIEW.style.display = 'none';
                 CORNER_VIEW.style.display = 'flex';
             }
 
-            // ----- 彩蛋：凌晨1-5点给按钮添加闪烁类 -----
             function updateWeeHourClass() {
                 const hour = new Date().getHours();
                 if (hour >= 1 && hour < 5) {
@@ -336,54 +317,27 @@
                     TIRED_BTN.classList.remove('wee-hours');
                 }
             }
-            // 立即执行一次，并每分钟检查一次（轻量）
             updateWeeHourClass();
             setInterval(updateWeeHourClass, 60000);
 
-            // ----- 事件绑定 -----
-            // 点击“累了”按钮：记录时间，无任何反馈
-            TIRED_BTN.addEventListener('click', function() {
-                addMoment();
-                // 完全静默，不给任何视觉/听觉反馈
-            });
+            TIRED_BTN.addEventListener('click', addMoment);
 
-            // 点击“角落”入口
-            CORNER_ENTRY.addEventListener('click', function() {
-                showCornerView();
-            });
+            CORNER_ENTRY.addEventListener('click', showCornerView);
 
-            // 返回主视图
-            BACK_BTN.addEventListener('click', function() {
-                showMainView();
-            });
+            BACK_BTN.addEventListener('click', showMainView);
 
-            // 清空角落
             CLEAR_BTN.addEventListener('click', function() {
-                if (confirm('清空所有记录？')) {  // 简单确认，也可以不要，但加一个防止误触
+                if (confirm('清空所有记录？')) {
                     clearCorner();
                 }
             });
 
-            // 支持链接 (占位，可替换为真实的赞赏码链接)
             COFFEE_LINK.addEventListener('click', function(e) {
                 e.preventDefault();
-                // 可以替换成你的赞赏链接，比如微信赞赏码或BuyMeACoffee
-                alert('感谢心意。但目前角落只存放累，不需要咖啡。');
-                // 如果想放真实链接，替换为 window.open('你的链接')
+                alert('感谢心意。但角落只存放累，不需要咖啡。');
             });
 
-            // 初始显示主视图
             showMainView();
-
-            // 可选：预渲染角落以保证数据最新，但只有进入时才渲染
-
-            // 处理iOS点击延迟/高亮
-            const allButtons = document.querySelectorAll('button');
-            allButtons.forEach(btn => {
-                btn.addEventListener('touchstart', function() {
-                    // 占位，仅用于移除默认灰色闪动
-                }, { passive: true });
-            });
         })();
     </script>
 </body>
