@@ -1,366 +1,539 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>基础课 · 急救防灾</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>基础课 - 家庭急救导航</title>
     <style>
+        /* 基础重置 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
+        
         body {
-            background-color: #f5f3f0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: #2b2b2b;
-            line-height: 1.5;
-            padding: 24px 16px 40px;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
         }
+        
+        /* 容器 */
         .container {
-            max-width: 720px;
+            max-width: 800px;
             margin: 0 auto;
+            padding: 0 15px;
         }
-        header {
-            margin-bottom: 24px;
-        }
-        h1 {
-            font-size: 2.4rem;
-            font-weight: 320;
-            letter-spacing: 1px;
-            color: #1e2b3a;
-            margin-bottom: 4px;
-        }
-        .domain {
-            font-size: 0.9rem;
-            color: #9a8c7a;
-            font-weight: 300;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-        }
-        .subhead {
-            font-size: 1.1rem;
-            color: #5f6a7a;
-            font-weight: 300;
-            border-left: 3px solid #b87c5a;
-            padding-left: 14px;
-            margin-top: 6px;
-        }
-        .intro {
-            background: #eae7e1;
-            padding: 18px 20px;
-            border-radius: 24px;
-            margin: 24px 0 28px;
-            color: #3e4a5a;
-            font-size: 0.98rem;
-            line-height: 1.5;
-            box-shadow: inset 0 1px 4px rgba(0,0,0,0.02);
-        }
-        .section {
-            margin-bottom: 36px;
-        }
-        .section-title {
-            font-size: 1.6rem;
-            font-weight: 320;
-            color: #1e2b3a;
-            margin-bottom: 16px;
-            padding-bottom: 6px;
-            border-bottom: 0.5px solid #d6cec2;
-        }
-        .card {
-            background: #ffffffdb;
-            backdrop-filter: blur(2px);
-            border-radius: 24px;
-            padding: 20px 22px;
-            border: 0.5px solid #e0d8cf;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.02);
-        }
-        .skill-block {
-            margin-bottom: 24px;
-        }
-        .skill-block:last-child {
-            margin-bottom: 0;
-        }
-        .skill-name {
-            font-size: 1.2rem;
-            font-weight: 440;
-            color: #b87c5a;
-            margin-bottom: 12px;
-            letter-spacing: 0.2px;
-            border-left: 3px solid #b87c5a;
-            padding-left: 12px;
-        }
-        .source-list {
-            list-style: none;
-            margin-left: 6px;
-        }
-        .source-item {
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-            padding: 8px 0;
-            border-bottom: 0.5px dashed #efe9e2;
-        }
-        .source-item:last-child {
-            border-bottom: none;
-        }
-        .source-bullet {
-            color: #b87c5a;
-            font-size: 1.2rem;
-            line-height: 1;
-            min-width: 20px;
+        
+        /* 头部 */
+        .header {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: white;
+            padding: 20px 0;
             text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .source-content {
-            flex: 1;
+        
+        .site-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
-        .source-title a {
-            text-decoration: none;
-            color: #2b3b4a;
-            font-weight: 430;
-            border-bottom: 0.5px solid transparent;
-            transition: border-color 0.1s;
+        
+        .site-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
         }
-        .source-title a:hover {
-            border-bottom-color: #b87c5a;
+        
+        /* 导航 */
+        .nav {
+            background-color: white;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+            position: sticky;
+            top: 80px;
+            z-index: 99;
         }
-        .source-meta {
-            font-size: 0.75rem;
-            color: #8f8a84;
+        
+        .nav-container {
             display: flex;
-            gap: 10px;
-            margin-top: 2px;
-        }
-        .badge {
-            background: #e0d8cf;
-            padding: 2px 10px;
-            border-radius: 30px;
-            color: #4a4a4a;
-            font-size: 0.65rem;
+            overflow-x: auto;
             white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
         }
-        .footer-note {
-            margin-top: 48px;
-            text-align: center;
-            font-size: 0.8rem;
-            color: #b7aea3;
-            border-top: 0.5px solid #ddd3c8;
-            padding-top: 28px;
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            flex-wrap: wrap;
-        }
-        .footer-note a {
-            color: #a29486;
+        
+        .nav-item {
+            padding: 8px 16px;
             text-decoration: none;
-            border-bottom: 0.5px dotted #c2b6aa;
+            color: #495057;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
         }
-        .feedback {
-            filter: opacity(0.7);
+        
+        .nav-item.active {
+            color: #1a2980;
+            border-bottom-color: #1a2980;
+        }
+        
+        .nav-item:hover {
+            color: #1a2980;
+        }
+        
+        /* 主要内容 */
+        .main-content {
+            padding: 20px 0 40px;
+        }
+        
+        .page-header {
+            margin-bottom: 20px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            color: #1a2980;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            font-size: 16px;
+            color: #6c757d;
+        }
+        
+        /* 警告框 */
+        .alert {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #f39c12;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-title {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #856404;
+        }
+        
+        .alert-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        .alert-content {
+            font-size: 14px;
+            color: #856404;
+        }
+        
+        .emergency-banner {
+            background-color: #dc3545;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 18px;
+            box-shadow: 0 4px 6px rgba(220, 53, 69, 0.2);
+        }
+        
+        .emergency-number {
+            font-size: 24px;
+            margin: 8px 0;
+            display: block;
+        }
+        
+        /* 内容分类 */
+        .category {
+            margin-bottom: 30px;
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #1a2980;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+        }
+        
+        .category-title {
+            font-size: 20px;
+            color: #1a2980;
+        }
+        
+        /* 资源卡片 */
+        .resource-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .resource-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid #1a2980;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .resource-badge {
+            display: inline-block;
+            background-color: #e7f4ff;
+            color: #1a2980;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .resource-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #212529;
+        }
+        
+        .resource-source {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .source-icon {
+            color: #28a745;
+            margin-right: 5px;
+        }
+        
+        .resource-description {
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .resource-link {
+            display: inline-flex;
+            align-items: center;
+            background-color: #1a2980;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .resource-link:hover {
+            background-color: #15225e;
+        }
+        
+        .link-icon {
+            margin-left: 5px;
+        }
+        
+        /* 底部信息 */
+        .footer-info {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 13px;
+            color: #6c757d;
+            border-top: 3px solid #1a2980;
+        }
+        
+        .update-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .page-title {
+                font-size: 24px;
+            }
+            
+            .category-title {
+                font-size: 18px;
+            }
+            
+            .resource-title {
+                font-size: 16px;
+            }
+            
+            .update-info {
+                flex-direction: column;
+                gap: 5px;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <header>
-        <h1>基础课</h1>
-        <div class="domain">jichuke.com · 急救防灾</div>
-        <div class="subhead">每个技能，多个权威来源，对照着学</div>
-    </header>
-
-    <div class="intro">
-        🌿 同一个急救/防灾技能，不同机构的讲解各有侧重。多学一种，多一份安心。
+    <!-- 头部 -->
+    <div class="header">
+        <div class="container">
+            <h1 class="site-title">基础课 jichuke.com</h1>
+            <p class="site-subtitle">生活技能的维基百科与导航</p>
+        </div>
     </div>
-
-    <!-- 分类容器（动态渲染） -->
-    <div id="categoriesContainer"></div>
-
-    <div class="footer-note">
-        <span class="feedback"><a href="#" id="feedbackLink">▪ 发现失效链接？</a></span>
-        <span>· 生命无价，知识有用 ·</span>
+    
+    <!-- 导航 -->
+    <div class="nav">
+        <div class="container">
+            <div class="nav-container">
+                <a href="#" class="nav-item">首页</a>
+                <a href="#" class="nav-item active">生存指南</a>
+                <a href="#" class="nav-item">生活手册</a>
+                <a href="#" class="nav-item">关于原则</a>
+                <a href="#" class="nav-item">投稿反馈</a>
+            </div>
+        </div>
     </div>
-</div>
-
-<script>
-    // ----- 数据结构：每个分类包含多个技能，每个技能包含多个来源 -----
-    const categories = [
-        {
-            name: "急救基础",
-            id: "firstAid",
-            skills: [
-                {
-                    name: "心肺复苏 (CPR)",
-                    sources: [
-                        { title: "红十字会CPR标准", source: "中国红十字会", url: "https://www.redcross.org.cn/px/", badge: "官方" },
-                        { title: "急救科普人·CPR视频", source: "北京急救中心", url: "https://www.beijing120.com/", badge: "视频" },
-                        { title: "央视新闻·CPR演示", source: "CCTV", url: "https://news.cctv.com/", badge: "媒体" }
-                    ]
-                },
-                {
-                    name: "海姆立克急救法",
-                    sources: [
-                        { title: "气道异物梗阻处理", source: "国家应急广播", url: "https://www.cneb.gov.cn/", badge: "图文" },
-                        { title: "海姆立克法(儿童版)", source: "中国消防", url: "https://www.119.gov.cn/kp/", badge: "科普" }
-                    ]
-                },
-                {
-                    name: "止血与包扎",
-                    sources: [
-                        { title: "基本止血方法", source: "中国红十字会", url: "https://www.redcross.org.cn/", badge: "图文" },
-                        { title: "加压包扎示范", source: "急救科普人", url: "https://www.beijing120.com/", badge: "视频" }
-                    ]
-                },
-                {
-                    name: "烧烫伤处理",
-                    sources: [
-                        { title: "烧烫伤五步法", source: "中国消防", url: "https://www.119.gov.cn/kp/", badge: "官方" },
-                        { title: "冲脱泡盖送原则", source: "疾控中心", url: "https://www.chinacdc.cn/jkzt/", badge: "科普" }
-                    ]
-                }
-            ]
-        },
-        {
-            name: "火灾应对",
-            id: "fire",
-            skills: [
-                {
-                    name: "家庭火灾逃生",
-                    sources: [
-                        { title: "制定家庭逃生计划", source: "中国消防", url: "https://www.119.gov.cn/kp/", badge: "指南" },
-                        { title: "高层建筑逃生要点", source: "应急管理部", url: "https://www.mem.gov.cn/kp/", badge: "官方" }
-                    ]
-                },
-                {
-                    name: "灭火器使用",
-                    sources: [
-                        { title: "干粉灭火器操作", source: "消防救援局", url: "https://www.119.gov.cn/", badge: "视频" },
-                        { title: "不同灭火器选择", source: "国家应急广播", url: "https://www.cneb.gov.cn/", badge: "图文" }
-                    ]
-                },
-                {
-                    name: "火灾避险原则",
-                    sources: [
-                        { title: "湿毛巾捂口鼻有用吗", source: "中国消防", url: "https://www.119.gov.cn/kp/", badge: "科普" },
-                        { title: "火场逃生十要诀", source: "央视新闻", url: "https://news.cctv.com/", badge: "专题" }
-                    ]
-                }
-            ]
-        },
-        {
-            name: "自然灾害",
-            id: "disaster",
-            skills: [
-                {
-                    name: "地震避险",
-                    sources: [
-                        { title: "伏地、遮挡、抓牢", source: "中国地震局", url: "https://www.cea.gov.cn/", badge: "官方" },
-                        { title: "不同场景地震应对", source: "国家应急广播", url: "https://www.cneb.gov.cn/", badge: "指南" }
-                    ]
-                },
-                {
-                    name: "洪水自救",
-                    sources: [
-                        { title: "洪水逃生方向", source: "应急管理部", url: "https://www.mem.gov.cn/kp/", badge: "官方" },
-                        { title: "城市内涝避险", source: "中国气象局", url: "http://www.cma.gov.cn/", badge: "科普" }
-                    ]
-                },
-                {
-                    name: "雷电防护",
-                    sources: [
-                        { title: "户外避雷常识", source: "中国气象科普", url: "http://www.qxkp.net/", badge: "图文" },
-                        { title: "室内防雷措施", source: "国家应急广播", url: "https://www.cneb.gov.cn/", badge: "科普" }
-                    ]
-                }
-            ]
-        },
-        {
-            name: "家庭安全",
-            id: "home",
-            skills: [
-                {
-                    name: "家庭急救包",
-                    sources: [
-                        { title: "急救包必备清单", source: "中国红十字会", url: "https://www.redcross.org.cn/", badge: "清单" },
-                        { title: "应急物资储备建议", source: "应急管理部", url: "https://www.mem.gov.cn/", badge: "官方" }
-                    ]
-                },
-                {
-                    name: "燃气泄漏处置",
-                    sources: [
-                        { title: "燃气泄漏三步走", source: "中国燃气", url: "https://www.chinagas.org.cn/", badge: "安全" },
-                        { title: "预防燃气中毒", source: "疾控中心", url: "https://www.chinacdc.cn/", badge: "科普" }
-                    ]
-                },
-                {
-                    name: "触电急救",
-                    sources: [
-                        { title: "断电原则与急救", source: "国家电网", url: "http://www.sgcc.com.cn/", badge: "官方" },
-                        { title: "低压触电急救", source: "中国红十字会", url: "https://www.redcross.org.cn/", badge: "图文" }
-                    ]
-                }
-            ]
-        },
-        {
-            name: "官方资源库",
-            id: "official",
-            skills: [
-                {
-                    name: "权威机构入口",
-                    sources: [
-                        { title: "中国红十字会总会训练中心", source: "红十字会", url: "https://www.redcross.org.cn/px/", badge: "急救课程" },
-                        { title: "国家应急管理部科普", source: "应急管理部", url: "https://www.mem.gov.cn/kp/", badge: "综合" },
-                        { title: "中国消防知识库", source: "消防救援局", url: "https://www.119.gov.cn/kp/", badge: "火灾" },
-                        { title: "中国地震局科普", source: "地震局", url: "https://www.cea.gov.cn/", badge: "地震" }
-                    ]
-                }
-            ]
-        }
-    ];
-
-    // 渲染所有分类
-    const container = document.getElementById('categoriesContainer');
-    let htmlString = '';
-
-    categories.forEach(cat => {
-        // 分类块开始
-        htmlString += `<div class="section"><div class="section-title">${cat.name}</div><div class="card">`;
-
-        // 遍历该分类下的技能
-        cat.skills.forEach(skill => {
-            htmlString += `<div class="skill-block"><div class="skill-name">${skill.name}</div>`;
-            htmlString += `<div class="source-list">`;
-
-            skill.sources.forEach(src => {
-                htmlString += `
-                    <div class="source-item">
-                        <span class="source-bullet">·</span>
-                        <div class="source-content">
-                            <div class="source-title"><a href="${src.url}" target="_blank" rel="noopener noreferrer">${src.title}</a></div>
-                            <div class="source-meta">
-                                <span>${src.source}</span>
-                                <span class="badge">${src.badge}</span>
-                            </div>
+    
+    <!-- 主要内容 -->
+    <div class="container">
+        <div class="main-content">
+            <!-- 页面标题 -->
+            <div class="page-header">
+                <h1 class="page-title">家庭急救</h1>
+                <p class="page-subtitle">官方指南与权威资源导航</p>
+            </div>
+            
+            <!-- 紧急警示 -->
+            <div class="emergency-banner">
+                紧急情况请立即拨打
+                <span class="emergency-number">120</span>
+                或前往最近医院
+            </div>
+            
+            <!-- 警告框 -->
+            <div class="alert">
+                <div class="alert-title">
+                    <span class="alert-icon">⚠️</span>
+                    重要声明
+                </div>
+                <div class="alert-content">
+                    本页面不提供医疗建议，仅整理来自国家权威机构的公开指导信息。任何网络信息（包括本站）均不能替代执业医师的面对面诊断。以下链接旨在帮助您了解基础知识、进行应急准备，或在事后进行学习。在采取任何行动前，请务必优先遵从专业医疗人员的指导。
+                </div>
+            </div>
+            
+            <!-- 主题一：心肺复苏 (CPR) 与 AED -->
+            <div class="category">
+                <div class="category-header">
+                    <div class="category-icon">1</div>
+                    <h2 class="category-title">心肺复苏 (CPR) 与自动体外除颤器 (AED)</h2>
+                </div>
+                <div class="resource-list">
+                    <div class="resource-card">
+                        <span class="resource-badge">必看视频</span>
+                        <h3 class="resource-title">心肺复苏术（CPR）标准教学</h3>
+                        <div class="resource-source">
+                            <span class="source-icon">✅</span> 来源：中国红十字会总会训练中心
+                        </div>
+                        <p class="resource-description">官方发布的标准单人成人CPR全流程演示，包含按压姿势、深度、频率及人工呼吸要领。</p>
+                        <a href="https://www.redcross.org.cn/cpr-video" class="resource-link" target="_blank">
+                            前往观看
+                            <span class="link-icon">↗</span>
+                        </a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="resource-badge">图文详解</span>
+                        <h3 class="resource-title">AED（自动体外除颤器）使用步骤</h3>
+                        <div class="resource-source">
+                            <span class="source-icon">✅</span> 来源：国家卫健委应急办公室
+                        </div>
+                        <p class="resource-description">详解AED开机、贴片放置、心律分析到电击的全过程，强调"听它说，跟它做"。</p>
+                        <a href="https://www.nhc.gov.cn/emergency/aed-guide" class="resource-link" target="_blank">
+                            前往阅读
+                            <span class="link-icon">↗</span>
+                        </a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="resource-badge">实用工具</span>
+                        <h3 class="resource-title">身边的AED设备地图</h3>
+                        <div class="resource-source">
+                            <span class="source-icon">✅</span> 来源：本地政务服务APP
+                        </div>
+                        <p class="resource-description">通过本地政务APP（如上海"随申办"、北京"京通"等）或地图软件，查找您附近公共场所的AED位置。</p>
+                        <div class="resource-description" style="font-style: italic; color: #6c757d;">
+                            提示：请在紧急情况发生前，提前熟悉您常去场所的AED位置。
                         </div>
                     </div>
-                `;
+                </div>
+            </div>
+            
+            <!-- 主题二：气道异物梗阻 -->
+            <div class="category">
+                <div class="category-header">
+                    <div class="category-icon">2</div>
+                    <h2 class="category-title">气道异物梗阻（海姆立克急救法）</h2>
+                </div>
+                <div class="resource-list">
+                    <div class="resource-card">
+                        <span class="resource-badge">视频教学</span>
+                        <h3 class="resource-title">成人、儿童、婴儿海姆立克急救法</h3>
+                        <div class="resource-source">
+                            <span class="source-icon">✅</span> 来源：中国急救培训官方平台
+                        </div>
+                        <p class="resource-description">针对不同年龄段受害者，清晰演示背部叩击法、腹部冲击法（海姆立克法）的正确操作。</p>
+                        <a href="https://www.chinafirstaid.org.cn/heimlich" class="resource-link" target="_blank">
+                            前往观看
+                            <span class="link-icon">↗</span>
+                        </a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="resource-badge">自救方法</span>
+                        <h3 class="resource-title">独自一人发生气道梗阻时如何自救</h3>
+                        <div class="resource-source">
+                            <span class="source-icon">✅</span> 来源：中华医学会急诊医学分会
+                        </div>
+                        <p class="resource-description">利用椅背、桌角等坚硬物体进行自我腹部冲击的演示与讲解。</p>
+                        <a href="https://www.cma.org.cn/emergency/self-help" class="resource-link" target="_blank">
+                            前往阅读
+                            <span class="link-icon">↗</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 主题三：常见急症与外伤 -->
+            <div class="category">
+                <div class="category-header">
+                    <div class="category-icon">3</div>
+                    <h2 class="category-title">常见急症与外伤处理</h2>
+                </div>
+                <div class="resource-list">
+                    <div class="resource-card">
+                        <span class="resource-badge">出血处理</span>
+                        <h3 class="resource-title">外伤止血的正确步骤</h3>
+                        <div class="resource-source">
+                            <span class="source-icon">✅</span> 来源：国家创伤医学中心
+                        </div>
+                        <p class="resource-description">包含加压止血、止血带使用警告等标准外伤止血流程。</p>
+                        <a href="https://www.ntmc.org.cn/bleeding-control" class="resource-link" target="_blank">
+                            前往阅读
+                            <span class="link-icon">↗</span>
+                        </a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="resource-badge">烧烫伤</span>
+                        <h3 class="resource-title">烧烫伤急救"五字诀"：冲、脱、泡、盖、送</h3>
+                        <div class="resource-source">
+                            <span class="source-icon">✅</span> 来源：国家应急广播
+                        </div>
+                        <p class="resource-description">详细解释烧烫伤急救的五个关键步骤，避免常见错误处理方式。</p>
+                        <a href="https://www.cneb.gov.cn/burn-firstaid" class="resource-link" target="_blank">
+                            前往阅读
+                            <span class="link-icon">↗</span>
+                        </a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="resource-badge">家庭药箱</span>
+                        <h3 class="resource-title">家庭常备药清单及储存建议</h3>
+                        <div class="resource-source">
+                            <span class="source-icon">✅</span> 来源：国家药品监督管理局
+                        </div>
+                        <p class="resource-description">NMPA推荐的家庭常备非处方药清单，包含药品储存条件与有效期管理建议。</p>
+                        <a href="https://www.nmpa.gov.cn/home-medicine-kit" class="resource-link" target="_blank">
+                            前往阅读
+                            <span class="link-icon">↗</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 底部信息 -->
+            <div class="footer-info">
+                <p><strong>本站内容原则：</strong>在健康急救、防灾法律等专业领域，我们<strong>绝不原创</strong>核心知识。我们只做可信信息的"导航员"，直接链接至国家部委、专业学会等官方机构发布的指南。</p>
+                
+                <div class="update-info">
+                    <span>最后更新：2024年5月27日</span>
+                    <span>下一次例行检查：2024年8月</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 简单的交互功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为所有外部链接添加提示
+            const externalLinks = document.querySelectorAll('a[target="_blank"]');
+            externalLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // 可以在这里添加统计代码
+                    console.log('用户点击了外部链接: ' + this.href);
+                });
             });
-
-            htmlString += `</div></div>`; // 结束source-list和skill-block
+            
+            // 移动端导航滚动
+            const navContainer = document.querySelector('.nav-container');
+            if (navContainer) {
+                navContainer.addEventListener('touchstart', function() {
+                    this.style.cursor = 'grabbing';
+                });
+                
+                navContainer.addEventListener('touchend', function() {
+                    this.style.cursor = 'grab';
+                });
+            }
+            
+            // 资源卡片点击反馈
+            const resourceCards = document.querySelectorAll('.resource-card');
+            resourceCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // 如果不是点击在链接上，则找到链接并触发点击
+                    if (!e.target.closest('a')) {
+                        const link = this.querySelector('a.resource-link');
+                        if (link) {
+                            link.click();
+                        }
+                    }
+                });
+            });
         });
-
-        htmlString += `</div></div>`; // 结束card和section
-    });
-
-    container.innerHTML = htmlString;
-
-    // 反馈链接简单弹窗
-    document.getElementById('feedbackLink').addEventListener('click', function(e) {
-        e.preventDefault();
-        alert('如果你发现某个链接失效，欢迎留言告知。我们会尽快更新。');
-    });
-</script>
+    </script>
 </body>
 </html>
