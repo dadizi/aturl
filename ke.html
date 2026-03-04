@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>生活基础课 · 目录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #f5f7fa;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.5;
+            color: #1e2b3c;
+            padding: 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .page {
+            max-width: 680px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+            padding: 2.2rem 1.8rem;
+            border: 1px solid #eef2f6;
+        }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.2rem;
+            color: #0b1e2e;
+            line-height: 1.2;
+        }
+        .subhead {
+            font-size: 1.05rem;
+            color: #4f6f8f;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e6edf4;
+            font-weight: 400;
+        }
+        .lesson-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            margin-bottom: 2.2rem;
+        }
+        .lesson-item {
+            display: flex;
+            align-items: baseline;
+            padding: 0.6rem 0 0.6rem 0.8rem;
+            border-bottom: 1px dashed #dde5ed;
+        }
+        .lesson-num {
+            font-weight: 500;
+            color: #2c6b9e;
+            background: #eaf1fa;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            margin-right: 1rem;
+            min-width: 4.2rem;
+            text-align: center;
+            letter-spacing: 0.3px;
+            border: 1px solid #cdddec;
+        }
+        .lesson-title {
+            font-size: 1.1rem;
+            color: #1e3a5f;
+            font-weight: 450;
+        }
+        .update-note {
+            background: #f0f5fb;
+            padding: 1rem 1.2rem;
+            border-radius: 24px;
+            margin: 1.8rem 0 2.2rem 0;
+            font-size: 1rem;
+            color: #1e3b4f;
+            border-left: 5px solid #3471a1;
+            font-weight: 350;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .update-note span {
+            font-size: 1.3rem;
+            margin-right: 6px;
+        }
+        .official-account {
+            background: #f8fbfe;
+            border-radius: 26px;
+            padding: 1.5rem 1.8rem;
+            text-align: center;
+            border: 1px solid #cfddee;
+            box-shadow: 0 2px 6px rgba(0,20,40,0.02);
+            margin-bottom: 1.6rem;
+        }
+        .oa-label {
+            font-size: 1.1rem;
+            font-weight: 450;
+            color: #1e3b5c;
+            margin-bottom: 0.5rem;
+        }
+        .oa-name {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #0b2b44;
+            letter-spacing: 2px;
+            margin-bottom: 1.2rem;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+        .qrcode-placeholder {
+            width: 140px;
+            height: 140px;
+            background: #eaf0f6;
+            margin: 1rem auto 1.2rem auto;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #b1c9e0;
+            color: #2b5b84;
+            font-size: 0.9rem;
+            font-weight: 400;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .qrcode-placeholder svg {
+            width: 40px;
+            height: 40px;
+            fill: none;
+            stroke: #2b5b84;
+            stroke-width: 2;
+        }
+        .hint {
+            color: #3e6a97;
+            font-size: 0.95rem;
+            background: #e1edfa;
+            display: inline-block;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            margin-top: 0.3rem;
+        }
+        .footer-domain {
+            text-align: center;
+            margin-top: 1.8rem;
+            color: #7f9ab3;
+            font-size: 0.9rem;
+            border-top: 1px solid #dee9f2;
+            padding-top: 1.2rem;
+        }
+        .footer-domain a {
+            color: #2f5885;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted #9bb7d4;
+        }
+        .footer-domain a:hover {
+            border-bottom: 2px solid #2f5885;
+        }
+        @media (max-width: 450px) {
+            body { padding: 0.8rem; }
+            .page { padding: 1.5rem 1.2rem; }
+            h1 { font-size: 1.9rem; }
+            .lesson-item { flex-wrap: wrap; gap: 8px; }
+            .lesson-num { min-width: 3.8rem; }
+            .oa-name { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <h1>生活基础课</h1>
+        <div class="subhead">
+            从学校出来，到这个城市的第一年，你可能遇到的事。
+        </div>
+
+        <!-- 课程列表 (001-006) -->
+        <div class="lesson-list">
+            <div class="lesson-item">
+                <span class="lesson-num">001</span>
+                <span class="lesson-title">找房：在打开软件之前先问自己两个问题</span>
+            </div>
+            <div class="lesson-item">
+                <span class="lesson-num">002</span>
+                <span class="lesson-title">看房：进门到底该看什么</span>
+            </div>
+            <div class="lesson-item">
+                <span class="lesson-num">003</span>
+                <span class="lesson-title">签合同：这几条没看清楚先别签字</span>
+            </div>
+            <div class="lesson-item">
+                <span class="lesson-num">004</span>
+                <span class="lesson-title">入住检查：拿到钥匙后第一件事</span>
+            </div>
+            <div class="lesson-item">
+                <span class="lesson-num">005</span>
+                <span class="lesson-title">办门禁：怎么才能顺利进出</span>
+            </div>
+            <div class="lesson-item">
+                <span class="lesson-num">006</span>
+                <span class="lesson-title">缴水费：问谁、怎么问、问完怎么做</span>
+            </div>
+        </div>
+
+        <!-- 每周更新提醒 -->
+        <div class="update-note">
+            <span>📅</span> 课程每周更新 · 陪你一点点安顿下来
+        </div>
+
+        <!-- 公众号区域 + 二维码示意 -->
+        <div class="official-account">
+            <div class="oa-label">📱 微信搜索</div>
+            <div class="oa-name">生活基础课</div>
+            <!-- 占位二维码 (示意用) -->
+            <div class="qrcode-placeholder">
+                <svg viewBox="0 0 40 40" width="40" height="40">
+                    <rect x="6" y="6" width="8" height="8" fill="#2b5b84" rx="1.5" />
+                    <rect x="18" y="6" width="8" height="8" fill="#2b5b84" rx="1.5" />
+                    <rect x="6" y="18" width="8" height="8" fill="#2b5b84" rx="1.5" />
+                    <rect x="26" y="18" width="8" height="8" fill="#2b5b84" rx="1.5" />
+                    <rect x="18" y="26" width="8" height="8" fill="#2b5b84" rx="1.5" />
+                    <rect x="6" y="26" width="4" height="4" fill="#2b5b84" />
+                    <rect x="26" y="6" width="4" height="4" fill="#2b5b84" />
+                    <path d="M18 18 L18 22 L22 22 L22 18 Z" fill="#2b5b84" />
+                </svg>
+                <span>扫码关注</span>
+            </div>
+            <div class="hint">公众号里每课推送 · 方便随时看</div>
+        </div>
+
+        <!-- 域名展示与版权 -->
+        <div class="footer-domain">
+            <a href="https://jichuke.cn">jichuke.cn</a>  ·  所有课程目录在此<br>
+            <span style="font-size:0.8rem; opacity:0.7;">© 生活基础课 · 个人记录</span>
+        </div>
+    </div>
+
+    <!-- 仅用于示意：点击链接不跳转 (因为是演示页面) -->
+    <script>
+        // 阻止所有a标签的默认跳转，避免演示时离开当前页面（仅用于静态预览）
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('这是预览效果，实际网站会跳转至 jichuke.cn');
+            });
+        });
+    </script>
+</body>
+</html>
