@@ -34,17 +34,13 @@
             width: 100%;
         }
 
-        /* 头部 — 整体居中 */
+        /* 头部 — 两行显示，整体居中 */
         .site-header {
             text-align: center;
-            margin-bottom: 30px;        /* 增加与下方导航的间距 */
+            margin-bottom: 30px;
         }
         .site-header h1 {
-            display: inline-flex;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
+            display: block;                /* 改为块级，自然分行 */
             font-size: 2.3rem;
             font-weight: 420;
             color: #3d543b;
@@ -58,6 +54,7 @@
             border-radius: 40px 8px 40px 8px;
             border: 1px solid #b8cbab;
             box-shadow: 2px 2px 0 #d9d0b5;
+            margin-bottom: 10px;            /* 与域名间距 */
         }
         .site-header h1 .domain {
             display: inline-block;
@@ -83,7 +80,7 @@
 
         /* 导航区域 — 独立卡片，与上方区分 */
         .nav-section {
-            background: #f4f0e5;        /* 极浅米色背景，独立区域 */
+            background: #f4f0e5;
             border-radius: 40px 12px 40px 12px;
             padding: 16px 16px 14px;
             margin-bottom: 24px;
@@ -116,7 +113,7 @@
             box-shadow: 3px 3px 0 #cfc5a3;
             transition: 0.05s linear;
             position: relative;
-            flex: 0 1 auto;            /* 不强制拉伸 */
+            flex: 0 1 auto;
         }
         .series-nav a::after {
             content: '';
@@ -326,10 +323,10 @@
 </head>
 <body>
     <div class="container">
-        <!-- 头部：整体居中 -->
+        <!-- 头部：两行显示，整体居中 -->
         <header class="site-header">
             <h1>
-                <span class="main-title">生活基础课</span>
+                <span class="main-title">生活基础课</span><br>
                 <span class="domain">jichuke.cn</span>
             </h1>
             <div class="subhead">真实经历 · 可执行的动作 · 陪伴</div>
