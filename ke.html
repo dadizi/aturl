@@ -34,7 +34,7 @@
             width: 100%;
         }
 
-        /* 头部 */
+        /* 头部 — 调整：主标题和域名同行底部对齐 */
         .site-header {
             margin-bottom: 20px;
         }
@@ -44,6 +44,10 @@
             color: #3d543b;
             line-height: 1.3;
             letter-spacing: -0.3px;
+            display: flex;
+            align-items: flex-end;      /* 底部对齐 */
+            flex-wrap: wrap;            /* 允许换行 */
+            gap: 8px;                   /* 两个span之间的间距 */
         }
         .site-header h1 .main-title {
             display: inline-block;
@@ -52,7 +56,7 @@
             border-radius: 40px 8px 40px 8px;
             border: 1px solid #b8cbab;
             box-shadow: 2px 2px 0 #d9d0b5;
-            margin-bottom: 8px;
+            /* 移除 margin-bottom，对齐由flex处理 */
         }
         .site-header h1 .domain {
             display: inline-block;
@@ -319,10 +323,10 @@
 </head>
 <body>
     <div class="container">
-        <!-- 头部 -->
+        <!-- 头部：主标题与域名同行，底部对齐 -->
         <header class="site-header">
             <h1>
-                <span class="main-title">生活基础课</span><br>
+                <span class="main-title">生活基础课</span>
                 <span class="domain">jichuke.cn</span>
             </h1>
             <div class="subhead">真实经历 · 可执行的动作 · 陪伴</div>
