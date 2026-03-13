@@ -1,257 +1,476 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>生活基础课 · 目录</title>
     <style>
+        /* 优化配色与样式 · 手绘温暖 · 莫兰迪色系 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            background-color: #f5f7fa;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #faf7ed;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             line-height: 1.5;
-            color: #1e2b3c;
-            padding: 1.5rem;
-            min-height: 100vh;
+            color: #3f4a3b;
+            padding: 28px 16px 36px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            position: relative;
+            min-height: 100vh;
         }
-        .page {
-            max-width: 680px;
+
+        .container {
+            max-width: 440px;
             width: 100%;
-            background: white;
-            border-radius: 28px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
-            padding: 2.2rem 1.8rem;
-            border: 1px solid #eef2f6;
         }
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-            margin-bottom: 0.2rem;
-            color: #0b1e2e;
-            line-height: 1.2;
+
+        /* 头部 */
+        .site-header {
+            margin-bottom: 20px;
+        }
+        .site-header h1 {
+            font-size: 2.3rem;
+            font-weight: 420;
+            color: #3d543b;
+            line-height: 1.3;
+            letter-spacing: -0.3px;
+        }
+        .site-header h1 .main-title {
+            display: inline-block;
+            background: #e2ebd3;
+            padding: 4px 14px 6px 12px;
+            border-radius: 40px 8px 40px 8px;
+            border: 1px solid #b8cbab;
+            box-shadow: 2px 2px 0 #d9d0b5;
+            margin-bottom: 8px;
+        }
+        .site-header h1 .domain {
+            display: inline-block;
+            font-size: 1.2rem;
+            background: #dbd2b5;
+            padding: 5px 18px 6px 16px;
+            border-radius: 50px 8px 50px 8px;
+            border: 1px solid #b0a582;
+            color: #334d31;
+            font-weight: 380;
+            box-shadow: 2px 2px 0 #c3bc9b;
         }
         .subhead {
-            font-size: 1.05rem;
-            color: #4f6f8f;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e6edf4;
+            font-size: 0.95rem;
+            color: #6c7d62;
+            margin-top: 14px;
+            padding-left: 14px;
+            border-left: 4px solid #d1ccae;
+            font-style: italic;
+        }
+
+        /* 导航提示 — 新增，让用户明白这是可点击的导航 */
+        .nav-hint {
+            font-size: 0.8rem;
+            color: #8b9a81;
+            text-align: center;
+            letter-spacing: 0.5px;
+            margin: 16px auto 8px;
+            border-bottom: 1px dashed #d1cbb0;
+            padding-bottom: 6px;
+            width: fit-content;
+            padding-left: 16px;
+            padding-right: 16px;
+            text-transform: uppercase;  /* 小写大写增加识别 */
             font-weight: 400;
         }
-        .lesson-list {
+
+        /* 系列导航 */
+        .series-nav {
+            display: flex;
+            gap: 12px;
+            margin: 0 0 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .series-nav a {
+            background: #e3deca;
+            border: 1px solid #b5ab8b;
+            border-radius: 50px 8px 50px 8px;
+            padding: 8px 22px;
+            text-decoration: none;
+            color: #41553b;
+            font-size: 1rem;
+            font-weight: 440;
+            box-shadow: 3px 3px 0 #cfc5a3;
+            transition: 0.05s linear;
+            /* 增加视觉提示：下划线 */
+            position: relative;
+        }
+        .series-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 20%;
+            width: 60%;
+            height: 1px;
+            background: #8fa07e;
+            opacity: 0.6;
+            border-radius: 2px;
+        }
+        .series-nav a:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        /* 系列标题 */
+        .series {
+            margin: 38px 0 18px 0;
+            scroll-margin-top: 20px;
+        }
+        .series h2 {
+            font-size: 1.4rem;
+            font-weight: 400;
+            background: #e3deca;
+            padding: 6px 20px 6px 18px;
+            border-radius: 60px 8px 60px 8px;
+            border: 1px solid #b5ab8b;
+            display: inline-block;
+            letter-spacing: -0.1px;
+            color: #41553b;
+            box-shadow: 3px 3px 0 #dbcfb2;
+        }
+
+        /* 课程列表 */
+        .course-list {
+            list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 0.9rem;
-            margin-bottom: 2.2rem;
+            gap: 14px;
         }
-        .lesson-item {
-            display: flex;
-            align-items: baseline;
-            padding: 0.6rem 0 0.6rem 0.8rem;
-            border-bottom: 1px dashed #dde5ed;
-        }
-        .lesson-num {
-            font-weight: 500;
-            color: #2c6b9e;
-            background: #eaf1fa;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            margin-right: 1rem;
-            min-width: 4.2rem;
-            text-align: center;
-            letter-spacing: 0.3px;
-            border: 1px solid #cdddec;
-        }
-        .lesson-title {
-            font-size: 1.1rem;
-            color: #1e3a5f;
-            font-weight: 450;
-        }
-        .update-note {
-            background: #f0f5fb;
-            padding: 1rem 1.2rem;
-            border-radius: 24px;
-            margin: 1.8rem 0 2.2rem 0;
-            font-size: 1rem;
-            color: #1e3b4f;
-            border-left: 5px solid #3471a1;
-            font-weight: 350;
+        .course-item {
+            background: #ffffffda;
+            backdrop-filter: blur(1px);
+            border: 1px solid #d3cdb2;
+            border-radius: 30px 12px 30px 12px;
+            padding: 12px 16px 12px 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            box-shadow: 5px 5px 0 #e4ddc2, 0 1px 4px rgba(0,0,0,0.02);
+            transition: 0.1s ease;
         }
-        .update-note span {
-            font-size: 1.3rem;
-            margin-right: 6px;
+        .course-item:nth-child(odd) {
+            transform: rotate(0.02deg);
         }
-        .official-account {
-            background: #f8fbfe;
-            border-radius: 26px;
-            padding: 1.5rem 1.8rem;
-            text-align: center;
-            border: 1px solid #cfddee;
-            box-shadow: 0 2px 6px rgba(0,20,40,0.02);
-            margin-bottom: 1.6rem;
+        .course-item:nth-child(3n) {
+            transform: rotate(-0.03deg);
         }
-        .oa-label {
-            font-size: 1.1rem;
-            font-weight: 450;
-            color: #1e3b5c;
-            margin-bottom: 0.5rem;
-        }
-        .oa-name {
-            font-size: 2rem;
-            font-weight: 650;
-            color: #0b2b44;
-            letter-spacing: 2px;
-            margin-bottom: 1.2rem;
-            line-height: 1.2;
-            word-break: break-word;
-        }
-        .qrcode-placeholder {
-            width: 140px;
-            height: 140px;
-            background: #eaf0f6;
-            margin: 1rem auto 1.2rem auto;
-            border-radius: 24px;
+
+        /* 序号 */
+        .course-num {
+            width: 48px;
+            height: 48px;
+            background: #dde5cf;
+            border: 2px solid #aebf98;
+            border-radius: 50% 20% 50% 20% / 40% 40% 30% 40%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px dashed #b1c9e0;
-            color: #2b5b84;
-            font-size: 0.9rem;
-            font-weight: 400;
-            flex-direction: column;
-            gap: 6px;
+            font-size: 1.2rem;
+            font-weight: 450;
+            color: #2d4b2d;
+            flex-shrink: 0;
+            box-shadow: 3px 3px 0 #c6bb96;
+            transform: rotate(-0.8deg);
         }
-        .qrcode-placeholder svg {
-            width: 40px;
-            height: 40px;
-            fill: none;
-            stroke: #2b5b84;
-            stroke-width: 2;
+
+        .course-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .hint {
-            color: #3e6a97;
-            font-size: 0.95rem;
-            background: #e1edfa;
-            display: inline-block;
-            padding: 0.3rem 1.2rem;
-            border-radius: 40px;
-            margin-top: 0.3rem;
+
+        /* 课程标题 — 完全显示，占满剩余宽度 */
+        .course-title {
+            font-size: 1.1rem;
+            font-weight: 460;
+            color: #2d4a2d;
+            word-break: break-word;
+            line-height: 1.4;
+            flex: 1;
         }
-        .footer-domain {
-            text-align: center;
-            margin-top: 1.8rem;
-            color: #7f9ab3;
-            font-size: 0.9rem;
-            border-top: 1px solid #dee9f2;
-            padding-top: 1.2rem;
-        }
-        .footer-domain a {
-            color: #2f5885;
+        .course-title a {
             text-decoration: none;
+            color: #2d4a2d;
+            border-bottom: 2px dotted #b7c8a4;
+            transition: border 0.1s;
+        }
+        .course-title a:hover {
+            border-bottom: 2px solid #8aa57a;
+        }
+
+        /* “看视频”按钮 — 固定宽度70px */
+        .video-link {
+            background: #f3edd9;
+            border: 1.5px solid #ccbe93;
+            border-radius: 40px 6px 40px 6px;
+            padding: 6px 0 5px 0;
+            text-decoration: none;
+            color: #4d653d;
+            font-size: 0.8rem;
+            font-weight: 460;
+            white-space: nowrap;
+            box-shadow: 2px 2px 0 #cfc094;
+            letter-spacing: 0.2px;
+            transition: 0.05s linear;
+            flex-shrink: 0;
+            width: 70px;
+            text-align: center;
+            display: inline-block;
+        }
+        .video-link:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        /* 占位课程 */
+        .course-item.coming-soon {
+            background: #f2efdf;
+            border-color: #bebaa2;
+            border-style: dashed;
+            opacity: 0.85;
+            box-shadow: 3px 3px 0 #dad1b2;
+        }
+        .coming-tag {
+            font-size: 0.7rem;
+            background: #dad1b2;
+            padding: 4px 10px 3px 10px;
+            border-radius: 30px 3px 30px 3px;
+            color: #3b5435;
+            margin-left: 8px;
+            white-space: nowrap;
+            border: 1px solid #b3a275;
+        }
+
+        /* 底部 */
+        .footer-note {
+            margin-top: 48px;
+            text-align: center;
+            font-size: 0.78rem;
+            color: #8e9b83;
+            border-top: 2px dashed #d9d0b0;
+            padding-top: 24px;
+        }
+        .footer-note a {
+            color: #627553;
+            text-decoration: none;
+            border-bottom: 1px dotted #afba94;
+            font-weight: 450;
+        }
+
+        /* 回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 24px;
+            right: 20px;
+            background: #f3edd9;
+            border: 2px solid #ccbe93;
+            border-radius: 50px 10px 50px 10px;
+            padding: 12px 18px 10px 18px;
+            text-decoration: none;
+            color: #4d653d;
+            font-size: 0.95rem;
             font-weight: 500;
-            border-bottom: 1px dotted #9bb7d4;
+            box-shadow: 4px 4px 0 #cfc094;
+            transition: 0.05s linear;
+            z-index: 100;
+            cursor: pointer;
+            display: none;
+            line-height: 1;
+            white-space: nowrap;
+            border-style: solid;
+            letter-spacing: 0.5px;
         }
-        .footer-domain a:hover {
-            border-bottom: 2px solid #2f5885;
+        .back-to-top span {
+            font-size: 1.2rem;
+            margin-right: 4px;
         }
-        @media (max-width: 450px) {
-            body { padding: 0.8rem; }
-            .page { padding: 1.5rem 1.2rem; }
-            h1 { font-size: 1.9rem; }
-            .lesson-item { flex-wrap: wrap; gap: 8px; }
-            .lesson-num { min-width: 3.8rem; }
-            .oa-name { font-size: 1.6rem; }
+        .back-to-top:active {
+            transform: translate(3px, 3px);
+            box-shadow: none;
+        }
+        @media (max-width: 400px) {
+            .back-to-top {
+                padding: 10px 14px 8px 14px;
+                font-size: 0.85rem;
+                bottom: 16px;
+                right: 16px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="page">
-        <h1>生活基础课</h1>
-        <div class="subhead">
-            从学校出来，到这个城市的第一年，你可能遇到的事。
+    <div class="container">
+        <!-- 头部 -->
+        <header class="site-header">
+            <h1>
+                <span class="main-title">生活基础课</span><br>
+                <span class="domain">jichuke.cn</span>
+            </h1>
+            <div class="subhead">真实经历 · 可执行的动作 · 陪伴</div>
+        </header>
+
+        <!-- 导航提示 + 系列导航 (优化点击认知) -->
+        <div class="nav-hint">系列导航</div>
+        <div class="series-nav">
+            <a href="#series-youth">初入社会</a>
+            <a href="#series-elder">适老化</a>
         </div>
 
-        <!-- 课程列表 (001-006) -->
-        <div class="lesson-list">
-            <div class="lesson-item">
-                <span class="lesson-num">001</span>
-                <span class="lesson-title">找房：在打开软件之前先问自己两个问题</span>
-            </div>
-            <div class="lesson-item">
-                <span class="lesson-num">002</span>
-                <span class="lesson-title">看房：进门到底该看什么</span>
-            </div>
-            <div class="lesson-item">
-                <span class="lesson-num">003</span>
-                <span class="lesson-title">签合同：这几条没看清楚先别签字</span>
-            </div>
-            <div class="lesson-item">
-                <span class="lesson-num">004</span>
-                <span class="lesson-title">入住检查：拿到钥匙后第一件事</span>
-            </div>
-            <div class="lesson-item">
-                <span class="lesson-num">005</span>
-                <span class="lesson-title">办门禁：怎么才能顺利进出</span>
-            </div>
-            <div class="lesson-item">
-                <span class="lesson-num">006</span>
-                <span class="lesson-title">缴水费：问谁、怎么问、问完怎么做</span>
-            </div>
+        <!-- 初入社会系列 -->
+        <div id="series-youth" class="series">
+            <h2>初入社会系列</h2>
         </div>
+        <ul class="course-list">
+            <li class="course-item">
+                <div class="course-num">001</div>
+                <div class="course-info">
+                    <span class="course-title"><a href="#" target="_blank" rel="noopener">找房 · 先问自己两个问题</a></span>
+                </div>
+                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
+            </li>
+            <li class="course-item">
+                <div class="course-num">002</div>
+                <div class="course-info">
+                    <span class="course-title"><a href="#" target="_blank" rel="noopener">看房 · 进门到底该看什么</a></span>
+                </div>
+                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
+            </li>
+            <li class="course-item">
+                <div class="course-num">003</div>
+                <div class="course-info">
+                    <span class="course-title"><a href="#" target="_blank" rel="noopener">签合同 · 哪几条没看清楚先别签字</a></span>
+                </div>
+                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
+            </li>
+            <li class="course-item">
+                <div class="course-num">004</div>
+                <div class="course-info">
+                    <span class="course-title"><a href="#" target="_blank" rel="noopener">入住检查 · 拿到钥匙后第一件事</a></span>
+                </div>
+                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
+            </li>
+            <li class="course-item">
+                <div class="course-num">005</div>
+                <div class="course-info">
+                    <span class="course-title"><a href="#" target="_blank" rel="noopener">办门禁 · 怎么才能顺利进出</a></span>
+                </div>
+                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
+            </li>
+            <li class="course-item">
+                <div class="course-num">006</div>
+                <div class="course-info">
+                    <span class="course-title"><a href="#" target="_blank" rel="noopener">缴水费 · 问谁、怎么问、问完怎么做</a></span>
+                </div>
+                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
+            </li>
+            <li class="course-item">
+                <div class="course-num">007</div>
+                <div class="course-info">
+                    <span class="course-title"><a href="#" target="_blank" rel="noopener">缴电费 · 电费怎么交？会不会断电？</a></span>
+                </div>
+                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
+            </li>
+            <li class="course-item">
+                <div class="course-num">008</div>
+                <div class="course-info">
+                    <span class="course-title"><a href="#" target="_blank" rel="noopener">缴燃气费 · 燃气怎么开、怎么交？</a></span>
+                </div>
+                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
+            </li>
+            <li class="course-item coming-soon">
+                <div class="course-num">···</div>
+                <div class="course-info">
+                    <span class="course-title">更多课程准备中 <span class="coming-tag">coming</span></span>
+                </div>
+                <span style="font-size:0.7rem; color:#7d8a71;">B站待上线</span>
+            </li>
+        </ul>
 
-        <!-- 每周更新提醒 -->
-        <div class="update-note">
-            <span>📅</span> 课程每周更新 · 陪你一点点安顿下来
+        <!-- 适老化系列 -->
+        <div id="series-elder" class="series">
+            <h2>适老化系列</h2>
         </div>
+        <ul class="course-list">
+            <li class="course-item coming-soon">
+                <div class="course-num">101</div>
+                <div class="course-info">
+                    <span class="course-title">手机基础 · 怎样调大字体 <span class="coming-tag">筹备</span></span>
+                </div>
+                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
+            </li>
+            <li class="course-item coming-soon">
+                <div class="course-num">102</div>
+                <div class="course-info">
+                    <span class="course-title">微信聊天 · 怎么发照片 <span class="coming-tag">筹备</span></span>
+                </div>
+                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
+            </li>
+            <li class="course-item coming-soon">
+                <div class="course-num">103</div>
+                <div class="course-info">
+                    <span class="course-title">预约挂号 · 手机操作 <span class="coming-tag">筹备</span></span>
+                </div>
+                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
+            </li>
+            <li class="course-item coming-soon">
+                <div class="course-num">···</div>
+                <div class="course-info">
+                    <span class="course-title">更多内容策划中</span>
+                </div>
+                <span style="font-size:0.7rem; color:#7d8a71;">⏳</span>
+            </li>
+        </ul>
 
-        <!-- 公众号区域 + 二维码示意 -->
-        <div class="official-account">
-            <div class="oa-label">📱 微信搜索</div>
-            <div class="oa-name">生活基础课</div>
-            <!-- 占位二维码 (示意用) -->
-            <div class="qrcode-placeholder">
-                <svg viewBox="0 0 40 40" width="40" height="40">
-                    <rect x="6" y="6" width="8" height="8" fill="#2b5b84" rx="1.5" />
-                    <rect x="18" y="6" width="8" height="8" fill="#2b5b84" rx="1.5" />
-                    <rect x="6" y="18" width="8" height="8" fill="#2b5b84" rx="1.5" />
-                    <rect x="26" y="18" width="8" height="8" fill="#2b5b84" rx="1.5" />
-                    <rect x="18" y="26" width="8" height="8" fill="#2b5b84" rx="1.5" />
-                    <rect x="6" y="26" width="4" height="4" fill="#2b5b84" />
-                    <rect x="26" y="6" width="4" height="4" fill="#2b5b84" />
-                    <path d="M18 18 L18 22 L22 22 L22 18 Z" fill="#2b5b84" />
-                </svg>
-                <span>扫码关注</span>
-            </div>
-            <div class="hint">公众号里每课推送 · 方便随时看</div>
-        </div>
-
-        <!-- 域名展示与版权 -->
-        <div class="footer-domain">
-            <a href="https://jichuke.cn">jichuke.cn</a>  ·  所有课程目录在此<br>
-            <span style="font-size:0.8rem; opacity:0.7;">© 生活基础课 · 个人记录</span>
+        <!-- 底部 -->
+        <div class="footer-note">
+            <a href="#" target="_blank">关注公众号</a> 获取文章 · 视频同步B站<br>© 生活基础课 · 备案中
         </div>
     </div>
 
-    <!-- 仅用于示意：点击链接不跳转 (因为是演示页面) -->
+    <!-- 回到顶部按钮 -->
+    <div class="back-to-top" id="backToTop" title="回到顶部">
+        <span>↑</span> 顶部
+    </div>
+
     <script>
-        // 阻止所有a标签的默认跳转，避免演示时离开当前页面（仅用于静态预览）
-        document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                alert('这是预览效果，实际网站会跳转至 jichuke.cn');
+        // 阻止所有 href="#" 的默认跳转 (仅用于演示)
+        document.querySelectorAll('a[href="#"]').forEach(link => {
+            link.addEventListener('click', (e) => e.preventDefault());
+        });
+
+        // 回到顶部按钮逻辑
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTop.style.display = 'block';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         });
     </script>
