@@ -1,628 +1,557 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>生活基础课 · 目录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>生活基础课 · 新生入学课表目录 | 初入社会必修清单</title>
+    <!-- Font Awesome 6 (免费图标库，用于微信/抖音图标) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* 优化配色与样式 · 手绘温暖 · 莫兰迪色系 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
-            background-color: #faf7ed;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            line-height: 1.5;
-            color: #3f4a3b;
-            padding: 28px 16px 36px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            min-height: 100vh;
+            background-color: #f4f7fc;
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Noto Sans', sans-serif;
+            padding: 20px 16px 48px;
+            color: #1e2f3e;
         }
 
+        /* 主容器 */
         .container {
-            max-width: 440px;
-            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
         }
 
-        /* 头部 — 两行显示，整体居中 */
-        .site-header {
-            text-align: center;
-            margin-bottom: 30px;
+        /* 头部 新生手册风格 */
+        .hero {
+            background: linear-gradient(135deg, #2b5e3b 0%, #1e3a2f 100%);
+            border-radius: 36px 36px 36px 24px;
+            padding: 28px 24px;
+            margin-bottom: 28px;
+            color: white;
+            box-shadow: 0 12px 20px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
         }
-        .site-header h1 {
-            display: block;
-            font-size: 2.3rem;
-            font-weight: 420;
-            color: #3d543b;
-            line-height: 1.3;
+        .hero::after {
+            content: "📘";
+            font-size: 110px;
+            opacity: 0.1;
+            position: absolute;
+            bottom: -20px;
+            right: -10px;
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,215,140,0.25);
+            backdrop-filter: blur(2px);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            border: 0.5px solid rgba(255,235,180,0.5);
+        }
+        .hero h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 12px;
             letter-spacing: -0.3px;
         }
-        .site-header h1 .main-title {
-            display: inline-block;
-            background: #e2ebd3;
-            padding: 4px 14px 6px 12px;
-            border-radius: 40px 8px 40px 8px;
-            border: 1px solid #b8cbab;
-            box-shadow: 2px 2px 0 #d9d0b5;
-            margin-bottom: 10px;
-        }
-        .site-header h1 .domain {
-            display: inline-block;
-            font-size: 1.2rem;
-            background: #dbd2b5;
-            padding: 5px 18px 6px 16px;
-            border-radius: 50px 8px 50px 8px;
-            border: 1px solid #b0a582;
-            color: #334d31;
-            font-weight: 380;
-            box-shadow: 2px 2px 0 #c3bc9b;
-        }
-        .subhead {
-            font-size: 0.95rem;
-            color: #6c7d62;
-            margin-top: 14px;
-            padding-left: 14px;
-            border-left: 4px solid #d1ccae;
-            font-style: italic;
-            display: inline-block;
-            text-align: left;
-        }
-
-        /* 导航区域 — 独立卡片，与上方区分 */
-        .nav-section {
-            background: #f4f0e5;
-            border-radius: 40px 12px 40px 12px;
-            padding: 16px 16px 14px;
-            margin-bottom: 24px;
-            box-shadow: 3px 3px 0 #e0d9c0;
-            border: 1px solid #d9cfb2;
-        }
-        .nav-label {
-            font-size: 0.75rem;
-            color: #8d9f85;
-            text-align: center;
-            letter-spacing: 0.3px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-        .series-nav {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .series-nav a {
-            background: #e3deca;
-            border: 1px solid #b5ab8b;
-            border-radius: 50px 8px 50px 8px;
-            padding: 8px 18px;
-            text-decoration: none;
-            color: #41553b;
-            font-size: 0.95rem;
-            font-weight: 440;
-            box-shadow: 3px 3px 0 #cfc5a3;
-            transition: 0.05s linear;
-            position: relative;
-            flex: 0 1 auto;
-        }
-        .series-nav a::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            left: 20%;
-            width: 60%;
-            height: 1px;
-            background: #8fa07e;
-            opacity: 0.6;
-            border-radius: 2px;
-        }
-        .series-nav a:active {
-            transform: translate(2px, 2px);
-            box-shadow: none;
-        }
-
-        /* 系列标题 */
-        .series {
-            margin: 38px 0 18px 0;
-            scroll-margin-top: 20px;
-            text-align: center;
-        }
-        .series h2 {
-            font-size: 1.4rem;
+        .hero h1 span {
             font-weight: 400;
-            background: #e3deca;
-            padding: 6px 20px 6px 18px;
-            border-radius: 60px 8px 60px 8px;
-            border: 1px solid #b5ab8b;
+            font-size: 1rem;
+            background: #f9b43a;
+            color: #1e3a2f;
+            padding: 2px 12px;
+            border-radius: 40px;
+            vertical-align: middle;
+            margin-left: 10px;
             display: inline-block;
-            letter-spacing: -0.1px;
-            color: #41553b;
-            box-shadow: 3px 3px 0 #dbcfb2;
+            font-size: 0.8rem;
+        }
+        .hero-desc {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            max-width: 85%;
+        }
+        .domain-tag {
+            font-family: monospace;
+            background: #00000020;
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(2px);
+        }
+        .domain-tag i {
+            margin-right: 6px;
         }
 
-        /* 课程列表 */
-        .course-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-        .course-item {
-            background: #ffffffda;
-            backdrop-filter: blur(1px);
-            border: 1px solid #d3cdb2;
-            border-radius: 30px 12px 30px 12px;
-            padding: 12px 16px 12px 12px;
+        /* 课表说明 */
+        .info-panel {
+            background: #eef2f5;
+            border-radius: 28px;
+            padding: 14px 20px;
+            margin-bottom: 28px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
             gap: 12px;
-            box-shadow: 5px 5px 0 #e4ddc2, 0 1px 4px rgba(0,0,0,0.02);
-            transition: 0.1s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2c4b3e;
+            border: 1px solid #dce6ec;
         }
-        .course-item:nth-child(odd) {
-            transform: rotate(0.02deg);
+        .info-panel i {
+            margin-right: 6px;
+            color: #2b5e3b;
         }
-        .course-item:nth-child(3n) {
-            transform: rotate(-0.03deg);
+        .update-badge {
+            background: white;
+            padding: 5px 12px;
+            border-radius: 50px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        /* 序号 */
-        .course-num {
-            width: 48px;
-            height: 48px;
-            background: #dde5cf;
-            border: 2px solid #aebf98;
-            border-radius: 50% 20% 50% 20% / 40% 40% 30% 40%;
+        /* 周次分组 */
+        .week-section {
+            margin-bottom: 36px;
+        }
+        .week-title {
             display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-left: 8px;
+            border-left: 5px solid #f3b33d;
+        }
+        .week-number {
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: #2b5e3b;
+            letter-spacing: -0.5px;
+        }
+        .week-tagline {
+            font-weight: 500;
+            color: #5c6f7e;
+            font-size: 0.85rem;
+            background: #e9edf0;
+            padding: 4px 12px;
+            border-radius: 30px;
+        }
+
+        /* 课程卡片 */
+        .course-card {
+            background: white;
+            border-radius: 28px;
+            padding: 18px 18px 14px 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+            border: 1px solid #e2edf2;
+        }
+        .course-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
+            border-color: #cbdde6;
+        }
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .course-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1c3a2e;
+            line-height: 1.3;
+            letter-spacing: -0.2px;
+        }
+        .required-stars {
+            background: #fff0db;
+            padding: 4px 10px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #c27d2e;
+            white-space: nowrap;
+        }
+        .formula-box {
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 20px;
+            margin: 12px 0;
+            font-size: 0.8rem;
+            color: #2d5a46;
+            border-left: 3px solid #f3b33d;
+            font-family: monospace;
+        }
+        .formula-box i {
+            margin-right: 6px;
+            color: #f3b33d;
+        }
+        .course-desc {
+            font-size: 0.85rem;
+            color: #4f6b7a;
+            margin-bottom: 14px;
+            line-height: 1.4;
+        }
+        /* 双平台按钮组 */
+        .platform-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+            border-top: 1px solid #ecf3f7;
+            padding-top: 14px;
+        }
+        .platform-btn {
+            flex: 1;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            font-weight: 450;
-            color: #2d4b2d;
-            flex-shrink: 0;
-            box-shadow: 3px 3px 0 #c6bb96;
-            transform: rotate(-0.8deg);
-        }
-
-        .course-info {
-            flex: 1;
-            min-width: 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* 课程标题 — 完全显示，占满剩余宽度 */
-        .course-title {
-            font-size: 1.1rem;
-            font-weight: 460;
-            color: #2d4a2d;
-            word-break: break-word;
-            line-height: 1.4;
-            flex: 1;
-        }
-        .course-title a {
-            text-decoration: none;
-            color: #2d4a2d;
-            border-bottom: 2px dotted #b7c8a4;
-            transition: border 0.1s;
-        }
-        .course-title a:hover {
-            border-bottom: 2px solid #8aa57a;
-        }
-
-        /* “看视频”按钮 — 固定宽度70px */
-        .video-link {
-            background: #f3edd9;
-            border: 1.5px solid #ccbe93;
-            border-radius: 40px 6px 40px 6px;
-            padding: 6px 0 5px 0;
-            text-decoration: none;
-            color: #4d653d;
+            gap: 8px;
+            background: #f2f6f9;
+            border-radius: 50px;
+            padding: 8px 6px;
             font-size: 0.8rem;
-            font-weight: 460;
-            white-space: nowrap;
-            box-shadow: 2px 2px 0 #cfc094;
-            letter-spacing: 0.2px;
-            transition: 0.05s linear;
-            flex-shrink: 0;
-            width: 70px;
-            text-align: center;
-            display: inline-block;
+            font-weight: 500;
+            color: #2c4f3e;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            width: 100%;
         }
-        .video-link:active {
-            transform: translate(2px, 2px);
-            box-shadow: none;
+        .platform-btn i {
+            font-size: 1rem;
         }
-
-        /* 占位课程 */
-        .course-item.coming-soon {
-            background: #f2efdf;
-            border-color: #bebaa2;
-            border-style: dashed;
-            opacity: 0.85;
-            box-shadow: 3px 3px 0 #dad1b2;
+        .platform-btn.wechat {
+            background: #e9f4eb;
+            color: #2b6e3c;
         }
-        .coming-tag {
-            font-size: 0.7rem;
-            background: #dad1b2;
-            padding: 4px 10px 3px 10px;
-            border-radius: 30px 3px 30px 3px;
-            color: #3b5435;
-            margin-left: 8px;
-            white-space: nowrap;
-            border: 1px solid #b3a275;
+        .platform-btn.douyin {
+            background: #fef1f0;
+            color: #d14b3a;
         }
-
-        /* 底部 */
+        .platform-btn:active {
+            transform: scale(0.97);
+        }
+        /* 页脚 */
         .footer-note {
-            margin-top: 48px;
+            margin-top: 40px;
             text-align: center;
-            font-size: 0.78rem;
-            color: #8e9b83;
-            border-top: 2px dashed #d9d0b0;
+            font-size: 0.7rem;
+            color: #839cac;
+            border-top: 1px solid #dce6ec;
             padding-top: 24px;
         }
         .footer-note a {
-            color: #627553;
+            color: #2b5e3b;
             text-decoration: none;
-            border-bottom: 1px dotted #afba94;
-            font-weight: 450;
         }
-
-        /* 回到顶部按钮 */
-        .back-to-top {
-            position: fixed;
-            bottom: 24px;
-            right: 20px;
-            background: #f3edd9;
-            border: 2px solid #ccbe93;
-            border-radius: 50px 10px 50px 10px;
-            padding: 12px 18px 10px 18px;
-            text-decoration: none;
-            color: #4d653d;
-            font-size: 0.95rem;
-            font-weight: 500;
-            box-shadow: 4px 4px 0 #cfc094;
-            transition: 0.05s linear;
-            z-index: 100;
-            cursor: pointer;
-            display: none;
-            line-height: 1;
-            white-space: nowrap;
-            border-style: solid;
-            letter-spacing: 0.5px;
+        /* 演示模式小标识 */
+        .demo-mode-badge {
+            background: #fff1c1;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+            text-align: center;
+            margin-bottom: 18px;
+            color: #9e6d1f;
         }
-        .back-to-top span {
-            font-size: 1.2rem;
-            margin-right: 4px;
-        }
-        .back-to-top:active {
-            transform: translate(3px, 3px);
-            box-shadow: none;
-        }
-        @media (max-width: 400px) {
-            .back-to-top {
-                padding: 10px 14px 8px 14px;
-                font-size: 0.85rem;
-                bottom: 16px;
-                right: 16px;
-            }
+        i, .fas, .far {
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 头部：两行显示，整体居中 -->
-        <header class="site-header">
-            <h1>
-                <span class="main-title">生活基础课</span><br>
-                <span class="domain">jichuke.cn</span>
-            </h1>
-            <div class="subhead">真实经历 · 可执行的动作 · 陪伴</div>
-        </header>
-
-        <!-- 导航区域独立卡片，与标题明显区分 -->
-        <div class="nav-section">
-            <div class="nav-label">系列导航</div>
-            <div class="series-nav">
-                <a href="#series-youth">初入社会</a>
-                <a href="#series-elder">适老化</a>
-                <a href="#series-wechat">会用微信</a>
-                <a href="#series-alipay">会用支付宝</a>
-                <a href="#series-survival">极限生存</a>
-                <a href="#series-better">更好地生活</a>
-            </div>
-        </div>
-
-        <!-- 初入社会系列 -->
-        <div id="series-youth" class="series">
-            <h2>初入社会系列</h2>
-        </div>
-        <ul class="course-list">
-            <li class="course-item">
-                <div class="course-num">001</div>
-                <div class="course-info">
-                    <span class="course-title"><a href="#" target="_blank" rel="noopener">找房 · 先问自己两个问题</a></span>
-                </div>
-                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
-            </li>
-            <li class="course-item">
-                <div class="course-num">002</div>
-                <div class="course-info">
-                    <span class="course-title"><a href="#" target="_blank" rel="noopener">看房 · 进门到底该看什么</a></span>
-                </div>
-                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
-            </li>
-            <li class="course-item">
-                <div class="course-num">003</div>
-                <div class="course-info">
-                    <span class="course-title"><a href="#" target="_blank" rel="noopener">签合同 · 哪几条没看清楚先别签字</a></span>
-                </div>
-                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
-            </li>
-            <li class="course-item">
-                <div class="course-num">004</div>
-                <div class="course-info">
-                    <span class="course-title"><a href="#" target="_blank" rel="noopener">入住检查 · 拿到钥匙后第一件事</a></span>
-                </div>
-                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
-            </li>
-            <li class="course-item">
-                <div class="course-num">005</div>
-                <div class="course-info">
-                    <span class="course-title"><a href="#" target="_blank" rel="noopener">办门禁 · 怎么才能顺利进出</a></span>
-                </div>
-                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
-            </li>
-            <li class="course-item">
-                <div class="course-num">006</div>
-                <div class="course-info">
-                    <span class="course-title"><a href="#" target="_blank" rel="noopener">缴水费 · 问谁、怎么问、问完怎么做</a></span>
-                </div>
-                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
-            </li>
-            <li class="course-item">
-                <div class="course-num">007</div>
-                <div class="course-info">
-                    <span class="course-title"><a href="#" target="_blank" rel="noopener">缴电费 · 电费怎么交？会不会断电？</a></span>
-                </div>
-                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
-            </li>
-            <li class="course-item">
-                <div class="course-num">008</div>
-                <div class="course-info">
-                    <span class="course-title"><a href="#" target="_blank" rel="noopener">缴燃气费 · 燃气怎么开、怎么交？</a></span>
-                </div>
-                <a href="#" class="video-link" target="_blank" rel="noopener">看视频</a>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">···</div>
-                <div class="course-info">
-                    <span class="course-title">更多课程准备中 <span class="coming-tag">coming</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">B站待上线</span>
-            </li>
-        </ul>
-
-        <!-- 适老化系列 -->
-        <div id="series-elder" class="series">
-            <h2>适老化系列</h2>
-        </div>
-        <ul class="course-list">
-            <li class="course-item coming-soon">
-                <div class="course-num">101</div>
-                <div class="course-info">
-                    <span class="course-title">手机基础 · 怎样调大字体 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">102</div>
-                <div class="course-info">
-                    <span class="course-title">微信聊天 · 怎么发照片 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">103</div>
-                <div class="course-info">
-                    <span class="course-title">预约挂号 · 手机操作 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">···</div>
-                <div class="course-info">
-                    <span class="course-title">更多内容策划中</span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">⏳</span>
-            </li>
-        </ul>
-
-        <!-- 会用微信系列 -->
-        <div id="series-wechat" class="series">
-            <h2>会用微信</h2>
-        </div>
-        <ul class="course-list">
-            <li class="course-item coming-soon">
-                <div class="course-num">201</div>
-                <div class="course-info">
-                    <span class="course-title">基础设置 · 字体/隐私/关怀模式 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">202</div>
-                <div class="course-info">
-                    <span class="course-title">聊天功能 · 语音/视频/群聊 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">203</div>
-                <div class="course-info">
-                    <span class="course-title">支付与钱包 · 红包/转账/零钱 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">···</div>
-                <div class="course-info">
-                    <span class="course-title">更多内容策划中</span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">⏳</span>
-            </li>
-        </ul>
-
-        <!-- 会用支付宝系列 -->
-        <div id="series-alipay" class="series">
-            <h2>会用支付宝</h2>
-        </div>
-        <ul class="course-list">
-            <li class="course-item coming-soon">
-                <div class="course-num">301</div>
-                <div class="course-info">
-                    <span class="course-title">基础设置 · 登录/安全/实名 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">302</div>
-                <div class="course-info">
-                    <span class="course-title">支付与缴费 · 扫码/水电煤 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">303</div>
-                <div class="course-info">
-                    <span class="course-title">市民中心 · 社保/公积金/证件 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">···</div>
-                <div class="course-info">
-                    <span class="course-title">更多内容策划中</span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">⏳</span>
-            </li>
-        </ul>
-
-        <!-- 极限生存系列 -->
-        <div id="series-survival" class="series">
-            <h2>极限生存</h2>
-        </div>
-        <ul class="course-list">
-            <li class="course-item coming-soon">
-                <div class="course-num">401</div>
-                <div class="course-info">
-                    <span class="course-title">没钱了怎么办 · 应急资源 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">402</div>
-                <div class="course-info">
-                    <span class="course-title">突发状况 · 证件丢失/受骗 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">403</div>
-                <div class="course-info">
-                    <span class="course-title">心理急救 · 孤独/焦虑怎么办 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">···</div>
-                <div class="course-info">
-                    <span class="course-title">更多内容策划中</span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">⏳</span>
-            </li>
-        </ul>
-
-        <!-- 更好地生活系列 -->
-        <div id="series-better" class="series">
-            <h2>更好地生活</h2>
-        </div>
-        <ul class="course-list">
-            <li class="course-item coming-soon">
-                <div class="course-num">501</div>
-                <div class="course-info">
-                    <span class="course-title">理财入门 · 记账/储蓄/防坑 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">502</div>
-                <div class="course-info">
-                    <span class="course-title">健康管理 · 医保/体检/小病 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">503</div>
-                <div class="course-info">
-                    <span class="course-title">自我提升 · 技能/社交/时间 <span class="coming-tag">筹备</span></span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">即将上线</span>
-            </li>
-            <li class="course-item coming-soon">
-                <div class="course-num">···</div>
-                <div class="course-info">
-                    <span class="course-title">更多内容策划中</span>
-                </div>
-                <span style="font-size:0.7rem; color:#7d8a71;">⏳</span>
-            </li>
-        </ul>
-
-        <!-- 底部 -->
-        <div class="footer-note">
-            <a href="#" target="_blank">关注公众号</a> 获取文章 · 视频同步B站<br>© 生活基础课 · 备案中
-        </div>
+<div class="container">
+    <!-- 头部区域：品牌+域名 -->
+    <div class="hero">
+        <div class="hero-badge">🎓 社会新生 · 必修手册</div>
+        <h1>生活基础课 <span>初入社会系列</span></h1>
+        <div class="hero-desc">从租房到入职，从缴费到独居<br>按时间线排课，每课解决一个核心小问题</div>
+        <div class="domain-tag"><i class="fas fa-globe"></i> jichuke.cn · 课表总目录</div>
     </div>
 
-    <!-- 回到顶部按钮 -->
-    <div class="back-to-top" id="backToTop" title="回到顶部">
-        <span>↑</span> 顶部
+    <!-- 课程说明 + 演示提示（方便展示架构）-->
+    <div class="demo-mode-badge">
+        <i class="fas fa-flask"></i> 课表演示版 · 点击图文/视频按钮可查看链接示意（正式版替换真实链接即可）
+    </div>
+    <div class="info-panel">
+        <span><i class="fas fa-calendar-alt"></i> 按毕业时间轴排课 · 每周进阶</span>
+        <span class="update-badge"><i class="fas fa-book-open"></i> 已上线12节必修课</span>
     </div>
 
-    <script>
-        // 阻止所有 href="#" 的默认跳转 (仅用于演示)
-        document.querySelectorAll('a[href="#"]').forEach(link => {
-            link.addEventListener('click', (e) => e.preventDefault());
-        });
+    <!-- 课表目录：动态js渲染 按周分组 -->
+    <div id="courseSchedule"></div>
 
-        // 回到顶部按钮逻辑
-        const backToTop = document.getElementById('backToTop');
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 300) {
-                backToTop.style.display = 'block';
+    <div class="footer-note">
+        <i class="fas fa-chalkboard-user"></i> 生活基础课 · 陪你安稳度过社会第一年<br>
+        更多课程持续更新中 | 关注公众号/抖音获取完整避坑手册<br>
+        <span style="font-size:0.65rem">📌 当前为课表H5演示版，正式链接将跳转公众号图文 & 抖音视频</span>
+    </div>
+</div>
+
+<script>
+    // ------------------------------
+    // 演示模式开关 (true=弹提示，展示架构；false=跳转真实链接，需填入下方课程数据中的真实URL)
+    const DEMO_MODE = true;
+    
+    // ------------------------------
+    // 课程数据（按周分组，自动按顺序展示）
+    // 字段说明：
+    // week: 周次编号 (展示顺序)
+    // weekName: 周主题名称
+    // courses: 课程列表
+    //   title: 课程标题（小而核心的问题）
+    //   stars: 必修指数 (1-5星，使用★展示)
+    //   formula: 一句话口诀/核心公式
+    //   description: 简短说明，解决什么痛点
+    //   wechatUrl: 公众号图文链接 (DEMO_MODE=false时生效)
+    //   douyinUrl: 抖音视频链接 (DEMO_MODE=false时生效)
+    // ------------------------------
+    const courseData = [
+        {
+            week: 1,
+            weekName: "📍 落脚城市 · 租房必修",
+            courses: [
+                {
+                    title: "🔍 看房时该拍哪5张照片？",
+                    stars: 5,
+                    formula: "📸 拍门牌+水电表+墙角窗户+家电型号+中介工牌 = 证据链",
+                    description: "避免入住后扯皮，退押金时有图有真相。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_kanfang",
+                    douyinUrl: "https://www.douyin.com/video/example_kanfang"
+                },
+                {
+                    title: "📑 租房合同避坑指南：这三处空白千万别签字",
+                    stars: 5,
+                    formula: "✍️ 维修责任+退租条款+费用明细 → 缺一不可",
+                    description: "逐字解析租房合同最易被坑的3个陷阱。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_hetong",
+                    douyinUrl: "https://www.douyin.com/video/example_hetong"
+                },
+                {
+                    title: "💰 退押金攻略｜黑中介的10个扣费套路",
+                    stars: 4,
+                    formula: "🧾 入住视频留底+交接单签字+法定扣除标准",
+                    description: "学会合法拿回押金，拒绝乱扣费。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_yajin",
+                    douyinUrl: "https://www.douyin.com/video/example_yajin"
+                }
+            ]
+        },
+        {
+            week: 2,
+            weekName: "⚡ 安顿生活 · 缴费居家",
+            courses: [
+                {
+                    title: "💡 水电燃气如何过户/缴费？",
+                    stars: 5,
+                    formula: "🏠 过户=房产证+身份证+物业结清；缴费=户号绑定",
+                    description: "第一次独立缴生活账单，手把手教你线上办理。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_shuidian",
+                    douyinUrl: "https://www.douyin.com/video/example_shuidian"
+                },
+                {
+                    title: "📶 宽带办理避坑指南：别被合约套牢",
+                    stars: 4,
+                    formula: "🔌 短期选月付，长期看融合套餐，问清违约金",
+                    description: "毕业生装宽带怎样最划算？避免两年合约陷阱。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_kuandai",
+                    douyinUrl: "https://www.douyin.com/video/example_kuandai"
+                },
+                {
+                    title: "🗑️ 垃圾分类+社区资源挖掘，不做尴尬新人",
+                    stars: 3,
+                    formula: "♻️ 定时定点APP查，邻里群+物业电话存好",
+                    description: "快速融入社区，搞定扔垃圾、找维修、收快递。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_shequ",
+                    douyinUrl: "https://www.douyin.com/video/example_shequ"
+                }
+            ]
+        },
+        {
+            week: 3,
+            weekName: "💼 职场启航 · 权益&社保",
+            courses: [
+                {
+                    title: "📄 劳动合同必须看这3处：薪资/工时/解约条款",
+                    stars: 5,
+                    formula: "🛡️ 空白合同不签，口头承诺写进纸，试用期时长≤6个月",
+                    description: "刚毕业签劳动合同最容易忽略的致命细节。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_laodong",
+                    douyinUrl: "https://www.douyin.com/video/example_laodong"
+                },
+                {
+                    title: "🏦 社保公积金第一课：五险一金到底是什么？",
+                    stars: 5,
+                    formula: "💎 医保最实用，公积金是存款，养老要累计",
+                    description: "搞懂缴费基数、断缴影响、怎么查账户。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_shebao",
+                    douyinUrl: "https://www.douyin.com/video/example_shebao"
+                },
+                {
+                    title: "⏳ 试用期避坑：不被PUA，不白加班",
+                    stars: 4,
+                    formula: "⚖️ 试用期薪资≥80%，时长不超6个月，社保必须缴",
+                    description: "试用期≠廉价劳动力，合法保护自己权益。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_shiyongqi",
+                    douyinUrl: "https://www.douyin.com/video/example_shiyongqi"
+                }
+            ]
+        },
+        {
+            week: 4,
+            weekName: "🏡 独居进阶 · 安全&合租公约",
+            courses: [
+                {
+                    title: "🚪 独居安全指南：外卖快递/陌生人敲门",
+                    stars: 5,
+                    formula: "🔐 虚拟号码+门外不放男鞋+智能门铃+物业联防",
+                    description: "独居男女都适用的安全防护小习惯。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_anquan",
+                    douyinUrl: "https://www.douyin.com/video/example_anquan"
+                },
+                {
+                    title: "👥 合租公约制定｜如何避免室友矛盾",
+                    stars: 4,
+                    formula: "📝 值日表+公共基金+静音时段，提前白纸黑字",
+                    description: "合租前约法三章，减少80%的琐事争吵。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_heyue",
+                    douyinUrl: "https://www.douyin.com/video/example_heyue"
+                },
+                {
+                    title: "🔊 邻里关系与噪音处理：社恐也能搞定",
+                    stars: 3,
+                    formula: "🎧 先礼后兵，物业介入，留存噪音记录",
+                    description: "楼上吵、邻居投诉怎么体面解决。",
+                    wechatUrl: "https://mp.weixin.qq.com/s/example_linli",
+                    douyinUrl: "https://www.douyin.com/video/example_linli"
+                }
+            ]
+        }
+    ];
+
+    // 辅助函数：渲染星级 (最多5星)
+    function renderStars(starCount) {
+        let full = "★";
+        let empty = "☆";
+        let starStr = "";
+        for(let i=0; i<5; i++) {
+            if(i < starCount) starStr += full;
+            else starStr += empty;
+        }
+        return starStr;
+    }
+
+    // 处理点击链接（演示模式 / 正式跳转）
+    function handleLinkClick(url, platformName) {
+        if(DEMO_MODE) {
+            // 演示模式 优雅提示
+            alert(`📚 “生活基础课” 演示版\n即将跳转至【${platformName}】课程内容。\n正式上线后将自动打开对应图文/视频链接。\n(课表架构已完成，替换DEMO_MODE=false并填入真实URL即可)`);
+        } else {
+            if(url && url !== "#" && url !== "") {
+                window.open(url, "_blank");
             } else {
-                backToTop.style.display = 'none';
+                alert(`⏳ 该课程${platformName}链接正在制作中，敬请期待！`);
             }
-        });
+        }
+    }
 
-        backToTop.addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+    // 动态渲染课程表
+    function renderSchedule() {
+        const container = document.getElementById("courseSchedule");
+        if(!container) return;
+        let html = "";
+        // 按周次排序（默认数组已按顺序）
+        courseData.forEach(weekItem => {
+            // 周头部
+            html += `
+                <div class="week-section">
+                    <div class="week-title">
+                        <div class="week-number">第 ${weekItem.week} 周</div>
+                        <div class="week-tagline">${weekItem.weekName}</div>
+                    </div>
+            `;
+            // 遍历课程
+            weekItem.courses.forEach(course => {
+                // 必修指数渲染
+                const starDisplay = renderStars(course.stars);
+                // 为防止wechatUrl或douyinUrl缺失，使用占位
+                const wechatLink = course.wechatUrl || "#";
+                const douyinLink = course.douyinUrl || "#";
+                // 构造卡片
+                html += `
+                    <div class="course-card">
+                        <div class="course-header">
+                            <div class="course-title">${course.title}</div>
+                            <div class="required-stars"><i class="fas fa-graduation-cap"></i> 必修指数 ${starDisplay}</div>
+                        </div>
+                        <div class="formula-box">
+                            <i class="fas fa-lightbulb"></i> ${course.formula}
+                        </div>
+                        <div class="course-desc">
+                            ${course.description}
+                        </div>
+                        <div class="platform-links">
+                            <button class="platform-btn wechat" data-platform="微信公众号图文" data-url="${wechatLink}" data-type="wechat">
+                                <i class="fab fa-weixin"></i> 图文详解
+                            </button>
+                            <button class="platform-btn douyin" data-platform="抖音短视频" data-url="${douyinLink}" data-type="douyin">
+                                <i class="fab fa-tiktok"></i> 视频课程
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`; // 关闭week-section
+        });
+        container.innerHTML = html;
+
+        // 绑定按钮事件 (委托)
+        container.querySelectorAll('.platform-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const platform = btn.getAttribute('data-platform');
+                let url = btn.getAttribute('data-url');
+                // 如果url是#或者空，演示模式也提示
+                if(!url || url === "#") {
+                    if(DEMO_MODE) {
+                        alert(`📘 【${platform}】课程内容正在录制中，即将上线！\n可以先收藏课表，后续自动更新链接。`);
+                    } else {
+                        alert(`该课程${platform}暂未配置链接，请联系管理员添加。`);
+                    }
+                    return;
+                }
+                handleLinkClick(url, platform);
             });
         });
-    </script>
+    }
+
+    // 额外：如果有兴趣在页面完全加载后显示课表完成信息
+    window.addEventListener('DOMContentLoaded', () => {
+        renderSchedule();
+        // 可选：控制台输出友好提示
+        if(DEMO_MODE) {
+            console.log("🔧 当前为“生活基础课”H5演示模式，课程链接均未实际跳转，正式上线时设置 DEMO_MODE = false 并填入真实公众号图文/抖音链接即可。");
+        }
+    });
+</script>
 </body>
 </html>
