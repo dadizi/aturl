@@ -138,7 +138,6 @@
             padding-left: 16px;
         }
 
-        /* 子标题 */
         .subsection-title {
             font-size: 13px;
             letter-spacing: 0.1em;
@@ -151,7 +150,6 @@
             padding-left: 4px;
         }
 
-        /* 卡片网格 */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -163,7 +161,6 @@
             grid-template-columns: repeat(3, 1fr);
         }
 
-        /* 信号卡片 */
         .signal-card {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -208,9 +205,6 @@
         .signal-icon.heart {
             background: rgba(170, 130, 120, 0.2);
         }
-        .signal-icon.calm {
-            background: rgba(140, 160, 150, 0.2);
-        }
 
         .signal-body-part {
             font-size: 14px;
@@ -248,7 +242,6 @@
             font-style: italic;
         }
 
-        /* 冲击数据 */
         .impact-card {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -303,7 +296,6 @@
             font-family: var(--font-en);
         }
 
-        /* 研究数据卡片 */
         .data-card {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -366,7 +358,6 @@
             margin-top: 4px;
         }
 
-        /* 场景便签 */
         .scene-intro {
             font-size: 14px;
             color: var(--text-dim);
@@ -461,7 +452,6 @@
             letter-spacing: 0.03em;
         }
 
-        /* 警告进度条 */
         .warning-timeline {
             position: relative;
             padding: 10px 0 10px 36px;
@@ -582,7 +572,6 @@
             font-weight: 500;
         }
 
-        /* ========== 第三幕：缓解累 ========== */
         .rest-command {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -647,7 +636,6 @@
             padding: 14px 16px;
         }
 
-        /* 精神按摩卡片 */
         .meditation-card {
             background: var(--bg-card-alt);
             border-radius: var(--radius);
@@ -680,7 +668,6 @@
             letter-spacing: 0.06em;
         }
 
-        /* 恢复工具卡片 */
         .tool-card {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -727,7 +714,6 @@
             color: #d8cfbf;
         }
 
-        /* 关机小事 */
         .shutdown-list {
             list-style: none;
             padding: 0;
@@ -770,7 +756,6 @@
             line-height: 1.5;
         }
 
-        /* 今日休息卡片 */
         .daily-card {
             background: var(--bg-card-alt);
             border-radius: var(--radius);
@@ -812,7 +797,6 @@
             font-family: var(--font-en);
         }
 
-        /* 底部 */
         .footer {
             text-align: center;
             padding: 40px 0 30px;
@@ -835,98 +819,6 @@
             margin-bottom: 30px;
         }
 
-        .subscribe-hint {
-            font-size: 12px;
-            color: var(--text-dim);
-            letter-spacing: 0.05em;
-            opacity: 0.7;
-            transition: var(--transition);
-            cursor: pointer;
-            display: inline-block;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .subscribe-hint:hover {
-            opacity: 1;
-            color: var(--accent);
-        }
-
-        .subscribe-form {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease, margin 0.5s ease, opacity 0.4s ease;
-            opacity: 0;
-            margin-top: 0;
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .subscribe-form.open {
-            max-height: 60px;
-            margin-top: 14px;
-            opacity: 1;
-        }
-
-        .subscribe-input {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 10px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            letter-spacing: 0.03em;
-            font-family: var(--font-cn);
-            outline: none;
-            transition: var(--transition);
-            width: 220px;
-            max-width: 60vw;
-        }
-
-        .subscribe-input:focus {
-            border-color: rgba(196, 149, 106, 0.5);
-            box-shadow: 0 0 0 3px rgba(196, 149, 106, 0.08);
-        }
-
-        .subscribe-btn {
-            background: transparent;
-            border: 1px solid rgba(196, 149, 106, 0.4);
-            color: var(--accent);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 13px;
-            letter-spacing: 0.05em;
-            cursor: pointer;
-            transition: var(--transition);
-            font-family: var(--font-cn);
-            white-space: nowrap;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .subscribe-btn:hover {
-            background: rgba(196, 149, 106, 0.1);
-            border-color: var(--accent);
-        }
-
-        .subscribe-confirm {
-            font-size: 12px;
-            color: var(--accent);
-            letter-spacing: 0.04em;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            margin-top: 8px;
-            height: 0;
-            overflow: hidden;
-        }
-
-        .subscribe-confirm.show {
-            opacity: 1;
-            height: auto;
-            margin-top: 10px;
-        }
-
         .footer-credits {
             font-size: 10px;
             color: var(--text-dim);
@@ -936,7 +828,6 @@
             font-family: var(--font-en);
         }
 
-        /* ========== 响应式 ========== */
         @media (max-width: 600px) {
             .cards-grid {
                 display: flex;
@@ -1024,10 +915,6 @@
             }
             .daily-card {
                 padding: 22px 16px;
-            }
-            .subscribe-input {
-                width: 160px;
-                max-width: 50vw;
             }
         }
 
@@ -1186,7 +1073,6 @@
             <span class="act-label">缓解</span>
             <p class="section-intro">停下来之后，可以试试这些——</p>
 
-            <!-- 即刻休息指令 -->
             <div class="rest-command">
                 <p class="rest-command-text">
                     现在，把手掌搓热，<br>轻轻盖在眼睛上。<br>数 7 次呼吸。
@@ -1195,7 +1081,6 @@
                 <div class="rest-explanation" id="explanation-text">温暖的手掌轻轻覆盖眼睑，通过眼心反射刺激副交感神经，帮助心率放缓、身心沉静。这是身体自带的"平静开关"，随时可用，无需任何工具。</div>
             </div>
 
-            <!-- 一分钟精神按摩 -->
             <p class="subsection-title">精神按摩</p>
             <div class="meditation-card">
                 <p class="meditation-line">
@@ -1207,7 +1092,6 @@
                 <p class="meditation-breathe-hint">读完这一段，刚好是一次深长的呼吸</p>
             </div>
 
-            <!-- 恢复工具箱 -->
             <p class="subsection-title">恢复工具箱</p>
             <div class="cards-grid three-col">
                 <div class="tool-card">
@@ -1242,7 +1126,15 @@
                 </div>
             </div>
 
-            <!-- 关机前的三件小事 -->
+            <!-- 今日休息卡片（按星期显示） -->
+            <p class="subsection-title">今日休息卡片</p>
+            <div class="daily-card">
+                <span class="daily-card-label">今日休息卡片</span>
+                <div class="daily-card-content" id="daily-content">加载中…</div>
+                <div class="daily-card-date" id="daily-date"></div>
+            </div>
+
+            <!-- 关机仪式 -->
             <p class="subsection-title">关机仪式</p>
             <ul class="shutdown-list">
                 <li class="shutdown-item">
@@ -1258,125 +1150,92 @@
                     <span class="shutdown-text">对自己说一句：<strong>"今天已经够了。"</strong> 不需要更多理由。</span>
                 </li>
             </ul>
-
-            <!-- 今日休息卡片 -->
-            <div class="daily-card">
-                <span class="daily-card-label">今日休息卡片</span>
-                <div class="daily-card-content" id="daily-content">加载中…</div>
-                <div class="daily-card-date" id="daily-date"></div>
-            </div>
         </section>
 
         <hr class="section-divider" aria-hidden="true">
 
         <footer class="footer">
             <p class="shutdown-line">今晚的关机语：</p>
-            <p class="shutdown-sub">今天你已经完成了足够多。剩下的，留给明天。</p>
-            <span class="subscribe-hint" id="toggle-subscribe" role="button" tabindex="0" aria-expanded="false">每天收到这张卡片 →</span>
-            <div class="subscribe-form" id="subscribe-form">
-                <input type="email" class="subscribe-input" id="subscribe-email" placeholder="输入邮箱地址" aria-label="邮箱地址">
-                <button class="subscribe-btn" id="subscribe-btn">订阅</button>
-            </div>
-            <p class="subscribe-confirm" id="subscribe-confirm">✓ 已记录。愿你每天都有片刻真正的休息。</p>
+            <p class="shutdown-sub" id="shutdown-message"></p>
             <p class="footer-credits">leilema.com · 累了没 · 累不累</p>
         </footer>
     </div>
 
     <script>
         (function() {
+            const today = new Date();
+            const dayOfWeek = today.getDay(); // 0=周日, 1=周一, ..., 6=周六
+
+            // 7 条今日休息卡片，索引对应星期几
+            const restCards = [
+                "闭上眼睛，听离你最近的那个声音。那是世界在继续，而你此刻可以暂停。",           // 周日
+                "站起来，走到窗边，看窗外30秒。什么也不用想，只是看。",                           // 周一
+                "喝一杯温水，慢慢地，一口一口。感受水从喉咙流下去的路径。",                       // 周二
+                "找到身边任何一件柔软的物体——靠垫、围巾、毛衣——用手抚摸它10秒。",                // 周三
+                "把肩膀耸到最高，停3秒，然后完全放下。重复3次。",                                // 周四
+                "写下此刻心里最烦的一件事，写在一张纸上，然后翻过去。",                           // 周五
+                "对自己说：'今天我已经完成了足够多。' 说三遍，声音可以很轻。"                    // 周六
+            ];
+
+            // 7 条今晚关机语，索引对应星期几
+            const shutdownMessages = [
+                "周日夜晚，适合把一整周的心都轻轻折好。晚安。",                                   // 周日
+                "周一已经结束，你比自己想象的更坚韧。关闭灯光，合上双眼。",                       // 周一
+                "周二总是被低估的一天。你做得很好，现在交给夜晚。",                               // 周二
+                "一周的中点，也是身心可以停靠的码头。周三晚安。",                                 // 周三
+                "周四的尾巴，像一首即将抵达副歌的曲子。安静听完它。",                             // 周四
+                "周五的夜晚，值得一次深深的呼气。你解放了。",                                     // 周五
+                "周六的城门关闭，世界和你一起休息。明天的事，明天再说。"                          // 周六
+            ];
+
+            // 设置今日休息卡片
             const dailyContent = document.getElementById('daily-content');
             const dailyDate = document.getElementById('daily-date');
-            const restCards = [
-                "闭上眼睛，听离你最近的那个声音。那是世界在继续，而你此刻可以暂停。",
-                "站起来，走到窗边，看窗外30秒。什么也不用想，只是看。",
-                "喝一杯温水，慢慢地，一口一口。感受水从喉咙流下去的路径。",
-                "找到身边任何一件柔软的物体——靠垫、围巾、毛衣——用手抚摸它10秒。",
-                "把肩膀耸到最高，停3秒，然后完全放下。重复3次。",
-                "写下此刻心里最烦的一件事，写在一张纸上，然后翻过去。",
-                "对自己说：'今天我已经完成了足够多。' 说三遍，声音可以很轻。",
-                "找一个有阳光的角落，站进去，闭上眼睛，让光照在眼皮上30秒。",
-                "用鼻子深深吸气4秒，憋住4秒，用嘴巴慢慢呼出6秒。只做这一次。",
-                "回想今天一个让你感到微小满足的瞬间——哪怕只是泡了一杯好茶。",
-                "把手机屏幕亮度调到最低，开启灰度模式，今晚不再切换回来。",
-                "在便签上画一个圆，用最慢的速度画，越慢越好。",
-                "听一首没有任何歌词的曲子，闭上眼睛听完它。",
-                "按摩你的太阳穴，用指腹画小圈，顺时针7圈，逆时针7圈。",
-            ];
-            const today = new Date();
-            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-            const cardIndex = dayOfYear % restCards.length;
-            dailyContent.textContent = restCards[cardIndex];
-            dailyDate.textContent = today.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+            if (dailyContent) {
+                dailyContent.textContent = restCards[dayOfWeek];
+            }
+            if (dailyDate) {
+                dailyDate.textContent = today.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'short'
+                });
+            }
+
+            // 设置今晚关机语
+            const shutdownElem = document.getElementById('shutdown-message');
+            if (shutdownElem) {
+                shutdownElem.textContent = shutdownMessages[dayOfWeek];
+            }
         })();
 
+        // 眼心反射折叠交互
         (function() {
             const toggleBtn = document.getElementById('toggle-explanation');
             const explanation = document.getElementById('explanation-text');
             let isOpen = false;
-            toggleBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                isOpen = !isOpen;
-                explanation.classList.toggle('open', isOpen);
-                toggleBtn.setAttribute('aria-expanded', isOpen);
-                toggleBtn.textContent = isOpen ? '原理：眼心反射 ↑' : '原理：眼心反射 →';
-            });
-            explanation.addEventListener('click', e => e.stopPropagation());
-            document.addEventListener('click', () => {
-                if (isOpen) { isOpen = false;
-                    explanation.classList.remove('open');
-                    toggleBtn.setAttribute('aria-expanded', 'false');
-                    toggleBtn.textContent = '原理：眼心反射 →'; }
-            });
-            toggleBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault();
-                    toggleBtn.click(); } });
+            if (toggleBtn && explanation) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    isOpen = !isOpen;
+                    explanation.classList.toggle('open', isOpen);
+                    toggleBtn.setAttribute('aria-expanded', isOpen);
+                    toggleBtn.textContent = isOpen ? '原理：眼心反射 ↑' : '原理：眼心反射 →';
+                });
+                explanation.addEventListener('click', e => e.stopPropagation());
+                document.addEventListener('click', () => {
+                    if (isOpen) { isOpen = false;
+                        explanation.classList.remove('open');
+                        toggleBtn.setAttribute('aria-expanded', 'false');
+                        toggleBtn.textContent = '原理：眼心反射 →'; }
+                });
+                toggleBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault();
+                        toggleBtn.click(); } });
+            }
         })();
 
-        (function() {
-            const toggleSubscribe = document.getElementById('toggle-subscribe');
-            const subscribeForm = document.getElementById('subscribe-form');
-            const subscribeBtn = document.getElementById('subscribe-btn');
-            const subscribeEmail = document.getElementById('subscribe-email');
-            const subscribeConfirm = document.getElementById('subscribe-confirm');
-            let isFormOpen = false;
-            toggleSubscribe.addEventListener('click', function(e) {
-                e.stopPropagation();
-                isFormOpen = !isFormOpen;
-                subscribeForm.classList.toggle('open', isFormOpen);
-                toggleSubscribe.setAttribute('aria-expanded', isFormOpen);
-                toggleSubscribe.textContent = isFormOpen ? '收起 ↑' : '每天收到这张卡片 →';
-                if (isFormOpen) setTimeout(() => subscribeEmail.focus(), 400);
-            });
-            subscribeForm.addEventListener('click', e => e.stopPropagation());
-            document.addEventListener('click', () => {
-                if (isFormOpen) { isFormOpen = false;
-                    subscribeForm.classList.remove('open');
-                    toggleSubscribe.setAttribute('aria-expanded', 'false');
-                    toggleSubscribe.textContent = '每天收到这张卡片 →'; }
-            });
-            toggleSubscribe.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault();
-                    toggleSubscribe.click(); } });
-            subscribeBtn.addEventListener('click', function() {
-                const email = subscribeEmail.value.trim();
-                if (email && email.includes('@') && email.includes('.')) {
-                    subscribeConfirm.classList.add('show');
-                    subscribeEmail.value = '';
-                    setTimeout(() => {
-                        subscribeConfirm.classList.remove('show');
-                        subscribeForm.classList.remove('open');
-                        isFormOpen = false;
-                        toggleSubscribe.setAttribute('aria-expanded', 'false');
-                        toggleSubscribe.textContent = '每天收到这张卡片 →';
-                    }, 3000);
-                } else {
-                    subscribeEmail.focus();
-                    subscribeEmail.style.borderColor = 'rgba(200,120,100,0.6)';
-                    setTimeout(() => { subscribeEmail.style.borderColor = ''; }, 1500);
-                }
-            });
-            subscribeEmail.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault();
-                    subscribeBtn.click(); } });
-        })();
-
+        // 警告阶段淡入
         if ('IntersectionObserver' in window) {
             const stages = document.querySelectorAll('.warning-stage');
             const observer = new IntersectionObserver(entries => {
