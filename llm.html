@@ -161,6 +161,15 @@
             grid-template-columns: repeat(3, 1fr);
         }
 
+        .signal-card,
+        .data-card,
+        .scene-note-card,
+        .tool-card {
+            transition: var(--transition);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         .signal-card {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -170,9 +179,6 @@
             align-items: flex-start;
             gap: 14px;
             border: 1px solid var(--border);
-            transition: var(--transition);
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .signal-card:hover {
@@ -305,9 +311,6 @@
             gap: 12px;
             border: 1px solid var(--border);
             border-top: 3px solid var(--accent);
-            transition: var(--transition);
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .data-card:hover {
@@ -375,46 +378,6 @@
             gap: 10px;
             border: 1px solid var(--border);
             border-left: 3px solid transparent;
-            transition: var(--transition);
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .scene-note-card:nth-child(1) {
-            border-left-color: rgba(180, 155, 140, 0.5);
-        }
-        .scene-note-card:nth-child(2) {
-            border-left-color: rgba(155, 150, 170, 0.5);
-        }
-        .scene-note-card:nth-child(3) {
-            border-left-color: rgba(170, 140, 130, 0.5);
-        }
-        .scene-note-card:nth-child(4) {
-            border-left-color: rgba(150, 160, 175, 0.5);
-        }
-        .scene-note-card:nth-child(5) {
-            border-left-color: rgba(165, 145, 155, 0.5);
-        }
-        .scene-note-card:nth-child(6) {
-            border-left-color: rgba(175, 138, 125, 0.5);
-        }
-        .scene-note-card:nth-child(7) {
-            border-left-color: rgba(148, 158, 168, 0.5);
-        }
-        .scene-note-card:nth-child(8) {
-            border-left-color: rgba(168, 152, 140, 0.5);
-        }
-        .scene-note-card:nth-child(9) {
-            border-left-color: rgba(160, 148, 162, 0.5);
-        }
-        .scene-note-card:nth-child(10) {
-            border-left-color: rgba(172, 135, 128, 0.5);
-        }
-        .scene-note-card:nth-child(11) {
-            border-left-color: rgba(153, 155, 172, 0.5);
-        }
-        .scene-note-card:nth-child(12) {
-            border-left-color: rgba(166, 142, 138, 0.5);
         }
 
         .scene-note-card:hover {
@@ -676,10 +639,7 @@
             flex-direction: column;
             gap: 10px;
             border: 1px solid var(--border);
-            transition: var(--transition);
             text-align: center;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .tool-card:hover {
@@ -828,6 +788,7 @@
             font-family: var(--font-en);
         }
 
+        /* ========== 响应式 ========== */
         @media (max-width: 600px) {
             .cards-grid {
                 display: flex;
@@ -836,10 +797,9 @@
                 -webkit-overflow-scrolling: touch;
                 scrollbar-width: none;
                 gap: 16px;
-                padding: 8px 0 20px;
+                padding: 8px 16px 20px;
                 margin: 0 -16px;
-                padding-left: 16px;
-                padding-right: 16px;
+                scroll-snap-type: x mandatory;
                 cursor: grab;
             }
             .cards-grid::-webkit-scrollbar {
@@ -852,10 +812,9 @@
                 -webkit-overflow-scrolling: touch;
                 scrollbar-width: none;
                 gap: 16px;
-                padding: 8px 0 20px;
+                padding: 8px 16px 20px;
                 margin: 0 -16px;
-                padding-left: 16px;
-                padding-right: 16px;
+                scroll-snap-type: x mandatory;
                 cursor: grab;
             }
             .cards-grid.three-col::-webkit-scrollbar {
@@ -866,13 +825,37 @@
             .scene-note-card,
             .tool-card {
                 flex: 0 0 auto;
-                width: 200px;
-                min-width: 200px;
+                width: 220px;
+                min-width: 220px;
+                scroll-snap-align: center;
             }
             .tool-card {
                 width: 180px;
                 min-width: 180px;
             }
+
+            /* 第一个和最后一个卡片的留白，让居中卡片能真正居中 */
+            .cards-grid::before,
+            .cards-grid::after {
+                content: '';
+                flex: 0 0 calc(50vw - 126px);
+                min-width: calc(50vw - 126px);
+            }
+            .cards-grid.three-col::before,
+            .cards-grid.three-col::after {
+                content: '';
+                flex: 0 0 calc(50vw - 106px);
+                min-width: calc(50vw - 106px);
+            }
+            .cards-grid.no-scroll-snap::before,
+            .cards-grid.no-scroll-snap::after,
+            .cards-grid.three-col.no-scroll-snap::before,
+            .cards-grid.three-col.no-scroll-snap::after {
+                content: none;
+                flex: 0 0 0;
+                min-width: 0;
+            }
+
             .shutdown-list {
                 gap: 10px;
             }
@@ -962,8 +945,8 @@
             <span class="act-label">信号</span>
             <p class="section-intro">这些微小感受，是身体最诚实的语言。</p>
 
-            <div class="cards-grid">
-                <div class="signal-card">
+            <div class="cards-grid" id="signal-cards">
+                <div class="signal-card pickable-card">
                     <div class="signal-icon shoulder" aria-hidden="true">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(200,180,160,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="4"/><path d="M12 10v4M8 14l-3 6M16 14l3 6"/></svg>
                     </div>
@@ -971,7 +954,7 @@
                     <span class="signal-meaning">压力库存，在斜方肌上悄然堆积</span>
                     <span class="signal-tag">肌肉代偿</span>
                 </div>
-                <div class="signal-card">
+                <div class="signal-card pickable-card">
                     <div class="signal-icon eye" aria-hidden="true">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(170,175,190,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z"/></svg>
                     </div>
@@ -979,7 +962,7 @@
                     <span class="signal-meaning">光信号过载，视神经在请求关闭</span>
                     <span class="signal-tag">感官超载</span>
                 </div>
-                <div class="signal-card">
+                <div class="signal-card pickable-card">
                     <div class="signal-icon brain" aria-hidden="true">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(175,160,170,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg>
                     </div>
@@ -987,7 +970,7 @@
                     <span class="signal-meaning">认知预算耗尽，前额叶暂时熄火</span>
                     <span class="signal-tag">决策疲劳</span>
                 </div>
-                <div class="signal-card">
+                <div class="signal-card pickable-card">
                     <div class="signal-icon heart" aria-hidden="true">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(190,150,135,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-8-5.5-8-11a5.5 5.5 0 0 1 9.5-4A5.5 5.5 0 0 1 22 10c0 5.5-8 11-8 11z"/></svg>
                     </div>
@@ -1014,23 +997,23 @@
             </div>
 
             <p class="scene-intro">数字不会说谎——</p>
-            <div class="cards-grid">
-                <div class="data-card">
+            <div class="cards-grid" id="data-cards">
+                <div class="data-card pickable-card">
                     <div class="data-figure"><strong>4.5</strong>倍</div>
                     <div class="data-desc">长期睡眠少于6小时，中风风险增加4.5倍。</div>
                     <div class="data-source">European Heart Journal, 2011</div>
                 </div>
-                <div class="data-card">
+                <div class="data-card pickable-card">
                     <div class="data-figure">约<strong>190</strong>人</div>
                     <div class="data-desc">日本每年因过劳死被认定工伤的人数，未被记录的可能是这个数字的几十倍。</div>
                     <div class="data-source">日本厚生劳动省</div>
                 </div>
-                <div class="data-card">
+                <div class="data-card pickable-card">
                     <div class="data-figure"><strong>35%</strong> &amp; <strong>17%</strong></div>
                     <div class="data-desc">每周工作超过55小时，中风风险增加35%，冠心病风险增加17%。</div>
                     <div class="data-source">WHO / ILO, 2021</div>
                 </div>
-                <div class="data-card">
+                <div class="data-card pickable-card">
                     <div class="data-quote">"我稍微趴一下，5分钟后继续。"</div>
                     <div class="data-desc">一位硅谷工程师昏迷前留下的最后一条工作消息。再也没有醒来。</div>
                     <div class="data-source">匿名消息，2023</div>
@@ -1038,19 +1021,19 @@
             </div>
 
             <p class="scene-intro">这些场景，离我们并不遥远——</p>
-            <div class="cards-grid">
-                <div class="scene-note-card"><span class="scene-tag">驾驶</span><span class="scene-label-dian">差点就</span><p class="scene-story">连续加班三天，高速上打盹，车子撞向护栏。醒来时，妻子站在病床边，一句话没说。</p></div>
-                <div class="scene-note-card"><span class="scene-tag">职场</span><span class="scene-label-dian">差点就</span><p class="scene-story">她以为自己只是累，直到在办公室晕倒。诊断书：病毒性心肌炎。医生问，前期是不是长期劳累。</p></div>
-                <div class="scene-note-card"><span class="scene-tag">运动</span><span class="scene-label-dian">差点就</span><p class="scene-story">坚持跑完马拉松，终点线后心脏骤停。后来他说，早知道应该在28公里处停下来。</p></div>
-                <div class="scene-note-card"><span class="scene-tag">学业</span><span class="scene-label-dian">差点就</span><p class="scene-story">考研二战，每天只睡四五个小时。考前一周，左耳突然听不见了——神经性耳聋。</p></div>
-                <div class="scene-note-card"><span class="scene-tag">医疗</span><span class="scene-label-dian">差点就</span><p class="scene-story">护士连续值第三个夜班，恍惚间差点给错剂量。被同事拦住的那一刻，她浑身发抖。</p></div>
-                <div class="scene-note-card"><span class="scene-tag">育儿</span><span class="scene-label-dian">差点就</span><p class="scene-story">新手妈妈产后长期缺觉，抱着孩子下楼时恍惚踩空。幸好抓住了扶手。</p></div>
-                <div class="scene-note-card"><span class="scene-tag">IT</span><span class="scene-label-dian">差点就</span><p class="scene-story">连续三个月 996，凌晨在工位前倒下。脑出血，抢救七天。那年他 28 岁。</p></div>
-                <div class="scene-note-card"><span class="scene-tag">运输</span><span class="scene-label-dian">差点就</span><p class="scene-story">货车司机为赶时效连续驾驶 14 小时，在国道追尾前车。行车记录仪拍下他闭眼的瞬间。</p></div>
-                <div class="scene-note-card"><span class="scene-tag">照护</span><span class="scene-label-dian">差点就</span><p class="scene-story">女儿独自照顾失能父亲三年，某天清晨晕倒在父亲床前。父亲按不了铃，只能大声哭喊。</p></div>
-                <div class="scene-note-card"><span class="scene-tag">教育</span><span class="scene-label-dian">差点就</span><p class="scene-story">高三班主任，高考前最后一周晕倒在讲台上。学生们说，她已经连着一个月没休过周日。</p></div>
-                <div class="scene-note-card"><span class="scene-tag">创业</span><span class="scene-label-dian">差点就</span><p class="scene-story">融资期连续熬夜两周，突发心梗。34 岁，抢救回来后他说：公司没了我，下周照样运转。</p></div>
-                <div class="scene-note-card"><span class="scene-tag">外卖</span><span class="scene-label-dian">差点就</span><p class="scene-story">骑手为了冲单量，连续接单 16 小时。在路口撞伤过路老人，自己也摔断了锁骨。</p></div>
+            <div class="cards-grid" id="scene-cards">
+                <div class="scene-note-card pickable-card"><span class="scene-tag">驾驶</span><span class="scene-label-dian">差点就</span><p class="scene-story">连续加班三天，高速上打盹，车子撞向护栏。醒来时，妻子站在病床边，一句话没说。</p></div>
+                <div class="scene-note-card pickable-card"><span class="scene-tag">职场</span><span class="scene-label-dian">差点就</span><p class="scene-story">她以为自己只是累，直到在办公室晕倒。诊断书：病毒性心肌炎。医生问，前期是不是长期劳累。</p></div>
+                <div class="scene-note-card pickable-card"><span class="scene-tag">运动</span><span class="scene-label-dian">差点就</span><p class="scene-story">坚持跑完马拉松，终点线后心脏骤停。后来他说，早知道应该在28公里处停下来。</p></div>
+                <div class="scene-note-card pickable-card"><span class="scene-tag">学业</span><span class="scene-label-dian">差点就</span><p class="scene-story">考研二战，每天只睡四五个小时。考前一周，左耳突然听不见了——神经性耳聋。</p></div>
+                <div class="scene-note-card pickable-card"><span class="scene-tag">医疗</span><span class="scene-label-dian">差点就</span><p class="scene-story">护士连续值第三个夜班，恍惚间差点给错剂量。被同事拦住的那一刻，她浑身发抖。</p></div>
+                <div class="scene-note-card pickable-card"><span class="scene-tag">育儿</span><span class="scene-label-dian">差点就</span><p class="scene-story">新手妈妈产后长期缺觉，抱着孩子下楼时恍惚踩空。幸好抓住了扶手。</p></div>
+                <div class="scene-note-card pickable-card"><span class="scene-tag">IT</span><span class="scene-label-dian">差点就</span><p class="scene-story">连续三个月 996，凌晨在工位前倒下。脑出血，抢救七天。那年他 28 岁。</p></div>
+                <div class="scene-note-card pickable-card"><span class="scene-tag">运输</span><span class="scene-label-dian">差点就</span><p class="scene-story">货车司机为赶时效连续驾驶 14 小时，在国道追尾前车。行车记录仪拍下他闭眼的瞬间。</p></div>
+                <div class="scene-note-card pickable-card"><span class="scene-tag">照护</span><span class="scene-label-dian">差点就</span><p class="scene-story">女儿独自照顾失能父亲三年，某天清晨晕倒在父亲床前。父亲按不了铃，只能大声哭喊。</p></div>
+                <div class="scene-note-card pickable-card"><span class="scene-tag">教育</span><span class="scene-label-dian">差点就</span><p class="scene-story">高三班主任，高考前最后一周晕倒在讲台上。学生们说，她已经连着一个月没休过周日。</p></div>
+                <div class="scene-note-card pickable-card"><span class="scene-tag">创业</span><span class="scene-label-dian">差点就</span><p class="scene-story">融资期连续熬夜两周，突发心梗。34 岁，抢救回来后他说：公司没了我，下周照样运转。</p></div>
+                <div class="scene-note-card pickable-card"><span class="scene-tag">外卖</span><span class="scene-label-dian">差点就</span><p class="scene-story">骑手为了冲单量，连续接单 16 小时。在路口撞伤过路老人，自己也摔断了锁骨。</p></div>
             </div>
 
             <div class="warning-timeline" role="list" aria-label="疲劳警告阶段">
@@ -1093,8 +1076,8 @@
             </div>
 
             <p class="subsection-title">恢复工具箱</p>
-            <div class="cards-grid three-col">
-                <div class="tool-card">
+            <div class="cards-grid three-col" id="tool-cards">
+                <div class="tool-card pickable-card">
                     <div class="tool-icon" aria-hidden="true">🫁</div>
                     <div class="tool-name">4-7-8 呼吸法</div>
                     <div class="tool-steps">
@@ -1104,7 +1087,7 @@
                         重复 3 轮
                     </div>
                 </div>
-                <div class="tool-card">
+                <div class="tool-card pickable-card">
                     <div class="tool-icon" aria-hidden="true">🧘</div>
                     <div class="tool-name">渐进式放松</div>
                     <div class="tool-steps">
@@ -1114,7 +1097,7 @@
                         一路向上到头顶
                     </div>
                 </div>
-                <div class="tool-card">
+                <div class="tool-card pickable-card">
                     <div class="tool-icon" aria-hidden="true">👁</div>
                     <div class="tool-name">20-20-20 法则</div>
                     <div class="tool-steps">
@@ -1126,7 +1109,6 @@
                 </div>
             </div>
 
-            <!-- 今日休息卡片（按星期显示） -->
             <p class="subsection-title">今日休息卡片</p>
             <div class="daily-card">
                 <span class="daily-card-label">今日休息卡片</span>
@@ -1134,7 +1116,6 @@
                 <div class="daily-card-date" id="daily-date"></div>
             </div>
 
-            <!-- 关机仪式 -->
             <p class="subsection-title">关机仪式</p>
             <ul class="shutdown-list">
                 <li class="shutdown-item">
@@ -1164,31 +1145,28 @@
     <script>
         (function() {
             const today = new Date();
-            const dayOfWeek = today.getDay(); // 0=周日, 1=周一, ..., 6=周六
+            const dayOfWeek = today.getDay();
 
-            // 7 条今日休息卡片，索引对应星期几
             const restCards = [
-                "闭上眼睛，听离你最近的那个声音。那是世界在继续，而你此刻可以暂停。",           // 周日
-                "站起来，走到窗边，看窗外30秒。什么也不用想，只是看。",                           // 周一
-                "喝一杯温水，慢慢地，一口一口。感受水从喉咙流下去的路径。",                       // 周二
-                "找到身边任何一件柔软的物体——靠垫、围巾、毛衣——用手抚摸它10秒。",                // 周三
-                "把肩膀耸到最高，停3秒，然后完全放下。重复3次。",                                // 周四
-                "写下此刻心里最烦的一件事，写在一张纸上，然后翻过去。",                           // 周五
-                "对自己说：'今天我已经完成了足够多。' 说三遍，声音可以很轻。"                    // 周六
+                "闭上眼睛，听离你最近的那个声音。那是世界在继续，而你此刻可以暂停。",
+                "站起来，走到窗边，看窗外30秒。什么也不用想，只是看。",
+                "喝一杯温水，慢慢地，一口一口。感受水从喉咙流下去的路径。",
+                "找到身边任何一件柔软的物体——靠垫、围巾、毛衣——用手抚摸它10秒。",
+                "把肩膀耸到最高，停3秒，然后完全放下。重复3次。",
+                "写下此刻心里最烦的一件事，写在一张纸上，然后翻过去。",
+                "对自己说：'今天我已经完成了足够多。' 说三遍，声音可以很轻。"
             ];
 
-            // 7 条今晚关机语，索引对应星期几
             const shutdownMessages = [
-                "周日夜晚，适合把一整周的心都轻轻折好。晚安。",                                   // 周日
-                "周一已经结束，你比自己想象的更坚韧。关闭灯光，合上双眼。",                       // 周一
-                "周二总是被低估的一天。你做得很好，现在交给夜晚。",                               // 周二
-                "一周的中点，也是身心可以停靠的码头。周三晚安。",                                 // 周三
-                "周四的尾巴，像一首即将抵达副歌的曲子。安静听完它。",                             // 周四
-                "周五的夜晚，值得一次深深的呼气。你解放了。",                                     // 周五
-                "周六的城门关闭，世界和你一起休息。明天的事，明天再说。"                          // 周六
+                "周日夜晚，适合把一整周的心都轻轻折好。晚安。",
+                "周一已经结束，你比自己想象的更坚韧。关闭灯光，合上双眼。",
+                "周二总是被低估的一天。你做得很好，现在交给夜晚。",
+                "一周的中点，也是身心可以停靠的码头。周三晚安。",
+                "周四的尾巴，像一首即将抵达副歌的曲子。安静听完它。",
+                "周五的夜晚，值得一次深深的呼气。你解放了。",
+                "周六的城门关闭，世界和你一起休息。明天的事，明天再说。"
             ];
 
-            // 设置今日休息卡片
             const dailyContent = document.getElementById('daily-content');
             const dailyDate = document.getElementById('daily-date');
             if (dailyContent) {
@@ -1203,14 +1181,13 @@
                 });
             }
 
-            // 设置今晚关机语
             const shutdownElem = document.getElementById('shutdown-message');
             if (shutdownElem) {
                 shutdownElem.textContent = shutdownMessages[dayOfWeek];
             }
         })();
 
-        // 眼心反射折叠交互
+        // 眼心反射折叠
         (function() {
             const toggleBtn = document.getElementById('toggle-explanation');
             const explanation = document.getElementById('explanation-text');
@@ -1252,6 +1229,44 @@
         } else {
             document.querySelectorAll('.warning-stage').forEach(s => s.style.opacity = '1');
         }
+
+        // 移动端随机居中滚动
+        (function() {
+            const groups = ['signal-cards', 'data-cards', 'scene-cards', 'tool-cards'];
+
+            function applyRandomScroll() {
+                const isMobile = window.innerWidth <= 600;
+                groups.forEach(id => {
+                    const container = document.getElementById(id);
+                    if (!container) return;
+                    const cards = container.querySelectorAll('.pickable-card');
+                    if (!isMobile || cards.length === 0) {
+                        container.classList.add('no-scroll-snap');
+                        return;
+                    }
+                    container.classList.remove('no-scroll-snap');
+                    const randomIndex = Math.floor(Math.random() * cards.length);
+                    const targetCard = cards[randomIndex];
+                    // 计算滚动位置使目标卡片居中
+                    const containerWidth = container.clientWidth;
+                    const cardLeft = targetCard.offsetLeft;
+                    const cardWidth = targetCard.offsetWidth;
+                    const scrollTarget = cardLeft - (containerWidth / 2) + (cardWidth / 2);
+                    container.scrollTo({
+                        left: Math.max(0, scrollTarget),
+                        behavior: 'instant'
+                    });
+                });
+            }
+
+            applyRandomScroll();
+
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(applyRandomScroll, 200);
+            });
+        })();
     </script>
 </body>
 </html>
