@@ -145,7 +145,6 @@
         }
         .impact-source a:hover { opacity: 1; }
 
-        /* 列表卡片通用 */
         .list-card {
             background: var(--bg-card); border-radius: var(--radius); padding: 22px 20px;
             border: 1px solid var(--border); transition: all 0.25s ease; display: block;
@@ -218,18 +217,22 @@
             font-size: 11px; color: var(--text-dim); opacity: 0.4; margin-top: 16px;
         }
 
+        /* ========== 响应式 ========== */
         @media (max-width: 600px) {
             .cards-grid {
-                display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
-                gap: 16px; padding: 8px 16px 20px; margin: 0 -16px; scroll-snap-type: x mandatory; cursor: grab;
+                /* 手机端改为纵向排列，不滑动 */
+                display: block;
+                overflow: visible;
+                padding: 8px 0 20px;
+                margin: 0;
+                cursor: default;
             }
-            .cards-grid::-webkit-scrollbar { display: none; }
             .signal-card {
-                flex: 0 0 auto; width: 220px; min-width: 220px; scroll-snap-align: center;
+                width: 100%;
+                margin-bottom: 12px;
             }
-            .cards-grid::before, .cards-grid::after {
-                content: ''; flex: 0 0 calc(50vw - 126px); min-width: calc(50vw - 126px);
-            }
+            .signal-card:last-child { margin-bottom: 0; }
+
             .page { padding: 0 16px 60px; }
             .hero { padding: 50px 0 35px; min-height: 40vh; }
             .impact-card { padding: 28px 18px; }
@@ -238,7 +241,13 @@
 
         @media (min-width: 601px) {
             .cards-grid {
-                display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 8px 0 20px;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+                padding: 8px 0 20px;
+                overflow: visible;
+                margin: 0;
+                cursor: default;
             }
         }
 
@@ -263,7 +272,7 @@
             <p class="section-intro">这些微小感受，是身体最诚实的语言。</p>
 
             <div class="cards-grid" id="signal-cards">
-                <div class="signal-card pickable-card">
+                <div class="signal-card">
                     <div class="signal-icon shoulder">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(200,180,160,0.8)" stroke-width="1.5"><circle cx="12" cy="6" r="4"/><path d="M12 10v4M8 14l-3 6M16 14l3 6"/></svg>
                     </div>
@@ -271,7 +280,7 @@
                     <span class="signal-meaning">扛了太多未说出口的话</span>
                     <span class="signal-tag">肌肉代偿</span>
                 </div>
-                <div class="signal-card pickable-card">
+                <div class="signal-card">
                     <div class="signal-icon eye">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(170,175,190,0.8)" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z"/></svg>
                     </div>
@@ -279,7 +288,7 @@
                     <span class="signal-meaning">屏幕的光，榨干了眼底的湿润</span>
                     <span class="signal-tag">感官超载</span>
                 </div>
-                <div class="signal-card pickable-card">
+                <div class="signal-card">
                     <div class="signal-icon brain">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(175,160,170,0.8)" stroke-width="1.5"><rect x="3" y="4" width="18" height="14" rx="3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg>
                     </div>
@@ -287,7 +296,7 @@
                     <span class="signal-meaning">大脑像深夜的办公室，灯还亮着，人已走空</span>
                     <span class="signal-tag">决策疲劳</span>
                 </div>
-                <div class="signal-card pickable-card">
+                <div class="signal-card">
                     <div class="signal-icon heart">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(190,150,135,0.8)" stroke-width="1.5"><path d="M12 21s-8-5.5-8-11a5.5 5.5 0 0 1 9.5-4A5.5 5.5 0 0 1 22 10c0 5.5-8 11-8 11z"/></svg>
                     </div>
@@ -301,7 +310,7 @@
 
         <hr class="section-divider">
 
-        <!-- 冲击数据（已替换为新案例） -->
+        <!-- 冲击数据 -->
         <section class="section">
             <span class="act-label">敬畏</span>
             <div class="impact-card">
@@ -312,7 +321,7 @@
             </div>
         </section>
 
-        <!-- 真实案例列表（首页直展，第一条已替换） -->
+        <!-- 真实案例列表 -->
         <section class="section">
             <span class="act-label">真实案例</span>
             <p class="section-intro">这些故事，不是恐吓，是为了被看见。</p>
@@ -338,7 +347,7 @@
 
         <hr class="section-divider">
 
-        <!-- 缓解方法列表（首页直展） -->
+        <!-- 缓解方法列表 -->
         <section class="section">
             <span class="act-label">缓解方法</span>
             <p class="section-intro">停下来之后，可以试试这些——</p>
@@ -429,22 +438,6 @@
             const companion = document.getElementById('companion-number');
             if (companion && daysDiff >= 0) {
                 companion.textContent = `已在这盏灯下陪伴了 ${daysDiff} 个疲惫的日夜。`;
-            }
-
-            // 移动端信号卡片随机居中（仅首次）
-            const container = document.getElementById('signal-cards');
-            if (container && window.innerWidth <= 600) {
-                const cards = container.querySelectorAll('.pickable-card');
-                if (cards.length) {
-                    let idx = parseInt(container.getAttribute('data-selected-index'));
-                    if (isNaN(idx)) {
-                        idx = Math.floor(Math.random() * cards.length);
-                        container.setAttribute('data-selected-index', idx);
-                    }
-                    const target = cards[idx];
-                    const scrollLeft = target.offsetLeft - (container.clientWidth / 2) + (target.offsetWidth / 2);
-                    container.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'instant' });
-                }
             }
         })();
     </script>
