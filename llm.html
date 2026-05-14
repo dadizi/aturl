@@ -217,25 +217,70 @@
             font-size: 11px; color: var(--text-dim); opacity: 0.4; margin-top: 16px;
         }
 
-        /* ========== 响应式 ========== */
+        /* ========== 响应式（手机端优化） ========== */
         @media (max-width: 600px) {
             .cards-grid {
-                /* 手机端改为纵向排列，不滑动 */
                 display: block;
                 overflow: visible;
                 padding: 8px 0 20px;
                 margin: 0;
-                cursor: default;
             }
+
+            /* ----- 信号卡片美化 ----- */
             .signal-card {
                 width: 100%;
-                margin-bottom: 12px;
+                margin-bottom: 14px;
+                padding: 22px 18px;
+                border-left: 3px solid rgba(196,149,106,0.25);   /* 左侧强调线 */
+                flex-direction: row;          /* 图标与文字水平排列 */
+                align-items: center;
+                gap: 16px;
             }
             .signal-card:last-child { margin-bottom: 0; }
 
+            .signal-icon {
+                width: 48px; height: 48px; flex-shrink: 0;
+            }
+
+            .signal-body-part {
+                font-size: 16px;
+                margin-bottom: 2px;
+            }
+            .signal-meaning {
+                font-size: 13px;
+                color: #c0b6a6;
+            }
+            .signal-tag {
+                margin-top: 4px;
+            }
+
+            /* ----- 敬畏卡片强化（页面核心） ----- */
+            .impact-card {
+                padding: 36px 24px;
+                margin: 24px 0 32px;
+                background: #22252d;          /* 稍微亮一点，与周围拉开 */
+                border-color: rgba(196,149,106,0.15);
+                box-shadow: 0 0 28px rgba(196,149,106,0.06);   /* 极淡光晕 */
+            }
+            .impact-card::before {
+                width: 80px;
+                height: 3px;
+                opacity: 0.9;
+            }
+            .impact-text {
+                font-size: 28px;
+                line-height: 1.4;
+            }
+            .impact-text strong {
+                color: var(--accent);         /* 关键数字用品牌金色 */
+            }
+            .impact-source {
+                margin-top: 18px;
+                font-size: 12px;
+            }
+
             .page { padding: 0 16px 60px; }
             .hero { padding: 50px 0 35px; min-height: 40vh; }
-            .impact-card { padding: 28px 18px; }
             .daily-card { padding: 22px 16px; }
         }
 
@@ -247,7 +292,6 @@
                 padding: 8px 0 20px;
                 overflow: visible;
                 margin: 0;
-                cursor: default;
             }
         }
 
@@ -276,33 +320,41 @@
                     <div class="signal-icon shoulder">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(200,180,160,0.8)" stroke-width="1.5"><circle cx="12" cy="6" r="4"/><path d="M12 10v4M8 14l-3 6M16 14l3 6"/></svg>
                     </div>
-                    <span class="signal-body-part">发紧的肩颈</span>
-                    <span class="signal-meaning">扛了太多未说出口的话</span>
-                    <span class="signal-tag">肌肉代偿</span>
+                    <div style="flex:1;">
+                        <div class="signal-body-part">发紧的肩颈</div>
+                        <div class="signal-meaning">扛了太多未说出口的话</div>
+                        <span class="signal-tag">肌肉代偿</span>
+                    </div>
                 </div>
                 <div class="signal-card">
                     <div class="signal-icon eye">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(170,175,190,0.8)" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z"/></svg>
                     </div>
-                    <span class="signal-body-part">酸胀的眼睛</span>
-                    <span class="signal-meaning">屏幕的光，榨干了眼底的湿润</span>
-                    <span class="signal-tag">感官超载</span>
+                    <div style="flex:1;">
+                        <div class="signal-body-part">酸胀的眼睛</div>
+                        <div class="signal-meaning">屏幕的光，榨干了眼底的湿润</div>
+                        <span class="signal-tag">感官超载</span>
+                    </div>
                 </div>
                 <div class="signal-card">
                     <div class="signal-icon brain">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(175,160,170,0.8)" stroke-width="1.5"><rect x="3" y="4" width="18" height="14" rx="3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg>
                     </div>
-                    <span class="signal-body-part">迟钝的脑袋</span>
-                    <span class="signal-meaning">大脑像深夜的办公室，灯还亮着，人已走空</span>
-                    <span class="signal-tag">决策疲劳</span>
+                    <div style="flex:1;">
+                        <div class="signal-body-part">迟钝的脑袋</div>
+                        <div class="signal-meaning">大脑像深夜的办公室，灯还亮着，人已走空</div>
+                        <span class="signal-tag">决策疲劳</span>
+                    </div>
                 </div>
                 <div class="signal-card">
                     <div class="signal-icon heart">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(190,150,135,0.8)" stroke-width="1.5"><path d="M12 21s-8-5.5-8-11a5.5 5.5 0 0 1 9.5-4A5.5 5.5 0 0 1 22 10c0 5.5-8 11-8 11z"/></svg>
                     </div>
-                    <span class="signal-body-part">隐约的心慌</span>
-                    <span class="signal-meaning">心跳在提醒：沉默的承受也有重量</span>
-                    <span class="signal-tag">应激反应</span>
+                    <div style="flex:1;">
+                        <div class="signal-body-part">隐约的心慌</div>
+                        <div class="signal-meaning">心跳在提醒：沉默的承受也有重量</div>
+                        <span class="signal-tag">应激反应</span>
+                    </div>
                 </div>
             </div>
             <p class="transition-line">我们习惯对这些信号说「再等等」。直到——</p>
@@ -310,7 +362,7 @@
 
         <hr class="section-divider">
 
-        <!-- 冲击数据 -->
+        <!-- 冲击数据（敬畏核心） -->
         <section class="section">
             <span class="act-label">敬畏</span>
             <div class="impact-card">
