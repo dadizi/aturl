@@ -47,7 +47,7 @@
 
         .page { max-width: 680px; margin: 0 auto; padding: 0 24px 80px; }
 
-        .section { padding: 60px 0 40px; }
+        .section { padding: 52px 0 36px; }
 
         .section-divider {
             border: none; height: 1px; background: var(--border); margin: 0; opacity: 0.6;
@@ -226,58 +226,33 @@
                 margin: 0;
             }
 
-            /* ----- 信号卡片美化 ----- */
             .signal-card {
                 width: 100%;
                 margin-bottom: 14px;
                 padding: 22px 18px;
-                border-left: 3px solid rgba(196,149,106,0.25);   /* 左侧强调线 */
-                flex-direction: row;          /* 图标与文字水平排列 */
+                border-left: 3px solid rgba(196,149,106,0.25);
+                flex-direction: row;
                 align-items: center;
                 gap: 16px;
             }
             .signal-card:last-child { margin-bottom: 0; }
 
-            .signal-icon {
-                width: 48px; height: 48px; flex-shrink: 0;
-            }
+            .signal-icon { width: 48px; height: 48px; flex-shrink: 0; }
+            .signal-body-part { font-size: 16px; margin-bottom: 2px; }
+            .signal-meaning { font-size: 13px; color: #c0b6a6; }
+            .signal-tag { margin-top: 4px; }
 
-            .signal-body-part {
-                font-size: 16px;
-                margin-bottom: 2px;
-            }
-            .signal-meaning {
-                font-size: 13px;
-                color: #c0b6a6;
-            }
-            .signal-tag {
-                margin-top: 4px;
-            }
-
-            /* ----- 敬畏卡片强化（页面核心） ----- */
             .impact-card {
                 padding: 36px 24px;
                 margin: 24px 0 32px;
-                background: #22252d;          /* 稍微亮一点，与周围拉开 */
+                background: #22252d;
                 border-color: rgba(196,149,106,0.15);
-                box-shadow: 0 0 28px rgba(196,149,106,0.06);   /* 极淡光晕 */
+                box-shadow: 0 0 28px rgba(196,149,106,0.06);
             }
-            .impact-card::before {
-                width: 80px;
-                height: 3px;
-                opacity: 0.9;
-            }
-            .impact-text {
-                font-size: 28px;
-                line-height: 1.4;
-            }
-            .impact-text strong {
-                color: var(--accent);         /* 关键数字用品牌金色 */
-            }
-            .impact-source {
-                margin-top: 18px;
-                font-size: 12px;
-            }
+            .impact-card::before { width: 80px; height: 3px; opacity: 0.9; }
+            .impact-text { font-size: 28px; line-height: 1.4; }
+            .impact-text strong { color: var(--accent); }
+            .impact-source { margin-top: 18px; font-size: 12px; }
 
             .page { padding: 0 16px 60px; }
             .hero { padding: 50px 0 35px; min-height: 40vh; }
@@ -372,6 +347,8 @@
                 <p class="impact-source">2026年3月27日 · 新华网 · <a href="/cases/001.html">阅读详情 →</a></p>
             </div>
         </section>
+
+        <hr class="section-divider">
 
         <!-- 真实案例列表 -->
         <section class="section">
