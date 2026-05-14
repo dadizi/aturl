@@ -150,7 +150,7 @@
         }
         .impact-source a:hover { opacity: 1; }
 
-        /* ========== 七阶段警告进度条 ========== */
+        /* 七阶段警告进度条 */
         .warning-timeline {
             position: relative;
             padding: 10px 0 10px 36px;
@@ -223,7 +223,7 @@
         .warning-stage:nth-child(7) .warning-stage-name { color: #f0c0a8; font-weight: 600; }
         .warning-stage:nth-child(7) .warning-stage-desc { color: #d8b8a8; }
 
-        /* ========== 案例和方法列表卡片 ========== */
+        /* 列表卡片 */
         .list-card {
             background: var(--bg-card); border-radius: var(--radius); padding: 22px 20px;
             border: 1px solid var(--border); transition: all 0.25s ease; display: block;
@@ -292,7 +292,7 @@
             font-size: 11px; color: var(--text-dim); opacity: 0.4; margin-top: 16px;
         }
 
-        /* ========== 响应式（手机端优化） ========== */
+        /* ========== 响应式 ========== */
         @media (max-width: 600px) {
             .cards-grid {
                 display: block;
@@ -365,10 +365,21 @@
 
         <hr class="section-divider">
 
+        <!-- 今日休息卡片（移到最前面） -->
+        <section class="section">
+            <div class="daily-card">
+                <span class="daily-card-label">今日休息卡片</span>
+                <div class="daily-card-content" id="daily-content">加载中…</div>
+                <div class="daily-card-date" id="daily-date"></div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
         <!-- 第一幕：认识累 -->
         <section class="section">
             <span class="act-label">信号</span>
-            <p class="section-intro">这些微小感受，是身体最诚实的语言。</p>
+            <p class="section-intro">在开始之前，先听听身体在说什么。</p>
 
             <div class="cards-grid" id="signal-cards">
                 <div class="signal-card">
@@ -428,7 +439,6 @@
                 <p class="impact-source">2026年3月27日 · 新华网 · <a href="/cases/001.html">阅读详情 →</a></p>
             </div>
 
-            <!-- 七阶段警告进度条（新增） -->
             <div class="warning-timeline" role="list" aria-label="疲劳警告阶段">
                 <div class="warning-stage" role="listitem"><div class="warning-stage-name">阶段一 · 微眩</div><div class="warning-stage-desc">你只是有点晕，但平衡已开始松动</div></div>
                 <div class="warning-stage" role="listitem"><div class="warning-stage-name">阶段二 · 迟钝</div><div class="warning-stage-desc">世界慢了半拍，大脑正在拒绝超载</div></div>
@@ -490,17 +500,6 @@
             </a>
 
             <a href="/methods/" class="subtle-link">更多缓解方法 →</a>
-        </section>
-
-        <hr class="section-divider">
-
-        <!-- 今日休息卡片 -->
-        <section class="section">
-            <div class="daily-card">
-                <span class="daily-card-label">今日休息卡片</span>
-                <div class="daily-card-content" id="daily-content">加载中…</div>
-                <div class="daily-card-date" id="daily-date"></div>
-            </div>
         </section>
 
         <hr class="section-divider">
