@@ -150,6 +150,80 @@
         }
         .impact-source a:hover { opacity: 1; }
 
+        /* ========== 七阶段警告进度条 ========== */
+        .warning-timeline {
+            position: relative;
+            padding: 10px 0 10px 36px;
+            margin-bottom: 32px;
+            margin-top: 8px;
+        }
+
+        .warning-timeline::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 8px;
+            bottom: 8px;
+            width: 1px;
+            background: linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0.08) 0%,
+                    rgba(200, 140, 100, 0.5) 60%,
+                    rgba(210, 100, 70, 0.7) 100%);
+            border-radius: 1px;
+        }
+
+        .warning-stage {
+            position: relative;
+            padding: 14px 0 14px 24px;
+            transition: var(--transition);
+        }
+
+        .warning-stage::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 20px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+            z-index: 2;
+        }
+
+        .warning-stage:nth-child(1)::before { border-color: #8b9aaf; background: rgba(139,154,175,0.25); }
+        .warning-stage:nth-child(2)::before { border-color: #9b8f9f; background: rgba(155,143,159,0.25); }
+        .warning-stage:nth-child(3)::before { border-color: #a8898a; background: rgba(168,137,138,0.3); }
+        .warning-stage:nth-child(4)::before { border-color: #b88070; background: rgba(184,128,112,0.3); }
+        .warning-stage:nth-child(5)::before { border-color: #c07860; background: rgba(192,120,96,0.35); }
+        .warning-stage:nth-child(6)::before { border-color: #c87050; background: rgba(200,112,80,0.4); }
+        .warning-stage:nth-child(7)::before {
+            border-color: #d06848;
+            background: rgba(208,104,72,0.45);
+            box-shadow: 0 0 12px rgba(210,100,65,0.4);
+            animation: pulse-warn 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-warn {
+            0%, 100% { box-shadow: 0 0 8px rgba(210,100,65,0.3); }
+            50% { box-shadow: 0 0 20px rgba(210,100,65,0.7); }
+        }
+
+        .warning-stage:hover::before { transform: scale(1.4); }
+
+        .warning-stage-name {
+            font-size: 15px; font-weight: 500; color: #e8e0d4; letter-spacing: 0.05em; margin-bottom: 2px;
+        }
+
+        .warning-stage-desc {
+            font-size: 12px; color: var(--text-muted); letter-spacing: 0.03em; line-height: 1.5;
+        }
+
+        .warning-stage:nth-child(7) .warning-stage-name { color: #f0c0a8; font-weight: 600; }
+        .warning-stage:nth-child(7) .warning-stage-desc { color: #d8b8a8; }
+
+        /* ========== 案例和方法列表卡片 ========== */
         .list-card {
             background: var(--bg-card); border-radius: var(--radius); padding: 22px 20px;
             border: 1px solid var(--border); transition: all 0.25s ease; display: block;
@@ -255,6 +329,11 @@
             .impact-text strong { color: var(--accent); }
             .impact-source { margin-top: 18px; font-size: 12px; }
 
+            .warning-timeline { padding-left: 28px; }
+            .warning-timeline::before { left: 10px; }
+            .warning-stage::before { left: -22px; width: 8px; height: 8px; }
+            .warning-stage { padding-left: 18px; }
+
             .page { padding: 0 16px 60px; }
             .hero { padding: 50px 0 35px; min-height: 40vh; }
             .daily-card { padding: 22px 16px; }
@@ -348,6 +427,17 @@
                 </p>
                 <p class="impact-source">2026年3月27日 · 新华网 · <a href="/cases/001.html">阅读详情 →</a></p>
             </div>
+
+            <!-- 七阶段警告进度条（新增） -->
+            <div class="warning-timeline" role="list" aria-label="疲劳警告阶段">
+                <div class="warning-stage" role="listitem"><div class="warning-stage-name">阶段一 · 微眩</div><div class="warning-stage-desc">你只是有点晕，但平衡已开始松动</div></div>
+                <div class="warning-stage" role="listitem"><div class="warning-stage-name">阶段二 · 迟钝</div><div class="warning-stage-desc">世界慢了半拍，大脑正在拒绝超载</div></div>
+                <div class="warning-stage" role="listitem"><div class="warning-stage-name">阶段三 · 微痛</div><div class="warning-stage-desc">胸口那一下轻微的抽紧，是心脏在轻声求救</div></div>
+                <div class="warning-stage" role="listitem"><div class="warning-stage-name">阶段四 · 解离</div><div class="warning-stage-desc">周围变得不真实，这是大脑启动了自我保护</div></div>
+                <div class="warning-stage" role="listitem"><div class="warning-stage-name">阶段五 · 耳鸣/黑矇</div><div class="warning-stage-desc">血压剧烈波动，感官亮起了红灯</div></div>
+                <div class="warning-stage" role="listitem"><div class="warning-stage-name">阶段六 · 一过性失忆</div><div class="warning-stage-desc">海马体暂时关闭，刚才的事突然想不起来了</div></div>
+                <div class="warning-stage" role="listitem"><div class="warning-stage-name">阶段七 · 崩溃</div><div class="warning-stage-desc">心脏、大脑、肾上腺——总有一个会替你按下暂停键</div></div>
+            </div>
         </section>
 
         <hr class="section-divider">
@@ -362,12 +452,12 @@
                 <div class="list-card-title">每年54万人猝死，劳累是第一诱因</div>
                 <div class="list-card-desc">41岁的张雪峰因心源性猝死离世。中国每天有近1500人因此离去，抢救成功率不足1%。</div>
             </a>
-			<a href="/cases/002.html" class="list-card">
-				<div class="list-card-tag">职场</div>
-				<div class="list-card-title">她在办公室晕倒之后</div>
-				<div class="list-card-desc">诊断书上写着病毒性心肌炎。医生只问了一句话：前期是不是长期劳累。</div>
-			</a>
-			<a href="/cases/003.html" class="list-card">
+            <a href="/cases/002.html" class="list-card">
+                <div class="list-card-tag">职场</div>
+                <div class="list-card-title">她在办公室晕倒之后</div>
+                <div class="list-card-desc">诊断书上写着病毒性心肌炎。医生只问了一句话：前期是不是长期劳累。</div>
+            </a>
+            <a href="/cases/003.html" class="list-card">
                 <div class="list-card-tag">IT</div>
                 <div class="list-card-title">28岁，脑出血，抢救七天</div>
                 <div class="list-card-desc">连续三个月996，凌晨在工位前倒下。那年他28岁。</div>
