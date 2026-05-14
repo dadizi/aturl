@@ -140,10 +140,15 @@
 
         .impact-source { font-size: 11px; color: var(--text-dim); margin-top: 14px; font-family: var(--font-en); }
 
+        .impact-source a {
+            color: var(--accent); text-decoration: none; opacity: 0.7; transition: opacity 0.2s;
+        }
+        .impact-source a:hover { opacity: 1; }
+
         /* 列表卡片通用 */
         .list-card {
             background: var(--bg-card); border-radius: var(--radius); padding: 22px 20px;
-            border: 1px solid var(--border); transition: var(--transition); display: block;
+            border: 1px solid var(--border); transition: all 0.25s ease; display: block;
             text-decoration: none; color: inherit; margin-bottom: 12px;
         }
 
@@ -296,26 +301,26 @@
 
         <hr class="section-divider">
 
-        <!-- 冲击数据 -->
+        <!-- 冲击数据（已替换为新案例） -->
         <section class="section">
             <span class="act-label">敬畏</span>
             <div class="impact-card">
                 <p class="impact-text">
-                    连续清醒<strong>17小时</strong>后，<br>你的驾驶反应能力<br><strong>等同酒驾</strong>
+                    中国每年<strong>54万</strong>人猝死，<br><strong>劳累、熬夜</strong>是第一诱因
                 </p>
-                <p class="impact-source">Nature, 2006 · 睡眠与认知表现研究</p>
+                <p class="impact-source">2026年3月27日 · 新华网 · <a href="/cases/001.html">阅读详情 →</a></p>
             </div>
         </section>
 
-        <!-- 真实案例列表（首页直展） -->
+        <!-- 真实案例列表（首页直展，第一条已替换） -->
         <section class="section">
             <span class="act-label">真实案例</span>
             <p class="section-intro">这些故事，不是恐吓，是为了被看见。</p>
 
             <a href="/cases/001.html" class="list-card">
-                <div class="list-card-tag">驾驶</div>
-                <div class="list-card-title">货车司机闭眼的瞬间</div>
-                <div class="list-card-desc">为赶时效连续驾驶14小时，在国道追尾。行车记录仪拍下他闭眼的瞬间。</div>
+                <div class="list-card-tag">职场 · 健康</div>
+                <div class="list-card-title">每年54万人猝死，劳累是第一诱因</div>
+                <div class="list-card-desc">41岁的张雪峰因心源性猝死离世。中国每天有近1500人因此离去，抢救成功率不足1%。</div>
             </a>
             <a href="/cases/002.html" class="list-card">
                 <div class="list-card-tag">职场</div>
