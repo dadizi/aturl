@@ -205,10 +205,6 @@
             font-size: 11px; color: var(--text-dim); margin-top: 20px; opacity: 0.5;
         }
 
-        .tomorrow-hint {
-            font-size: 11px; color: var(--text-dim); opacity: 0.45; margin-top: 12px;
-        }
-
         .week-restart {
             font-size: 11px; color: var(--accent); opacity: 0.7; margin-top: 12px;
         }
@@ -332,7 +328,6 @@
                     </div>
                 </div>
             </div>
-            <!-- ✅ 修改点1：把“直到——”改成直面后果的过渡句 -->
             <p class="transition-line">对这些信号说「再等等」的人，后来等来了什么。</p>
         </section>
 
@@ -380,7 +375,6 @@
         <!-- 缓解方法列表 -->
         <section class="section">
             <span class="act-label">缓解方法</span>
-            <!-- ✅ 修改点2：把“试试这些——”改成适合文章列表入口的表述 -->
             <p class="section-intro">了解如何更好地恢复——</p>
 
             <a href="/methods/001.html" class="list-card">
@@ -411,7 +405,6 @@
                 <div class="daily-card-content" id="daily-content">加载中…</div>
                 <div class="daily-card-date" id="daily-date"></div>
             </div>
-            <p class="tomorrow-hint" id="tomorrow-hint">明天这个时候，卡片和关机语都会更新。</p>
         </section>
 
         <hr class="section-divider">
@@ -457,9 +450,6 @@
                 year: 'numeric', month: 'long', day: 'numeric', weekday: 'short'
             });
             document.getElementById('shutdown-message').textContent = shutdownMessages[dayOfWeek];
-
-            const tomorrowHint = document.getElementById('tomorrow-hint');
-            tomorrowHint.textContent = dayOfWeek === 6 ? '明天是周日，新的一周即将开始。' : '明天这个时候，卡片和关机语都会更新。';
 
             const weekRestart = document.getElementById('week-restart');
             if (dayOfWeek === 0) weekRestart.style.display = 'block';
