@@ -37,7 +37,12 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        html { 
+            scroll-behavior: smooth; 
+            -webkit-font-smoothing: antialiased; 
+            overflow-x: hidden; 
+            touch-action: pan-y;
+        }
 
         body {
             background-color: var(--bg);
@@ -47,9 +52,13 @@
             letter-spacing: 0.025em;
             overflow-x: hidden;
             min-height: 100vh;
+            width: 100%;
+            max-width: 100vw;
             background-image: 
                 radial-gradient(circle at 20% 80%, rgba(201, 154, 122, 0.03) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(150, 130, 110, 0.03) 0%, transparent 50%);
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
         }
 
         .page { 
@@ -350,6 +359,7 @@
             padding: 16px 0 16px 40px;
             margin-bottom: 36px;
             margin-top: 12px;
+            overflow-x: hidden;
         }
 
         .warning-timeline::before {
@@ -894,6 +904,39 @@
 
     <script>
         (function() {
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            function handleTouchStart(e) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }
+
+            function handleTouchMove(e) {
+                if (!touchStartX || !touchStartY) return;
+                
+                const touchCurrentX = e.touches[0].clientX;
+                const touchCurrentY = e.touches[0].clientY;
+                const diffX = touchCurrentX - touchStartX;
+                const diffY = touchCurrentY - touchStartY;
+
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    e.preventDefault();
+                }
+
+                touchStartX = touchCurrentX;
+                touchStartY = touchCurrentY;
+            }
+
+            document.addEventListener('touchstart', handleTouchStart, { passive: true });
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+            window.addEventListener('scroll', function() {
+                if (window.scrollX !== 0) {
+                    window.scrollTo(0, window.scrollY);
+                }
+            });
+
             const today = new Date();
             const dayOfWeek = today.getDay();
 
