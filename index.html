@@ -1,43 +1,50 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coming Soon</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-        }
-        .container {
-            padding: 40px;
-        }
-        h1 {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-        p {
-            font-size: 1.5rem;
-            opacity: 0.9;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#7BAE9A">
+  <meta http-equiv="Cache-Control" content="public, max-age=604800">
+  <title>累了吗？</title>
+  <style>
+    :root{--p:#7BAE9A;--s:#E8F4F0;--t:#5A5A5A;--l:#999;--r:16px}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#FFF9F5,#F0F7F4);min-height:100svh;color:var(--t);line-height:1.6}
+    .c{max-width:480px;margin:0 auto;padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom, 20px));display:flex;flex-direction:column;min-height:100svh}
+    header{text-align:center;margin-bottom:24px}
+    h1{font-size:2.2rem;font-weight:700;background:linear-gradient(135deg,var(--p),#5A8A7A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+    .su{font-size:1rem;color:var(--l)}
+    .btns{display:flex;flex-direction:column;gap:12px;margin:auto 0}
+    .btn{display:block;text-align:center;padding:14px 28px;background:var(--p);color:white;text-decoration:none;border-radius:var(--r);font-weight:600;font-size:1.05rem;box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+    .btn:active{transform:scale(0.98)}
+    .btn-sec{background:var(--s);color:var(--p)}
+    footer{text-align:center;margin-top:auto;padding-top:24px;font-size:0.95rem;color:var(--l)}
+    @media(max-width:480px){h1{font-size:2rem}.su{font-size:1rem}.btn{padding:12px 20px;font-size:1rem}}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Coming Soon</h1>
-        <p>精彩即将呈现...</p>
+  <div class="c">
+    <header>
+      <h1>累了吗</h1>
+      <p class="su">嗨，坐下来歇会儿，跟自己聊聊天<br><span style="font-size:0.9rem;opacity:0.8;margin-top:4px;display:block;">leilema.cn</span></p>
+    </header>
+    
+    <div class="btns">
+      <a href="quiz.html" class="btn">我是哪种累？</a>
+      <a href="stories.html" class="btn">听听别人的故事</a>
+      <a href="solution.html" class="btn btn-sec">想轻松一点</a>
     </div>
+    
+    <footer>慢慢来，你已经很棒了 💛<br><span style="font-size:0.8rem;opacity:0.7;margin-top:8px;display:block;" id="copyright">© <script>document.write(new Date().getFullYear())</script> leilema.cn</span></footer>
+  </div>
+  
+  <script>
+    document.querySelectorAll('.btn').forEach(b=>{
+      b.addEventListener('click',e=>{
+        e.preventDefault();
+        location.href=b.href;
+      });
+    });
+  </script>
 </body>
 </html>
