@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我是累了吗？</title>
+  <title>我是哪种累？</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>我是累了吗？</h1>
-      <p class="subtitle">了解你的累，是照顾自己的第一步</p>
+      <h1>我是哪种累？</h1>
+      <p class="subtitle">花几分钟，好好看看自己</p>
     </header>
     
     <div class="story-container" id="introContainer">
       <div class="story-text">
-        了解你的累，是照顾自己的第一步。<br><br>
-        下面有12组描述，每一组请选择 <strong>最近一周最贴近你状态</strong> 的那一项。<br><br>
-        没有对错，凭第一感觉选就好。这只是一次温柔的自我觉察。
+        嗨～不用紧张，这只是一次小小的自我对话。<br><br>
+        下面有12个小问题，每一题都选 <strong>最近一周最像你的那一个</strong> 就好。<br><br>
+        没有对错，跟着直觉走。我们只是想更懂你一点。
       </div>
-      <button class="btn" id="startQuizBtn">开始测试</button>
+      <button class="btn" id="startQuizBtn">开始聊聊</button>
     </div>
     
     <div class="question-container" id="questionContainer" style="display: none;">
@@ -27,17 +27,17 @@
         <div class="progress-fill" id="progressFill"></div>
       </div>
       
-      <div class="question-number" id="questionNumber">第 1 组 / 12</div>
+      <div class="question-number" id="questionNumber">第 1 题 / 12</div>
       <div class="question-text" id="questionText">
-        明明计划好要做事，却忍不住刷手机、发呆，事后又懊恼。
+        明明想做事，却忍不住刷手机？
       </div>
       
       <div class="options" id="options">
         <button class="option" data-score="self">
-          A. 明明计划好要做事，却忍不住刷手机、发呆，事后又懊恼。
+          A. 对，刷完又后悔，总觉得时间悄悄溜走了
         </button>
         <button class="option" data-score="physical">
-          B. 身体像灌了铅，脑子想动但身体真的不想动。
+          B. 不是不想动，是身体真的沉得像灌了铅
         </button>
       </div>
     </div>
@@ -49,72 +49,72 @@
       
       <div class="buttons-container">
         <a href="stories.html" class="btn">
-          看看为什么累了要重视？
+          听听类似的故事
         </a>
         <a href="solution.html" class="btn btn-secondary">
-          我该怎么缓解？
+          试试轻松一点的方法
         </a>
       </div>
       
       <p style="margin-top: 20px; font-size: 0.95rem; color: var(--text-color); opacity: 0.7; font-style: italic;">
-        你看，你的累有名字了。这已经是很重要的一步。
+        找到你的「累」了，这就是改变的开始呀～
       </p>
     </div>
     
     <footer>
-      <a href="index.html" style="color: var(--text-color); opacity: 0.6; text-decoration: none;">返回首页</a>
+      <a href="index.html" style="color: var(--text-color); opacity: 0.6; text-decoration: none;">回首页歇会儿</a>
     </footer>
   </div>
 
   <script>
     const questions = [
       {
-        optionA: 'A. 明明计划好要做事，却忍不住刷手机、发呆，事后又懊恼。',
-        optionB: 'B. 身体像灌了铅，脑子想动但身体真的不想动。'
+        optionA: 'A. 对，刷完又后悔，总觉得时间悄悄溜走了',
+        optionB: 'B. 不是不想动，是身体真的沉得像灌了铅'
       },
       {
-        optionA: 'A. 一想到任务清单，就觉得心累、想逃避。',
-        optionB: 'B. 睡了一整晚，早上起来还是浑身乏力。'
+        optionA: 'A. 一想到要做事就心累，总想躲一躲',
+        optionB: 'B. 睡了一整晚，醒来还是觉得好累好累'
       },
       {
-        optionA: 'A. 如果突然多出2小时空闲，我会焦躁不知道该做什么，或继续磨蹭。',
-        optionB: 'B. 如果突然多出2小时空闲，我只想躺着或干脆睡一觉。'
+        optionA: 'A. 突然有空反而焦虑，不知道该干嘛',
+        optionB: 'B. 有空闲时间只想躺着，能睡就睡'
       },
       {
-        optionA: 'A. 累是因为脑子里太多声音在打架，停不下来。',
-        optionB: 'B. 累是因为感觉电量已经耗尽，连思考都费劲。'
+        optionA: 'A. 脑子里像有好多小人在吵架，停不下来',
+        optionB: 'B. 感觉电量耗尽，连想事情都觉得费劲'
       },
       {
-        optionA: 'A. 最近容易对自己失望，怪自己不够自律。',
-        optionB: 'B. 最近对外界兴趣减退，以前喜欢的事现在也提不起劲。'
+        optionA: 'A. 总对自己失望，怪自己不够努力',
+        optionB: 'B. 对什么都没兴趣，以前喜欢的也不想做'
       },
       {
-        optionA: 'A. 我的累在工作/学习开始时最明显，开始动手后反而可能好一些。',
-        optionB: 'B. 我的累在工作/学习结束后最明显，需要很长时间恢复。'
+        optionA: 'A. 刚开始做事时最累，做起来反而好点',
+        optionB: 'B. 做完事最累，需要好久才能缓过来'
       },
       {
-        optionA: 'A. 坐着不动的时候，心里也七上八下，并不是真正放松。',
-        optionB: 'B. 坐着不动的时候，身体终于能喘口气，但疲劳感一阵阵涌上来。'
+        optionA: 'A. 坐着不动也不踏实，心里七上八下',
+        optionB: 'B. 坐着才能喘气，但累还是一阵阵涌上来'
       },
       {
-        optionA: 'A. 即使休息时，脑子里也会反复想「还有事没做」。',
-        optionB: 'B. 休息时只想放空，身体沉重，连想事的力气都没有。'
+        optionA: 'A. 休息时也老想着「还有事没做」',
+        optionB: 'B. 休息时只想放空，连想事的力气都没有'
       },
       {
-        optionA: 'A. 拖得越久越自责，越自责越不想动，像进了一个循环。',
-        optionB: 'B. 做什么都觉得费力，连简单的决定都能耗尽力气。'
+        optionA: 'A. 越拖越自责，越自责越不想动，像死循环',
+        optionB: 'B. 做什么都觉得费力，连小决定都耗力气'
       },
       {
-        optionA: 'A. 别人觉得我懒，其实我只是心里在打架。',
-        optionB: 'B. 别人觉得我懒，其实我只是身体被掏空了。'
+        optionA: 'A. 别人觉得我懒，其实我心里在打架',
+        optionB: 'B. 别人觉得我懒，其实我真的被掏空了'
       },
       {
-        optionA: 'A. 如果能回到精力充沛的一天，我会先把拖延的那件事干掉。',
-        optionB: 'B. 如果能回到精力充沛的一天，我会好好睡一觉，什么也不做。'
+        optionA: 'A. 如果精力充沛，我要先把拖延的事做完',
+        optionB: 'B. 如果精力充沛，我只想好好睡一觉'
       },
       {
-        optionA: 'A. 我的累更多和「管不住自己」有关。',
-        optionB: 'B. 我的累更多和「真的需要休息」有关。'
+        optionA: 'A. 我的累更多是「管不住自己」',
+        optionB: 'B. 我的累更多是「真的需要休息」'
       }
     ];
 
@@ -135,7 +135,7 @@
 
     function loadQuestion(index) {
       const question = questions[index];
-      questionNumber.textContent = `第 ${index + 1} 组 / ${questions.length}`;
+      questionNumber.textContent = `第 ${index + 1} 题 / ${questions.length}`;
       
       options.innerHTML = '';
       
@@ -181,18 +181,18 @@
       if (sScore >= 8 && diff >= 3) {
         fatigueType = 'self-inflicted';
         icon = '🧠';
-        title = '「心里在打架」型';
-        description = '你的累，更多来自内心的拉扯。拖延、自责、自制力消耗，像后台程序一样偷偷吃掉你的精力。你不是没有能量，而是能量被内耗了。这种累最隐蔽，因为它常常披着「我不够好」的外衣。<br><br><strong>学者悄悄话：</strong>自我攻击是最大的能量漏洞，先停止自责，就是帮自己充电。';
+        title = '「心里在打小架」的你';
+        description = '你的累，像心里住着两个小人在拔河——一个想动，一个想逃。拖延、自责像后台耗电一样，悄悄吃掉你的能量。你不是懒，只是被自己的期待困住啦。<br><br><strong>悄悄话：</strong>先别骂自己啦，停下来抱抱那个「不想动」的自己吧。';
       } else if (pScore >= 8 && diff <= -3) {
         fatigueType = 'physical';
         icon = '💤';
-        title = '「身体在求救」型';
-        description = '你的身体正在诚实地发出休息请求。肌肉、神经、免疫系统可能已经过度负载。这不是意志力能解决的，你需要真正的生理恢复：睡眠、营养、放空。忽略它，身体会以更激烈的方式让你停下来。<br><br><strong>学者悄悄话：</strong>把休息看作一种技能，像吃饭一样是刚需，不是奖励。';
+        title = '「身体在喊充电」的你';
+        description = '你的身体正在拼命给你发信号："我累啦！"肌肉、神经、睡眠都在抗议。这不是意志力的问题，是身体真的需要休息了。就像手机没电要充电，你也需要停下来啦。<br><br><strong>悄悄话：</strong>休息不是偷懒，是爱自己的必修课哦。';
       } else {
         fatigueType = 'mixed';
         icon = '🤝';
-        title = '「身心交织」型';
-        description = '你同时承受着心理内耗和生理透支，而且它们互相加重。身体累让你更不想行动，进而产生更多自责；而心理压力又让身体无法真正放松。打破这个循环需要先找一个微小切口——哪怕只是今晚提前半小时关灯。<br><br><strong>学者悄悄话：</strong>先关怀身体，再梳理内心，顺序对了，结就容易解。';
+        title = '「身心都在喊累」的你';
+        description = '你的心里和身体都在疲惫——身体累让你更不想动，心里纠结又让身体更累。别着急，我们可以一起慢慢解开这个结。先让身体舒服一点，心也会跟着轻松起来的。<br><br><strong>悄悄话：</strong>慢慢来，照顾好自己没有标准答案。';
       }
       
       resultIcon.textContent = icon;
