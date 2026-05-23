@@ -23,7 +23,7 @@
     .std{font-size:0.95rem;line-height:1.7;margin-bottom:12px}
     .act{background:var(--w);padding:12px;border-radius:8px;font-size:0.9rem;border-left:4px solid var(--p)}
     .nav{display:flex;gap:12px;margin-top:24px}
-    .nav button{flex:1;padding:14px;border:none;border-radius:var(--r);font-weight:600;font-size:1rem;cursor:pointer;transition:all 0.2s}
+    .nav button{flex:1;padding:14px;border:none;border-radius:var(--r);font-weight:600;font-size:1rem;cursor:pointer}
     .nav .prev{background:var(--s);color:var(--p)}
     .nav .next{background:var(--p);color:white}
     .nav button:disabled{opacity:0.5;cursor:not-allowed}
@@ -33,10 +33,10 @@
     .nores-ico{font-size:4rem;margin-bottom:16px}
     .nores-text{font-size:1.1rem;color:var(--l);margin-bottom:20px}
     .btn{display:block;text-align:center;padding:14px 24px;background:var(--p);color:white;border:none;border-radius:var(--r);font-weight:600;font-size:1rem;text-decoration:none}
-    ft{text-align:center;margin-top:auto;padding-top:24px}
-    ft a{color:var(--l);text-decoration:none;font-size:0.9rem;margin:0 8px}
-    ft a:hover{color:var(--p)}
-    ft p{margin-top:16px;font-size:0.9rem;color:var(--l)}
+    .btn:active{transform:scale(0.98)}
+    footer{text-align:center;margin-top:auto;padding-top:24px}
+    footer a{color:var(--l);text-decoration:none;font-size:0.9rem;margin:0 12px;display:inline-block}
+    footer p{margin-top:16px;font-size:0.9rem;color:var(--l)}
     @media(max-width:480px){.c{padding:24px 16px}h1{font-size:1.8rem}.step{padding:20px}}
   </style>
 </head>
@@ -113,6 +113,10 @@
       next.onclick=()=>{if(cur<5){cur++;upd()}else alert('你已经做完所有小练习啦！记得每天都要对自己好一点哦 💖')};
       upd();
     }
+    
+    document.querySelectorAll('a').forEach(a=>{
+      a.onclick=e=>{e.preventDefault();location.href=a.href};
+    });
   </script>
 </body>
 </html>

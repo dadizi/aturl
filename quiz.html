@@ -2,74 +2,65 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#7BAE9A">
   <meta http-equiv="Cache-Control" content="public, max-age=604800">
   <title>我是哪种累？</title>
   <style>
-    :root{--primary:#7BAE9A;--secondary:#E8F4F0;--warm:#FDF8F3;--text:#5A5A5A;--light:#999;--radius:16px;--shadow:0 4px 16px rgba(0,0,0,0.08)}
+    :root{--p:#7BAE9A;--s:#E8F4F0;--w:#FDF8F3;--t:#5A5A5A;--l:#999;--r:16px}
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#FFF9F5,#F0F7F4);min-height:100vh;color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
-    .container{max-width:520px;margin:0 auto;padding:40px 20px;min-height:100vh;display:flex;flex-direction:column}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#FFF9F5,#F0F7F4);min-height:100vh;color:var(--t);line-height:1.6}
+    .c{max-width:520px;margin:0 auto;padding:40px 20px;min-height:100vh;display:flex;flex-direction:column}
     header{text-align:center;margin-bottom:32px}
-    h1{font-size:2rem;background:linear-gradient(135deg,var(--primary),#5A8A7A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
-    .subtitle{color:var(--light);font-size:1rem}
-    .story-container,.question-container,.result-container{background:white;border-radius:var(--radius);padding:24px;margin-bottom:24px;box-shadow:var(--shadow)}
-    .story-text{font-size:1rem;line-height:1.8;margin-bottom:20px}
-    .story-text strong{color:var(--primary)}
-    .btn{display:block;text-align:center;padding:14px 24px;background:var(--primary);color:white;border:none;border-radius:var(--radius);font-weight:600;font-size:1rem;cursor:pointer;transition:all 0.2s;text-decoration:none}
-    .btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.12)}
-    .btn-secondary{background:var(--secondary);color:var(--primary)}
-    .progress-bar{height:6px;background:var(--secondary);border-radius:3px;margin-bottom:20px;overflow:hidden}
-    .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),#5A8A7A);transition:width 0.3s ease;border-radius:3px}
-    .question-number{font-size:0.9rem;color:var(--light);margin-bottom:8px}
-    .question-text{font-size:1.1rem;font-weight:600;margin-bottom:20px;line-height:1.6}
-    .options{display:flex;flex-direction:column;gap:12px}
-    .option{padding:16px;background:var(--warm);border:2px solid transparent;border-radius:12px;text-align:left;font-size:0.95rem;cursor:pointer;transition:all 0.2s}
-    .option:hover{border-color:var(--primary);transform:translateX(4px)}
-    .option.selected{background:var(--secondary);border-color:var(--primary)}
-    .result-icon{font-size:4rem;text-align:center;margin-bottom:16px}
-    .result-title{font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:16px;color:var(--primary)}
-    .result-description{font-size:0.95rem;line-height:1.8;margin-bottom:24px}
-    .buttons-container{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+    h1{font-size:2rem;background:linear-gradient(135deg,var(--p),#5A8A7A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+    .su{color:var(--l);font-size:1rem}
+    .box{background:white;border-radius:var(--r);padding:24px;margin-bottom:24px;box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+    .txt{font-size:1rem;line-height:1.8;margin-bottom:20px}
+    .txt strong{color:var(--p)}
+    .btn{display:block;text-align:center;padding:14px 24px;background:var(--p);color:white;border:none;border-radius:var(--r);font-weight:600;font-size:1rem;cursor:pointer;text-decoration:none}
+    .btn:active{transform:scale(0.98)}
+    .btn-sec{background:var(--s);color:var(--p)}
+    .prog{height:6px;background:var(--s);border-radius:3px;margin-bottom:20px;overflow:hidden}
+    .prog-f{height:100%;background:linear-gradient(90deg,var(--p),#5A8A7A);border-radius:3px}
+    .qn{font-size:0.9rem;color:var(--l);margin-bottom:8px}
+    .qt{font-size:1.1rem;font-weight:600;margin-bottom:20px;line-height:1.6}
+    .opts{display:flex;flex-direction:column;gap:12px}
+    .opt{padding:16px;background:var(--w);border:2px solid transparent;border-radius:12px;text-align:left;font-size:0.95rem;cursor:pointer}
+    .opt:active{background:var(--s);border-color:var(--p)}
+    .ri{font-size:4rem;text-align:center;margin-bottom:16px}
+    .rt{font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:16px;color:var(--p)}
+    .rd{font-size:0.95rem;line-height:1.8;margin-bottom:24px}
+    .btns{display:flex;flex-direction:column;gap:12px;margin-top:20px}
     footer{text-align:center;margin-top:auto;padding-top:24px}
-    footer a{color:var(--light);text-decoration:none;font-size:0.9rem}
-    footer a:hover{color:var(--primary)}
-    @media(max-width:480px){.container{padding:24px 16px}h1{font-size:1.8rem}.story-container,.question-container,.result-container{padding:20px}}
+    footer a{color:var(--l);text-decoration:none;font-size:0.9rem}
+    @media(max-width:480px){.c{padding:24px 16px}h1{font-size:1.8rem}.box{padding:20px}}
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>我是哪种累？</h1>
-      <p class="subtitle">花几分钟，好好看看自己</p>
-    </header>
+  <div class="c">
+    <header><h1>我是哪种累？</h1><p class="su">花几分钟，好好看看自己</p></header>
     
-    <div class="story-container" id="introContainer">
-      <div class="story-text">
-        嗨～不用紧张，这只是一次小小的自我对话。<br><br>
-        下面有12个小问题，每一题都选 <strong>最近一周最像你的那一个</strong> 就好。<br><br>
-        没有对错，跟着直觉走。我们只是想更懂你一点。
-      </div>
+    <div class="box" id="intro">
+      <div class="txt">嗨～不用紧张，这只是一次小小的自我对话。<br><br>下面有12个小问题，每一题都选 <strong>最近一周最像你的那一个</strong> 就好。<br><br>没有对错，跟着直觉走。我们只是想更懂你一点。</div>
       <button class="btn" id="startBtn">开始聊聊</button>
     </div>
     
-    <div class="question-container" id="questionContainer" style="display:none;">
-      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="question-number" id="questionNumber">第 1 题 / 12</div>
-      <div class="question-text" id="questionText"></div>
-      <div class="options" id="options"></div>
+    <div class="box" id="quiz" style="display:none">
+      <div class="prog"><div class="prog-f" id="prog"></div></div>
+      <div class="qn" id="qn">第 1 题 / 12</div>
+      <div class="qt" id="qt"></div>
+      <div class="opts" id="opts"></div>
     </div>
     
-    <div class="result-container" id="resultContainer" style="display:none;">
-      <div class="result-icon" id="resultIcon"></div>
-      <div class="result-title" id="resultTitle"></div>
-      <div class="result-description" id="resultDescription"></div>
-      <div class="buttons-container">
+    <div class="box" id="result" style="display:none">
+      <div class="ri" id="ri"></div>
+      <div class="rt" id="rt"></div>
+      <div class="rd" id="rd"></div>
+      <div class="btns">
         <a href="stories.html" class="btn">听听类似的故事</a>
-        <a href="solution.html" class="btn btn-secondary">试试轻松一点的方法</a>
+        <a href="solution.html" class="btn btn-sec">试试轻松一点的方法</a>
       </div>
-      <p style="margin-top:20px;font-size:0.9rem;color:var(--light);text-align:center;font-style:italic">找到你的「累」了，这就是改变的开始呀～</p>
+      <p style="margin-top:20px;font-size:0.9rem;color:var(--l);text-align:center;font-style:italic">找到你的「累」了，这就是改变的开始呀～</p>
     </div>
     
     <footer><a href="index.html">回首页歇会儿</a></footer>
@@ -93,33 +84,36 @@
     let i=0,s={self:0,physical:0};
     
     function loadQ(){
-      document.getElementById('questionNumber').textContent=`第 ${i+1} 题 / 12`;
-      document.getElementById('progressFill').style.width=`${((i+1)/12)*100}%`;
-      const opt=document.getElementById('options');
-      opt.innerHTML=q[i].map((t,n)=>`<button class="option" onclick="sel(${n})">${t}</button>`).join('');
+      document.getElementById('qn').textContent=`第 ${i+1} 题 / 12`;
+      document.getElementById('prog').style.width=`${((i+1)/12)*100}%`;
+      document.getElementById('opts').innerHTML=q[i].map((t,n)=>`<button class="opt" onclick="sel(${n})">${t}</button>`).join('');
     }
     
     function sel(t){s[t===0?'self':'physical']++;i++<12?loadQ():show();}
     
     function show(){
-      document.getElementById('questionContainer').style.display='none';
-      document.getElementById('resultContainer').style.display='block';
+      document.getElementById('quiz').style.display='none';
+      document.getElementById('result').style.display='block';
       const ds=s.self,dp=s.physical,d=ds-dp;
       let ic,ti,de;
       if(ds>=8&&d>=3){ic='🌙';ti='「心里在打小架」的你';de='你的累，像心里住着两个小人在拔河——一个想动，一个想逃。拖延、自责像后台耗电一样，悄悄吃掉你的能量。你不是懒，只是被自己的期待困住啦。<br><br><strong>悄悄话：</strong>先别骂自己啦，停下来抱抱那个「不想动」的自己吧。';localStorage.setItem('fatigueType','self-inflicted');}
       else if(dp>=8&&d<=-3){ic='🛋️';ti='「身体在喊充电」的你';de='你的身体正在拼命给你发信号："我累啦！"肌肉、神经、睡眠都在抗议。这不是意志力的问题，是身体真的需要休息了。就像手机没电要充电，你也需要停下来啦。<br><br><strong>悄悄话：</strong>休息不是偷懒，是爱自己的必修课哦。';localStorage.setItem('fatigueType','physical');}
       else{ic='🧩';ti='「身心都在喊累」的你';de='你的心里和身体都在疲惫——身体累让你更不想动，心里纠结又让身体更累。别着急，我们可以一起慢慢解开这个结。先让身体舒服一点，心也会跟着轻松起来的。<br><br><strong>悄悄话：</strong>慢慢来，照顾好自己没有标准答案。';localStorage.setItem('fatigueType','mixed');}
-      document.getElementById('resultIcon').textContent=ic;
-      document.getElementById('resultTitle').textContent=ti;
-      document.getElementById('resultDescription').innerHTML=de;
+      document.getElementById('ri').textContent=ic;
+      document.getElementById('rt').textContent=ti;
+      document.getElementById('rd').innerHTML=de;
       localStorage.setItem('sScore',ds);localStorage.setItem('pScore',dp);
     }
     
     document.getElementById('startBtn').onclick=()=>{
-      document.getElementById('introContainer').style.display='none';
-      document.getElementById('questionContainer').style.display='block';
+      document.getElementById('intro').style.display='none';
+      document.getElementById('quiz').style.display='block';
       loadQ();
     };
+    
+    document.querySelectorAll('a').forEach(a=>{
+      a.onclick=e=>{e.preventDefault();location.href=a.href};
+    });
   </script>
 </body>
 </html>
