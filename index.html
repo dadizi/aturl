@@ -9,8 +9,8 @@
   <style>
     :root{--p:#7BAE9A;--s:#E8F4F0;--t:#5A5A5A;--l:#999;--r:16px}
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#FFF9F5,#F0F7F4);min-height:100vh;color:var(--t);line-height:1.6}
-    .c{max-width:480px;margin:0 auto;padding:20px;display:flex;flex-direction:column;min-height:100vh}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#FFF9F5,#F0F7F4);min-height:100svh;color:var(--t);line-height:1.6}
+    .c{max-width:480px;margin:0 auto;padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom, 20px));display:flex;flex-direction:column;min-height:100svh}
     header{text-align:center;margin-bottom:24px}
     h1{font-size:2.2rem;font-weight:700;background:linear-gradient(135deg,var(--p),#5A8A7A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
     .su{font-size:1rem;color:var(--l)}
