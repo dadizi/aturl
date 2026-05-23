@@ -2,12 +2,24 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#7BAE9A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta http-equiv="Cache-Control" content="public, max-age=604800">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>想轻松一点</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=1.0">
 </head>
 <body>
-  <div class="container">
+  <div class="loader" id="loader">
+    <div class="loader-content">
+      <span class="loader-icon">🌿</span>
+      <span class="loader-text">正在加载...</span>
+    </div>
+  </div>
+  
+  <div class="container" id="mainContent" style="display: none;">
     <header>
       <h1>想轻松一点</h1>
       <p class="subtitle">慢慢走，我们一起找办法</p>
@@ -17,7 +29,7 @@
       <div class="no-result" id="noResult">
         <div class="no-result-icon">🤔</div>
         <div class="no-result-text">还不知道自己是哪种累？</div>
-        <a href="quiz.html" class="btn">先聊五分钟</a>
+        <a href="quiz.html" class="btn" onclick="handleLinkClick(this)">先聊五分钟</a>
       </div>
       
       <div id="solutionContent" style="display: none;">
@@ -74,9 +86,9 @@
     
     <footer>
       <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-        <a href="quiz.html" style="color: var(--text-color); opacity: 0.6; text-decoration: none;">重新认识自己</a>
-        <a href="stories.html" style="color: var(--text-color); opacity: 0.6; text-decoration: none;">听听故事</a>
-        <a href="index.html" style="color: var(--text-color); opacity: 0.6; text-decoration: none;">回首页</a>
+        <a href="quiz.html" style="color: var(--text-color); opacity: 0.6; text-decoration: none;" onclick="handleLinkClick(this)">重新认识自己</a>
+        <a href="stories.html" style="color: var(--text-color); opacity: 0.6; text-decoration: none;" onclick="handleLinkClick(this)">听听故事</a>
+        <a href="index.html" style="color: var(--text-color); opacity: 0.6; text-decoration: none;" onclick="handleLinkClick(this)">回首页</a>
       </div>
       <p style="margin-top: 16px; font-size: 0.9rem; color: var(--text-color); opacity: 0.6;">
         慢慢来，你已经在变好的路上了 🌿
@@ -84,7 +96,76 @@
     </footer>
   </div>
 
+  <div class="error-overlay" id="errorOverlay" style="display: none;">
+    <div class="error-content">
+      <span class="error-icon">😔</span>
+      <p class="error-text">网络有点慢，再试一次吧</p>
+      <button class="btn" onclick="reloadPage()">重新加载</button>
+    </div>
+  </div>
+
   <style>
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #FFF9F5 0%, #F0F7F4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.3s ease;
+    }
+    
+    .loader-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .loader-icon {
+      font-size: 2.5rem;
+      animation: bounce 1s ease-in-out infinite;
+    }
+    
+    .loader-text {
+      font-size: 1rem;
+      color: var(--text-light);
+    }
+    
+    .error-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 249, 245, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+      padding: 20px;
+    }
+    
+    .error-content {
+      text-align: center;
+      max-width: 320px;
+    }
+    
+    .error-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    
+    .error-text {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+    
     .intro-text {
       font-size: 0.95rem;
       color: var(--text-color);
@@ -122,6 +203,11 @@
     .scholar-note strong {
       color: var(--primary-color);
     }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
   </style>
 
   <script>
@@ -130,170 +216,61 @@
         intro: '你的累，是心里的小纠结在偷偷耗电。别担心，我们一起把能量找回来～',
         scholarNote: '<strong>想对你说：</strong>你不是懒，只是太想做好了。试着对自己温柔一点，每一步小小的前进都是胜利呀。',
         steps: [
-          {
-            icon: '�',
-            title: '先和自己和解',
-            description: '在心里轻轻说：「我看到你在拖延啦，没关系的，这只是大脑在保护自己呀。我们不打架，一起歇会儿。」',
-            action: '💡 小行动：把手放在胸口，深呼吸三次，每次呼气都默念「允许」'
-          },
-          {
-            icon: '🍬',
-            title: '把任务切得小小的',
-            description: '别想着「写完报告」，就想「打开文档写个标题」；别想着「整理房间」，就想「挂好一件衣服」。小到不可能失败～',
-            action: '💡 小行动：现在就想一个2分钟能做完的小事，做完它，感受那种「我做到了」的小骄傲'
-          },
-          {
-            icon: '✨',
-            title: '给大脑一个启动信号',
-            description: '设计一个专属仪式：比如泡杯茶、整理桌面、深呼吸三次。每天同一时间做，大脑就知道「该开工啦」。',
-            action: '💡 小行动：写下你的三件套仪式，贴在电脑旁或镜子上'
-          },
-          {
-            icon: '🌸',
-            title: '奖励自己好好休息',
-            description: '做完小事就奖励自己5分钟：看看窗外的云、听一首喜欢的歌、伸个大大的懒腰。休息不是浪费，是充电呀。',
-            action: '💡 小行动：现在就给自己3分钟，什么都不做，只是发呆'
-          },
-          {
-            icon: '�',
-            title: '一次只做一件事',
-            description: '每天选25分钟，只做一件小事，关掉手机通知。做完打个勾，看着勾勾变多，你会越来越相信自己。',
-            action: '💡 小行动：明天找个25分钟，在日历上标上「只做一件事」'
-          }
+          { icon: '🤍', title: '先和自己和解', description: '在心里轻轻说：「我看到你在拖延啦，没关系的，这只是大脑在保护自己呀。我们不打架，一起歇会儿。」', action: '💡 小行动：把手放在胸口，深呼吸三次，每次呼气都默念「允许」' },
+          { icon: '🍬', title: '把任务切得小小的', description: '别想着「写完报告」，就想「打开文档写个标题」；别想着「整理房间」，就想「挂好一件衣服」。小到不可能失败～', action: '💡 小行动：现在就想一个2分钟能做完的小事，做完它，感受那种「我做到了」的小骄傲' },
+          { icon: '✨', title: '给大脑一个启动信号', description: '设计一个专属仪式：比如泡杯茶、整理桌面、深呼吸三次。每天同一时间做，大脑就知道「该开工啦」。', action: '💡 小行动：写下你的三件套仪式，贴在电脑旁或镜子上' },
+          { icon: '🌸', title: '奖励自己好好休息', description: '做完小事就奖励自己5分钟：看看窗外的云、听一首喜欢的歌、伸个大大的懒腰。休息不是浪费，是充电呀。', action: '💡 小行动：现在就给自己3分钟，什么都不做，只是发呆' },
+          { icon: '🌿', title: '一次只做一件事', description: '每天选25分钟，只做一件小事，关掉手机通知。做完打个勾，看着勾勾变多，你会越来越相信自己。', action: '💡 小行动：明天找个25分钟，在日历上标上「只做一件事」' }
         ]
       },
       'physical': {
         intro: '你的身体在喊累啦！别硬撑，我们一起给它充充电～',
         scholarNote: '<strong>想对你说：</strong>休息不是偷懒，就像饿了要吃饭、困了要睡觉，这是爱自己的基本操作呀。',
         steps: [
-          {
-            icon: '🏠',
-            title: '先按下暂停键',
-            description: '把能推的事推掉，吃点热饭，洗个舒服的澡，换上软乎乎的衣服。告诉自己：「现在是充电时间。」',
-            action: '💡 小行动：今天取消一件可选的事，晚上只属于你自己'
-          },
-          {
-            icon: '�',
-            title: '听听身体在说什么',
-            description: '闭上眼睛感受一下：哪里酸？哪里沉？是眼睛干干的？还是肩膀硬硬的？给它们起个名字，不用评判。',
-            action: '💡 小行动：困了就小睡20分钟，酸了就滚泡沫轴5分钟，闷了就出去走10分钟'
-          },
-          {
-            icon: '🌬️',
-            title: '试试「叹气式呼吸」',
-            description: '躺着或坐着，手放肚子上，用鼻子吸气4秒，肚子鼓起来；嘴巴慢慢呼气6秒，肚子瘪下去。做5轮，肩膀会悄悄下沉哦。',
-            action: '💡 小行动：现在就做3轮，感受呼气时身体变轻的感觉'
-          },
-          {
-            icon: '🌳',
-            title: '安排一天「什么都不做」',
-            description: '接下来一周找半天，不安排工作、不刷手机。去公园坐坐、看本闲书、或者在家发发呆。这是深度充电，不是浪费时间。',
-            action: '💡 小行动：打开日历，圈出未来7天里「无事发生」的半天'
-          },
-          {
-            icon: '🌈',
-            title: '把休息写进日程',
-            description: '不用等累到不行才休息。上午11点听首歌，下午3点伸个懒腰，晚上8点调暗灯光。小小的休息能防止累累积。',
-            action: '💡 小行动：设一个每天响的闹钟，标签写「充电时间」'
-          }
+          { icon: '🏠', title: '先按下暂停键', description: '把能推的事推掉，吃点热饭，洗个舒服的澡，换上软乎乎的衣服。告诉自己：「现在是充电时间。」', action: '💡 小行动：今天取消一件可选的事，晚上只属于你自己' },
+          { icon: '👂', title: '听听身体在说什么', description: '闭上眼睛感受一下：哪里酸？哪里沉？是眼睛干干的？还是肩膀硬硬的？给它们起个名字，不用评判。', action: '💡 小行动：困了就小睡20分钟，酸了就滚泡沫轴5分钟，闷了就出去走10分钟' },
+          { icon: '🌬️', title: '试试「叹气式呼吸」', description: '躺着或坐着，手放肚子上，用鼻子吸气4秒，肚子鼓起来；嘴巴慢慢呼气6秒，肚子瘪下去。做5轮，肩膀会悄悄下沉哦。', action: '💡 小行动：现在就做3轮，感受呼气时身体变轻的感觉' },
+          { icon: '🌳', title: '安排一天「什么都不做」', description: '接下来一周找半天，不安排工作、不刷手机。去公园坐坐、看本闲书、或者在家发发呆。这是深度充电，不是浪费时间。', action: '💡 小行动：打开日历，圈出未来7天里「无事发生」的半天' },
+          { icon: '🌈', title: '把休息写进日程', description: '不用等累到不行才休息。上午11点听首歌，下午3点伸个懒腰，晚上8点调暗灯光。小小的休息能防止累累积。', action: '💡 小行动：设一个每天响的闹钟，标签写「充电时间」' }
         ]
       },
       'mixed': {
         intro: '心里和身体都累了？没关系，我们先从最简单的开始～',
         scholarNote: '<strong>想对你说：</strong>不用急着一下子变好，像解开打结的项链一样，轻轻找个小口，慢慢抖开就好。',
         steps: [
-          {
-            icon: '🍵',
-            title: '先喂饱身体',
-            description: '现在就去喝杯温水，吃点小零食，伸个懒腰。身体舒服了，心才有力气放松。',
-            action: '💡 小行动：站起来接杯水，站着喝完，顺便转转脖子'
-          },
-          {
-            icon: '🎯',
-            title: '做一件「绝对能成」的小事',
-            description: '整理床铺、洗个杯子、删5封邮件。做完在心里说：「看，我做到了！」小小的掌控感很重要。',
-            action: '💡 小行动：找眼前最小的事，30秒内做完它'
-          },
-          {
-            icon: '📝',
-            title: '把脑子里的事倒出来',
-            description: '拿张纸随便写：要做的事、担心的事、乱七八糟的想法。写完圈出今天能做的1件，其他的先不管。',
-            action: '💡 小行动：花3分钟，在备忘录里「倒垃圾」'
-          },
-          {
-            icon: '🌻',
-            title: '15分钟工作，5分钟休息',
-            description: '不用等做完才休息。做15分钟事，就闭眼深呼吸5分钟；再做15分钟，就对自己说句鼓励的话。交替来，不透支。',
-            action: '💡 小行动：定15分钟计时器，开始做事，铃响就休息'
-          },
-          {
-            icon: '�',
-            title: '每天给自己打个分',
-            description: '睡前花30秒：身体累不累（1-10分）？心里平不平静（1-10分）？不用改，只是看见。慢慢就知道什么让你充电了。',
-            action: '💡 小行动：今晚睡前，给自己的身体和心情各打个分'
-          }
+          { icon: '🍵', title: '先喂饱身体', description: '现在就去喝杯温水，吃点小零食，伸个懒腰。身体舒服了，心才有力气放松。', action: '💡 小行动：站起来接杯水，站着喝完，顺便转转脖子' },
+          { icon: '🎯', title: '做一件「绝对能成」的小事', description: '整理床铺、洗个杯子、删5封邮件。做完在心里说：「看，我做到了！」小小的掌控感很重要。', action: '💡 小行动：找眼前最小的事，30秒内做完它' },
+          { icon: '📝', title: '把脑子里的事倒出来', description: '拿张纸随便写：要做的事、担心的事、乱七八糟的想法。写完圈出今天能做的1件，其他的先不管。', action: '💡 小行动：花3分钟，在备忘录里「倒垃圾」' },
+          { icon: '🌻', title: '15分钟工作，5分钟休息', description: '不用等做完才休息。做15分钟事，就闭眼深呼吸5分钟；再做15分钟，就对自己说句鼓励的话。交替来，不透支。', action: '💡 小行动：定15分钟计时器，开始做事，铃响就休息' },
+          { icon: '📝', title: '每天给自己打个分', description: '睡前花30秒：身体累不累（1-10分）？心里平不平静（1-10分）？不用改，只是看见。慢慢就知道什么让你充电了。', action: '💡 小行动：今晚睡前，给自己的身体和心情各打个分' }
         ]
       }
     };
 
-    const fatigueType = localStorage.getItem('fatigueType');
-    
-    const noResult = document.getElementById('noResult');
-    const solutionContent = document.getElementById('solutionContent');
-    const introText = document.getElementById('introText');
-    const scholarNote = document.getElementById('scholarNote');
-    
-    const steps = document.querySelectorAll('.step');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    
-    let currentStep = 0;
-
-    function loadSolution(type) {
-      if (!solutions[type]) return;
-      
-      const sol = solutions[type];
-      const stepData = sol.steps;
-      
-      introText.textContent = sol.intro;
-      scholarNote.innerHTML = sol.scholarNote;
-      scholarNote.style.display = 'none';
-      
-      for (let i = 0; i < 5; i++) {
-        document.getElementById(`stepIcon${i + 1}`).textContent = stepData[i].icon;
-        document.getElementById(`stepTitle${i + 1}`).textContent = stepData[i].title;
-        document.getElementById(`stepDesc${i + 1}`).textContent = stepData[i].description;
-        document.getElementById(`stepAction${i + 1}`).textContent = stepData[i].action;
-      }
-      
-      currentStep = 0;
-      updateStepDisplay();
+    function handleLinkClick(element) {
+      event.preventDefault();
+      const url = element.getAttribute('href');
+      document.getElementById('loader').style.display = 'flex';
+      setTimeout(() => { window.location.href = url; }, 100);
     }
 
-    function updateStepDisplay() {
-      steps.forEach((step, index) => {
-        step.classList.toggle('active', index === currentStep);
-      });
-      
-      prevBtn.disabled = currentStep === 0;
-      
-      if (currentStep === 4) {
-        nextBtn.textContent = '听听悄悄话';
-      } else if (currentStep === 5) {
-        nextBtn.textContent = '完成啦';
-      } else {
-        nextBtn.textContent = '下一个小办法';
-      }
-      
-      if (currentStep >= 5) {
-        scholarNote.style.display = 'block';
-        steps.forEach(step => step.style.display = 'none');
-      } else {
-        scholarNote.style.display = 'none';
-      }
+    function reloadPage() {
+      document.getElementById('errorOverlay').style.display = 'none';
+      document.getElementById('loader').style.display = 'flex';
+      window.location.reload();
     }
 
     function showSolution() {
+      let fatigueType;
+      try {
+        fatigueType = localStorage.getItem('fatigueType');
+      } catch(e) {
+        console.log('localStorage unavailable');
+      }
+      
+      const noResult = document.getElementById('noResult');
+      const solutionContent = document.getElementById('solutionContent');
+      
       if (!fatigueType) {
         noResult.style.display = 'block';
         solutionContent.style.display = 'none';
@@ -303,7 +280,48 @@
       noResult.style.display = 'none';
       solutionContent.style.display = 'block';
       
-      loadSolution(fatigueType);
+      const sol = solutions[fatigueType];
+      if (!sol) return;
+      
+      document.getElementById('introText').textContent = sol.intro;
+      document.getElementById('scholarNote').innerHTML = sol.scholarNote;
+      document.getElementById('scholarNote').style.display = 'none';
+      
+      const stepData = sol.steps;
+      for (let i = 0; i < 5; i++) {
+        document.getElementById(`stepIcon${i + 1}`).textContent = stepData[i].icon;
+        document.getElementById(`stepTitle${i + 1}`).textContent = stepData[i].title;
+        document.getElementById(`stepDesc${i + 1}`).textContent = stepData[i].description;
+        document.getElementById(`stepAction${i + 1}`).textContent = stepData[i].action;
+      }
+      
+      let currentStep = 0;
+      const steps = document.querySelectorAll('.step');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      
+      function updateStepDisplay() {
+        steps.forEach((step, index) => {
+          step.classList.toggle('active', index === currentStep);
+        });
+        
+        prevBtn.disabled = currentStep === 0;
+        
+        if (currentStep === 4) {
+          nextBtn.textContent = '听听悄悄话';
+        } else if (currentStep === 5) {
+          nextBtn.textContent = '完成啦';
+        } else {
+          nextBtn.textContent = '下一个小办法';
+        }
+        
+        if (currentStep >= 5) {
+          document.getElementById('scholarNote').style.display = 'block';
+          steps.forEach(step => step.style.display = 'none');
+        } else {
+          document.getElementById('scholarNote').style.display = 'none';
+        }
+      }
       
       prevBtn.addEventListener('click', () => {
         if (currentStep > 0) {
@@ -323,9 +341,35 @@
           alert('你已经做完所有小练习啦！记得每天都要对自己好一点哦 💖');
         }
       });
+      
+      updateStepDisplay();
     }
 
-    showSolution();
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        document.getElementById('loader').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('loader').style.display = 'none';
+          document.getElementById('mainContent').style.display = 'flex';
+          showSolution();
+        }, 300);
+      }, 300);
+    });
+
+    window.addEventListener('load', () => {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'flex';
+    });
+
+    window.addEventListener('error', () => {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('errorOverlay').style.display = 'flex';
+    });
+
+    window.addEventListener('offline', () => {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('errorOverlay').style.display = 'flex';
+    });
   </script>
 </body>
 </html>
