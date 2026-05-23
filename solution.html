@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我不想这么累？</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>我不想这么累？</h1>
+      <p class="subtitle">一步步找回轻松</p>
+    </header>
+    
+    <div class="solution-container" id="solutionContainer">
+      <div class="no-result" id="noResult">
+        <div class="no-result-icon">🤔</div>
+        <div class="no-result-text">还没有找到你的累型呢</div>
+        <a href="quiz.html" class="btn">先去做个小测试</a>
+      </div>
+      
+      <div id="solutionContent" style="display: none;">
+        <div class="intro-text" id="introText"></div>
+        
+        <div class="step active" id="step1">
+          <div class="step-number">1</div>
+          <div class="step-icon" id="stepIcon1">🌱</div>
+          <div class="step-title" id="stepTitle1"></div>
+          <div class="step-description" id="stepDesc1"></div>
+          <div class="step-action" id="stepAction1"></div>
+        </div>
+        
+        <div class="step" id="step2">
+          <div class="step-number">2</div>
+          <div class="step-icon" id="stepIcon2">✨</div>
+          <div class="step-title" id="stepTitle2"></div>
+          <div class="step-description" id="stepDesc2"></div>
+          <div class="step-action" id="stepAction2"></div>
+        </div>
+        
+        <div class="step" id="step3">
+          <div class="step-number">3</div>
+          <div class="step-icon" id="stepIcon3">💪</div>
+          <div class="step-title" id="stepTitle3"></div>
+          <div class="step-description" id="stepDesc3"></div>
+          <div class="step-action" id="stepAction3"></div>
+        </div>
+        
+        <div class="step" id="step4">
+          <div class="step-number">4</div>
+          <div class="step-icon" id="stepIcon4">🎯</div>
+          <div class="step-title" id="stepTitle4"></div>
+          <div class="step-description" id="stepDesc4"></div>
+          <div class="step-action" id="stepAction4"></div>
+        </div>
+        
+        <div class="step" id="step5">
+          <div class="step-number">5</div>
+          <div class="step-icon" id="stepIcon5">🌟</div>
+          <div class="step-title" id="stepTitle5"></div>
+          <div class="step-description" id="stepDesc5"></div>
+          <div class="step-action" id="stepAction5"></div>
+        </div>
+        
+        <div class="navigation-buttons">
+          <button class="nav-btn" id="prevBtn" disabled>上一步</button>
+          <button class="nav-btn" id="nextBtn">下一步</button>
+        </div>
+        
+        <div class="scholar-note" id="scholarNote"></div>
+      </div>
+    </div>
+    
+    <footer>
+      <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+        <a href="quiz.html" style="color: var(--text-color); opacity: 0.6; text-decoration: none;">重新测试</a>
+        <a href="stories.html" style="color: var(--text-color); opacity: 0.6; text-decoration: none;">了解为什么累了要重视</a>
+        <a href="index.html" style="color: var(--text-color); opacity: 0.6; text-decoration: none;">返回首页</a>
+      </div>
+      <p style="margin-top: 16px; font-size: 0.9rem; color: var(--text-color); opacity: 0.6;">
+        疗愈不是一个目标，是一段温柔地找回自己的路程。
+      </p>
+    </footer>
+  </div>
+
+  <style>
+    .intro-text {
+      font-size: 0.95rem;
+      color: var(--text-color);
+      opacity: 0.9;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      padding: 16px;
+      background: var(--secondary-color);
+      border-radius: 12px;
+    }
+    
+    .step-action {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: var(--warm-bg);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--text-color);
+      opacity: 0.9;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .scholar-note {
+      margin-top: 24px;
+      padding: 16px;
+      background: var(--secondary-color);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      color: var(--text-color);
+      opacity: 0.9;
+      line-height: 1.7;
+      display: none;
+    }
+    
+    .scholar-note strong {
+      color: var(--primary-color);
+    }
+  </style>
+
+  <script>
+    const solutions = {
+      'self-inflicted': {
+        intro: '你的累，是内在的能量被「拖延-自责」的循环偷偷吃掉了。以下步骤基于行为激活与自我关怀理论，帮你重新收回主动权。',
+        scholarNote: '<strong>学者寄语：</strong>你不是懒惰，你只是被自己审判得太累了。每一次小小的自我接纳，都是在把漏电的插头重新接好。',
+        steps: [
+          {
+            icon: '🤝',
+            title: '停战协议',
+            description: '在心里对自己说：「我注意到我又在拖延了，没关系，这只是大脑的保护机制，不想面对压力。我不跟自己打架，我选择和这个「不想动」的部分坐一会儿。」',
+            action: '小行动：把手放在胸口，深呼吸三次，每次呼气时默念「允许」。'
+          },
+          {
+            icon: '✂️',
+            title: '给任务「瘦身」成2分钟版本',
+            description: '拖延常常因为任务在心里被放大成了怪兽。找出你一直拖着的那件事，把它切到小得可笑的程度。不是「写报告」，而是「打开文档，写下标题」。不是「整理房间」，而是「把沙发上的一件衣服挂起来」。',
+            action: '小行动：现在就定一个2分钟任务，完成它，并感受那种「我做到了」的微小胜利。'
+          },
+          {
+            icon: '🔔',
+            title: '建立「启动仪式」',
+            description: '大脑需要信号来切换状态。为自己设计一个5分钟的启动仪式，比如：整理桌面→泡一杯温水→写下今天唯一重要的那件事。每天在同一时间做，坚持一周，它会成为你进入专注模式的锚点。',
+            action: '小行动：现在就写下你的启动仪式三件套，贴在看得见的地方。'
+          },
+          {
+            icon: '🧘',
+            title: '用「零分休息法」奖励自己',
+            description: '完成任务的一小步后，给自己一段零负罪感、零输入的休息。不刷手机，不看剧，只是看看窗外、闭眼听一首歌、或伸展身体。这是大脑最好的奖赏，不会重新触发逃避回路。',
+            action: '小行动：完成刚才的2分钟任务后，给自己3分钟这样的休息，刻意享受它。'
+          },
+          {
+            icon: '🎯',
+            title: '培养「一件事专注」的微习惯',
+            description: '自控力像肌肉，可以从小重量练起。每天只设定一个「单任务时段」，比如「上午9:00-9:25只做A」，关掉所有通知。完成就打勾，看着一连串的勾，你会重新相信自己。',
+            action: '小行动：明天就找一个25分钟时段，标记在日历上，定为「只做一件事」时间。'
+          }
+        ]
+      },
+      'physical': {
+        intro: '身体不是机器，它是需要回充电的生态系统。这套方案基于生理恢复与神经放松原理，帮你认真回应身体的请求。',
+        scholarNote: '<strong>学者寄语：</strong>休息不是停止生活，休息本身就是一种重要的生活。你值得像保护重要的人那样，保护自己的精力。',
+        steps: [
+          {
+            icon: '🛑',
+            title: '按下暂停，进入「基本维护模式」',
+            description: '把所有非生存必须的事项先搁置。吃一顿温热的饭，洗一个舒服的澡，换上柔软的衣服。告诉自己和周围的人：「我现在需要执行休息任务。」',
+            action: '小行动：今天就取消一项可选的约定，空出晚上的时间，只给自己。'
+          },
+          {
+            icon: '👀',
+            title: '做一次「身体信号扫描」',
+            description: '闭上眼睛，像扫描仪一样从头顶到脚趾感知一遍：哪里发紧、哪里酸痛、哪里沉重？是眼睛干涩（视力疲劳），还是后腰僵硬（久坐）？是胸闷（压力躯体化），还是单纯困（睡眠债）？给每种不适无声地命名，不评判。',
+            action: '小行动：如果困，就小睡20分钟或早点睡；如果酸，就用泡沫轴滚5分钟；如果烦闷，就出门慢走10分钟。针对信号行动。'
+          },
+          {
+            icon: '🌬️',
+            title: '学习「腹式呼吸+渐进放松」',
+            description: '平躺或坐直，一手放腹部。用鼻子缓缓吸气，让肚子鼓起，默数4秒；屏息2秒；再用嘴慢慢呼气，肚子回落，默数6秒。重复5轮。然后依次收紧再放松脚趾、小腿、大腿、腹部、手臂、面部，每个部位5秒。这是直接向神经系统发信号：「安全了，可以休息。」',
+            action: '小行动：现在就做一轮腹式呼吸，感受呼气时肩头的下沉。'
+          },
+          {
+            icon: '📅',
+            title: '规划一次「不受打扰的恢复日」',
+            description: '在接下来一周内，找半天或一天，完全不安排社交、工作和屏幕密集的活动。可以去自然里走走、做一次拉伸、泡图书馆看闲书、或只是在家做一顿慢饭。这是给身体的「深度充电」，不是懒散，是必须的保养。',
+            action: '小行动：打开日历，现在就圈出未来7天里一个可以「什么事都没有」的半天。'
+          },
+          {
+            icon: '⚖️',
+            title: '重新定义「休息」为日常支柱',
+            description: '把休息拆成每日的「微恢复时段」，而不是等累趴才休。比如：上午11点闭眼听3分钟白噪音，下午3点做5分钟肩颈拉伸，晚上8点后调暗灯光。这些像补丁一样，能防止疲劳累积。',
+            action: '小行动：选一个时段，设置一个每日闹钟，标签写「充电时间」，到时无论多忙都停下执行。'
+          }
+        ]
+      },
+      'mixed': {
+        intro: '当心理消耗和生理透支纠缠在一起时，需要先建立秩序，再拆解。顺序很重要：先稳身体，再理内心。',
+        scholarNote: '<strong>学者寄语：</strong>身心交错时，急不来。就像解开缠绕的项链，必须找到一头，轻轻抖动。你的那头，就是对自己无条件的善意。',
+        steps: [
+          {
+            icon: '⚡',
+            title: '先做能量急救',
+            description: '此刻你就像一个又渴又焦虑的人。先解决最基础的生理需求：喝一杯温水，吃一小份坚果或水果，做3分钟伸展。让身体先脱离「低电量警报」状态。',
+            action: '小行动：现在就站起来，去接一杯水，站着慢慢喝完，顺便转动脖子。'
+          },
+          {
+            icon: '🎯',
+            title: '完成一个「最小可能」的掌控',
+            description: '混乱感会同时消耗身心。选一件你能百分之百完成的小事，比如整理床铺、清洗一个杯子、删掉5封垃圾邮件。完成后，刻意在心里说：「我做到了，我恢复了一点掌控。」',
+            action: '小行动：找到眼前最微小的那个可以整理的东西，现在就动手，30秒内完成。'
+          },
+          {
+            icon: '📝',
+            title: '进行一次「想法外置」',
+            description: '心理内耗常常因为脑中事情缠绕成团。拿一张纸，不加组织地写下所有飘在脑子里的念头、待办、担心。写完后，圈出今天能真正影响的1-2件，其余的划掉或移到明天。这就是所谓的「大脑外存」，能显著减少后台消耗。',
+            action: '小行动：现在花3分钟，在手机备忘录或纸上做一次「念头倾泻」。'
+          },
+          {
+            icon: '🔄',
+            title: '交替使用「行动卡」和「休息卡」',
+            description: '不要等累了再休，也不要休够了再干。使用番茄钟理念，但更弹性：做15分钟任务（哪怕是最小一步），然后强制进行5分钟的「生理休息」（闭眼、深呼吸、伸展）。然后再做15分钟，再5分钟心理关怀（对自己说句鼓励的话）。两者交替，避免单向透支。',
+            action: '小行动：设定一个15分钟计时器，开始一个小任务，铃声一响就切换到休息。'
+          },
+          {
+            icon: '📊',
+            title: '建立「双轨记录」',
+            description: '用一个简单表格，每天记录两项：①身体精力值（1-10分），②自我接纳度（1-10分）。坚持一周，你就能清晰看到什么活动是充电，什么人是耗电。慢慢调整，让生活节奏围绕自己的能量曲线进行。',
+            action: '小行动：睡前花30秒给自己今天的「身体电量」和「内心平静度」打个分，不用分析，只是看见。'
+          }
+        ]
+      }
+    };
+
+    const fatigueType = localStorage.getItem('fatigueType');
+    
+    const noResult = document.getElementById('noResult');
+    const solutionContent = document.getElementById('solutionContent');
+    const introText = document.getElementById('introText');
+    const scholarNote = document.getElementById('scholarNote');
+    
+    const steps = document.querySelectorAll('.step');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    let currentStep = 0;
+
+    function loadSolution(type) {
+      if (!solutions[type]) return;
+      
+      const sol = solutions[type];
+      const stepData = sol.steps;
+      
+      introText.textContent = sol.intro;
+      scholarNote.innerHTML = sol.scholarNote;
+      scholarNote.style.display = 'none';
+      
+      for (let i = 0; i < 5; i++) {
+        document.getElementById(`stepIcon${i + 1}`).textContent = stepData[i].icon;
+        document.getElementById(`stepTitle${i + 1}`).textContent = stepData[i].title;
+        document.getElementById(`stepDesc${i + 1}`).textContent = stepData[i].description;
+        document.getElementById(`stepAction${i + 1}`).textContent = stepData[i].action;
+      }
+      
+      currentStep = 0;
+      updateStepDisplay();
+    }
+
+    function updateStepDisplay() {
+      steps.forEach((step, index) => {
+        step.classList.toggle('active', index === currentStep);
+      });
+      
+      prevBtn.disabled = currentStep === 0;
+      
+      if (currentStep === 4) {
+        nextBtn.textContent = '查看学者寄语';
+      } else if (currentStep === 5) {
+        nextBtn.textContent = '完成';
+      } else {
+        nextBtn.textContent = '下一步';
+      }
+      
+      if (currentStep >= 5) {
+        scholarNote.style.display = 'block';
+        steps.forEach(step => step.style.display = 'none');
+      } else {
+        scholarNote.style.display = 'none';
+      }
+    }
+
+    function showSolution() {
+      if (!fatigueType) {
+        noResult.style.display = 'block';
+        solutionContent.style.display = 'none';
+        return;
+      }
+      
+      noResult.style.display = 'none';
+      solutionContent.style.display = 'block';
+      
+      loadSolution(fatigueType);
+      
+      prevBtn.addEventListener('click', () => {
+        if (currentStep > 0) {
+          currentStep--;
+          updateStepDisplay();
+        }
+      });
+      
+      nextBtn.addEventListener('click', () => {
+        if (currentStep < 4) {
+          currentStep++;
+          updateStepDisplay();
+        } else if (currentStep === 4) {
+          currentStep++;
+          updateStepDisplay();
+        } else {
+          alert('你已经完成了所有步骤！记得每天都要照顾好自己哦 💖');
+        }
+      });
+    }
+
+    showSolution();
+  </script>
+</body>
+</html>
