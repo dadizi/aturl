@@ -78,7 +78,7 @@
       if(t===0)s.self++;
       else if(t===1)s.physical++;
       else s.notTired++;
-      i++<12?loadQ():show();
+      if(++i<12){loadQ();}else{show();}
     }
     function show(){
       document.getElementById('quiz').style.display='none';
