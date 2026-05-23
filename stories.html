@@ -20,10 +20,10 @@
     .stx{font-size:1.05rem;line-height:1.8;color:var(--t);opacity:0.9;background:#F5F5F5;padding:20px;border-radius:12px}
     .btn{display:block;text-align:center;padding:14px 24px;background:var(--p);color:white;border:none;border-radius:var(--r);font-weight:600;font-size:1rem;cursor:pointer;transition:all 0.2s;margin-top:20px}
     .btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.12)}
-    ft{text-align:center;margin-top:auto;padding-top:24px}
-    ft a{color:var(--l);text-decoration:none;font-size:0.9rem;margin:0 8px}
-    ft a:hover{color:var(--p)}
-    ft p{margin-top:16px;font-size:0.85rem;color:var(--l);opacity:0.5}
+    footer{text-align:center;margin-top:auto;padding-top:24px}
+    footer a{color:var(--l);text-decoration:none;font-size:0.9rem;margin:0 12px;display:inline-block}
+    footer a:hover{color:var(--p)}
+    footer p{margin-top:16px;font-size:0.85rem;color:var(--l);opacity:0.5}
     @media(max-width:480px){.c{padding:24px 16px}h1{font-size:1.8rem}.sc{padding:20px}}
   </style>
 </head>
@@ -80,6 +80,9 @@
       setTimeout(()=>{c.style.opacity=1},50);
     }
     document.getElementById('nextBtn').onclick=show;
+    document.querySelectorAll('footer a').forEach(a=>{
+      a.onclick=()=>{window.location.href=a.getAttribute('href')};
+    });
     show();
   </script>
 </body>
