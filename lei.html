@@ -608,37 +608,42 @@
         if (!audioCtx) {
           audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
-        // iOS 需要显式恢复 AudioContext
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-        const bufferSize = 2 * audioCtx.sampleRate;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = buffer.getChannelData(0);
-        let b0 = 0, b1 = 0, b2 = 0;
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1;
-          b0 = 0.99765 * b0 + white * 0.099046;
-          b1 = 0.96300 * b1 + white * 0.296516;
-          b2 = 0.57000 * b2 + white * 1.052691;
-          data[i] = (b0 + b1 + b2 + white * 0.1848) * 0.25; // 音量从 0.1 提高到 0.25
-        }
-        noiseSource = audioCtx.createBufferSource();
-        noiseSource.buffer = buffer;
-        noiseSource.loop = true;
-        // 添加增益节点控制音量
-        const gainNode = audioCtx.createGain();
-        gainNode.gain.value = 0.6;
-        noiseSource.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        noiseSource.start();
-        isPlaying = true;
-        updateAudioButton();
+        // 如果 AudioContext 是 suspended，先恢复
+        const resumePromise = audioCtx.state === 'suspended' ? audioCtx.resume() : Promise.resolve();
+        resumePromise.then(() => {
+          // 确保恢复后再创建并播放噪音
+          const bufferSize = 2 * audioCtx.sampleRate;
+          const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+          const data = buffer.getChannelData(0);
+          let b0 = 0, b1 = 0, b2 = 0;
+          for (let i = 0; i < bufferSize; i++) {
+            const white = Math.random() * 2 - 1;
+            b0 = 0.99765 * b0 + white * 0.099046;
+            b1 = 0.96300 * b1 + white * 0.296516;
+            b2 = 0.57000 * b2 + white * 1.052691;
+            data[i] = (b0 + b1 + b2 + white * 0.1848) * 0.3;
+          }
+          noiseSource = audioCtx.createBufferSource();
+          noiseSource.buffer = buffer;
+          noiseSource.loop = true;
+          // 增益节点，音量适中
+          const gainNode = audioCtx.createGain();
+          gainNode.gain.value = 0.8;
+          noiseSource.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          noiseSource.start();
+          isPlaying = true;
+          updateAudioButton();
+        }).catch(err => {
+          console.error('AudioContext resume failed:', err);
+        });
       }
-      function stopNoise() {
+	  function stopNoise() {
         if (noiseSource) {
-          noiseSource.stop();
-          noiseSource.disconnect();
+          try {
+            noiseSource.stop();
+            noiseSource.disconnect();
+          } catch (e) {}
           noiseSource = null;
         }
         isPlaying = false;
