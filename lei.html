@@ -621,46 +621,46 @@
           b3 = 0.86650 * b3 + white * 0.3104856;
           b4 = 0.55000 * b4 + white * 0.5329522;
           b5 = -0.7616 * b5 - white * 0.0168980;
-          const pink = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+		  const pink = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.5;
           b6 = white * 0.115926;
           data[i] = Math.max(-1, Math.min(1, pink));
         }
         return buffer;
       }
 
-      function startNoise() {
-        // 如果已经有 AudioContext 且正在播放，直接返回
-        if (isPlaying) return;
+	  function startNoise() {
+		  if (isPlaying) return;
 
-        // 创建或获取 AudioContext
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+		  if (!audioCtx) {
+			audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+		  }
 
-        // 确保 AudioContext 处于运行状态
-        const resumePromise = audioCtx.state === 'suspended' ? audioCtx.resume() : Promise.resolve();
+		  const resumePromise = audioCtx.state === 'suspended' ? audioCtx.resume() : Promise.resolve();
 
-        resumePromise.then(() => {
-          // 创建粉红噪音缓冲
-          const buffer = createPinkNoiseBuffer(audioCtx, 5);
-          // 创建 BufferSource 并设置循环
-          noiseSource = audioCtx.createBufferSource();
-          noiseSource.buffer = buffer;
-          noiseSource.loop = true;  // 关键：无缝循环
-          // 创建增益节点控制音量
-          noiseGain = audioCtx.createGain();
-          noiseGain.gain.value = 0.8;  // 音量 0.8
-          // 连接：source -> gain -> destination
-          noiseSource.connect(noiseGain);
-          noiseGain.connect(audioCtx.destination);
-          // 开始播放
-          noiseSource.start();
-          isPlaying = true;
-          updateAudioButton();
-        }).catch(err => {
-          console.error('AudioContext resume failed:', err);
-        });
-      }
+		  resumePromise.then(() => {
+			// 强制激活：播放短暂静音
+			const silentBuffer = audioCtx.createBuffer(1, 1, 22050);
+			const silentSource = audioCtx.createBufferSource();
+			silentSource.buffer = silentBuffer;
+			silentSource.connect(audioCtx.destination);
+			silentSource.start(0);
+
+			// 生成粉红噪音
+			const buffer = createPinkNoiseBuffer(audioCtx, 5);
+			noiseSource = audioCtx.createBufferSource();
+			noiseSource.buffer = buffer;
+			noiseSource.loop = true;
+			noiseSource.connect(audioCtx.destination);
+			noiseSource.start();
+
+			isPlaying = true;
+			updateAudioButton();
+			console.log('Noise started, AudioContext state:', audioCtx.state);
+		  }).catch(err => {
+			console.error('AudioContext resume failed:', err);
+			alert('无法播放声音，请检查设备设置');
+		  });
+		}
 
       function stopNoise() {
         if (noiseSource) {
