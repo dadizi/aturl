@@ -649,30 +649,26 @@
 
         return new Blob([buffer], { type: 'audio/wav' });
       }
-
-      function startNoise() {
-        if (noiseAudio) {
-          // 如果已有音频对象，直接播放
-          noiseAudio.play().catch(() => {});
-          isPlaying = true;
-          updateAudioButton();
-          return;
-        }
-        // 生成粉红噪音 WAV
-        const wavBlob = generatePinkNoiseWav(5, 44100);
-        const url = URL.createObjectURL(wavBlob);
-        noiseAudio = new Audio(url);
-        noiseAudio.loop = true;
-        noiseAudio.volume = 0.8; // 音量适中
-        noiseAudio.play().then(() => {
-          isPlaying = true;
-          updateAudioButton();
-        }).catch(err => {
-          console.error('播放失败:', err);
-          // 如果播放失败，提示用户
-          alert('无法播放声音，请检查设备静音状态');
-        });
-      }
+	  function startNoise() {
+		  if (noiseAudio) {
+			noiseAudio.play().catch(() => {});
+			isPlaying = true;
+			updateAudioButton();
+			return;
+		  }
+		  const wavBlob = generatePinkNoiseWav(30, 22050);  // 30秒，采样率22050，文件更小
+		  const url = URL.createObjectURL(wavBlob);
+		  noiseAudio = new Audio(url);
+		  noiseAudio.loop = true;
+		  noiseAudio.volume = 0.8;
+		  noiseAudio.play().then(() => {
+			isPlaying = true;
+			updateAudioButton();
+		  }).catch(err => {
+			console.error('播放失败:', err);
+			alert('无法播放声音，请检查设备静音状态');
+		  });
+		}
 
       function stopNoise() {
         if (noiseAudio) {
