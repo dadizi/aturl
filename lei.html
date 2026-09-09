@@ -604,8 +604,14 @@
           audioToggle.classList.remove('active');
         }
       }
-      function startNoise() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	  function startNoise() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        // iOS 需要显式恢复 AudioContext
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
         const bufferSize = 2 * audioCtx.sampleRate;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
@@ -615,12 +621,16 @@
           b0 = 0.99765 * b0 + white * 0.099046;
           b1 = 0.96300 * b1 + white * 0.296516;
           b2 = 0.57000 * b2 + white * 1.052691;
-          data[i] = (b0 + b1 + b2 + white * 0.1848) * 0.1;
+          data[i] = (b0 + b1 + b2 + white * 0.1848) * 0.25; // 音量从 0.1 提高到 0.25
         }
         noiseSource = audioCtx.createBufferSource();
         noiseSource.buffer = buffer;
         noiseSource.loop = true;
-        noiseSource.connect(audioCtx.destination);
+        // 添加增益节点控制音量
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.value = 0.6;
+        noiseSource.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
         noiseSource.start();
         isPlaying = true;
         updateAudioButton();
