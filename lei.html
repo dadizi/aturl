@@ -585,8 +585,10 @@
         input.value = '';
       });
 
-	  // ---------- 白噪音（使用 HTML5 Audio 播放粉红噪音 WAV） ----------
-      let noiseAudio = null;
+	  // ---------- 白噪音（使用 Web Audio API 无缝循环） ----------
+      let audioCtx = null;
+      let noiseSource = null;
+      let noiseGain = null;
       let isPlaying = false;
       const audioToggle = document.getElementById('audio-toggle');
       const audioIcon = document.querySelector('.audio-icon');
@@ -604,35 +606,14 @@
         }
       }
 
-      // 生成粉红噪音 WAV 文件（返回 Blob）
-      function generatePinkNoiseWav(durationSec = 5, sampleRate = 44100) {
-        const numSamples = Math.floor(durationSec * sampleRate);
-        const buffer = new ArrayBuffer(44 + numSamples * 2);
-        const view = new DataView(buffer);
-
-        // WAV 文件头
-        function writeString(offset, str) {
-          for (let i = 0; i < str.length; i++) {
-            view.setUint8(offset + i, str.charCodeAt(i));
-          }
-        }
-        writeString(0, 'RIFF');
-        view.setUint32(4, 36 + numSamples * 2, true);
-        writeString(8, 'WAVE');
-        writeString(12, 'fmt ');
-        view.setUint32(16, 16, true);
-        view.setUint16(20, 1, true);      // PCM
-        view.setUint16(22, 1, true);      // 单声道
-        view.setUint32(24, sampleRate, true);
-        view.setUint32(28, sampleRate * 2, true);
-        view.setUint16(32, 2, true);
-        view.setUint16(34, 16, true);
-        writeString(36, 'data');
-        view.setUint32(40, numSamples * 2, true);
-
-        // 生成粉红噪音（Paul Kellet 算法）
+      // 生成粉红噪音并返回 AudioBuffer
+      function createPinkNoiseBuffer(ctx, durationSec = 5) {
+        const sampleRate = ctx.sampleRate;
+        const length = Math.floor(sampleRate * durationSec);
+        const buffer = ctx.createBuffer(1, length, sampleRate);
+        const data = buffer.getChannelData(0);
         let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-        for (let i = 0; i < numSamples; i++) {
+        for (let i = 0; i < length; i++) {
           const white = Math.random() * 2 - 1;
           b0 = 0.99886 * b0 + white * 0.0555179;
           b1 = 0.99332 * b1 + white * 0.0750759;
@@ -642,38 +623,56 @@
           b5 = -0.7616 * b5 - white * 0.0168980;
           const pink = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
           b6 = white * 0.115926;
-          // 转换为 16 位 PCM
-          const sample = Math.max(-1, Math.min(1, pink));
-          view.setInt16(44 + i * 2, sample * 0x7FFF, true);
+          data[i] = Math.max(-1, Math.min(1, pink));
+        }
+        return buffer;
+      }
+
+      function startNoise() {
+        // 如果已经有 AudioContext 且正在播放，直接返回
+        if (isPlaying) return;
+
+        // 创建或获取 AudioContext
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
 
-        return new Blob([buffer], { type: 'audio/wav' });
+        // 确保 AudioContext 处于运行状态
+        const resumePromise = audioCtx.state === 'suspended' ? audioCtx.resume() : Promise.resolve();
+
+        resumePromise.then(() => {
+          // 创建粉红噪音缓冲
+          const buffer = createPinkNoiseBuffer(audioCtx, 5);
+          // 创建 BufferSource 并设置循环
+          noiseSource = audioCtx.createBufferSource();
+          noiseSource.buffer = buffer;
+          noiseSource.loop = true;  // 关键：无缝循环
+          // 创建增益节点控制音量
+          noiseGain = audioCtx.createGain();
+          noiseGain.gain.value = 0.8;  // 音量 0.8
+          // 连接：source -> gain -> destination
+          noiseSource.connect(noiseGain);
+          noiseGain.connect(audioCtx.destination);
+          // 开始播放
+          noiseSource.start();
+          isPlaying = true;
+          updateAudioButton();
+        }).catch(err => {
+          console.error('AudioContext resume failed:', err);
+        });
       }
-	  function startNoise() {
-		  if (noiseAudio) {
-			noiseAudio.play().catch(() => {});
-			isPlaying = true;
-			updateAudioButton();
-			return;
-		  }
-		  const wavBlob = generatePinkNoiseWav(30, 22050);  // 30秒，采样率22050，文件更小
-		  const url = URL.createObjectURL(wavBlob);
-		  noiseAudio = new Audio(url);
-		  noiseAudio.loop = true;
-		  noiseAudio.volume = 0.8;
-		  noiseAudio.play().then(() => {
-			isPlaying = true;
-			updateAudioButton();
-		  }).catch(err => {
-			console.error('播放失败:', err);
-			alert('无法播放声音，请检查设备静音状态');
-		  });
-		}
 
       function stopNoise() {
-        if (noiseAudio) {
-          noiseAudio.pause();
-          noiseAudio.currentTime = 0;
+        if (noiseSource) {
+          try {
+            noiseSource.stop();
+            noiseSource.disconnect();
+          } catch (e) {}
+          noiseSource = null;
+        }
+        if (noiseGain) {
+          noiseGain.disconnect();
+          noiseGain = null;
         }
         isPlaying = false;
         updateAudioButton();
@@ -689,11 +688,9 @@
 
       // 页面卸载时释放资源
       window.addEventListener('beforeunload', () => {
-        if (noiseAudio) {
-          noiseAudio.pause();
-          if (noiseAudio.src) {
-            URL.revokeObjectURL(noiseAudio.src);
-          }
+        stopNoise();
+        if (audioCtx) {
+          audioCtx.close();
         }
       });
     })();
