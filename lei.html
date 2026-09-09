@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>累了吧 · 休息一下</title>
+  <title>累了吧</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -50,8 +50,6 @@
       font-size: 1rem;
       line-height: 1.6;
     }
-
-    /* 步骤指示器 */
     .steps {
       display: flex;
       justify-content: center;
@@ -68,8 +66,6 @@
     .step-dot.active {
       background: var(--accent);
     }
-
-    /* 步骤1：入口 */
     .step-panel {
       display: none;
       animation: fadeIn 0.4s ease;
@@ -87,8 +83,6 @@
       margin-bottom: 2.5rem;
       line-height: 1.6;
     }
-
-    /* 步骤2：类型选择 */
     .cards {
       display: flex;
       flex-direction: column;
@@ -122,8 +116,6 @@
       color: var(--muted);
       line-height: 1.5;
     }
-
-    /* 按钮 */
     .btn {
       background: var(--accent);
       color: #fff;
@@ -160,8 +152,6 @@
       border-radius: 50px;
       box-shadow: 0 8px 20px rgba(139,127,199,0.2);
     }
-
-    /* 呼吸引导 */
     .breath-box {
       text-align: center;
     }
@@ -196,8 +186,6 @@
       font-size: 0.9rem;
       margin-top: 0.3rem;
     }
-
-    /* 发呆模式 */
     .rest-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -225,8 +213,6 @@
       font-weight: 300;
       color: var(--muted);
     }
-
-    /* 树洞 */
     .treehole textarea {
       width: 100%;
       min-height: 150px;
@@ -260,8 +246,6 @@
       0% { bottom: 20px; opacity: 1; }
       100% { bottom: 90vh; opacity: 0; }
     }
-
-    /* 功能标签 */
     .tabs {
       display: flex;
       gap: 0.5rem;
@@ -290,7 +274,6 @@
       animation: fadeIn 0.3s ease;
     }
     .tab-content.active { display: block; }
-
     .random-quote {
       margin-top: 1.5rem;
       text-align: center;
@@ -322,7 +305,7 @@
       <div class="step-dot" data-step="3"></div>
     </div>
 
-    <!-- ========== 步骤1：累了吗 ========== -->
+    <!-- 步骤1：累了吗 -->
     <div class="step-panel active" id="step-1">
       <div class="step1-box">
         <h1>累了吗？</h1>
@@ -331,7 +314,7 @@
       </div>
     </div>
 
-    <!-- ========== 步骤2：累不累 ========== -->
+    <!-- 步骤2：累不累 -->
     <div class="step-panel" id="step-2">
       <h1 style="margin-bottom:1rem;">先不急着解决，先看看是哪种累</h1>
       <div class="cards">
@@ -350,7 +333,7 @@
       </div>
     </div>
 
-    <!-- ========== 步骤3：累了吧（放松） ========== -->
+    <!-- 步骤3：累了吧 -->
     <div class="step-panel" id="step-3">
       <h1 id="main-title">累了吧</h1>
       <div class="greeting" id="greeting-text"></div>
@@ -404,7 +387,8 @@
 
       <!-- 随机暖心句子 -->
       <div class="random-quote" id="random-quote"></div>
-	  <div class="emergency-link">
+
+      <div class="emergency-link">
         如果长期疲惫、情绪持续低落，请及时寻求专业帮助。<br>
         全国心理援助热线：12356
       </div>
@@ -437,7 +421,7 @@
 
       document.getElementById('go-step2').addEventListener('click', () => showStep(2));
 
-      // ========== 类型选择 → 进入步骤3 ==========
+      // ========== 类型选择 ==========
       const typeMessages = {
         body: {
           title: '身体累了吧',
@@ -585,10 +569,8 @@
         input.value = '';
       });
 
-	  // ---------- 白噪音（使用 Web Audio API 无缝循环） ----------
-      let audioCtx = null;
-      let noiseSource = null;
-      let noiseGain = null;
+      // ========== 白噪音（HTML5 Audio 方案） ==========
+      let noiseAudio = null;
       let isPlaying = false;
       const audioToggle = document.getElementById('audio-toggle');
       const audioIcon = document.querySelector('.audio-icon');
@@ -606,14 +588,33 @@
         }
       }
 
-      // 生成粉红噪音并返回 AudioBuffer
-      function createPinkNoiseBuffer(ctx, durationSec = 5) {
-        const sampleRate = ctx.sampleRate;
-        const length = Math.floor(sampleRate * durationSec);
-        const buffer = ctx.createBuffer(1, length, sampleRate);
-        const data = buffer.getChannelData(0);
+      // 生成粉红噪音 WAV 文件（返回 Blob）
+      function generatePinkNoiseWav(durationSec, sampleRate) {
+        const numSamples = Math.floor(durationSec * sampleRate);
+        const buffer = new ArrayBuffer(44 + numSamples * 2);
+        const view = new DataView(buffer);
+
+        function writeString(offset, str) {
+          for (let i = 0; i < str.length; i++) {
+            view.setUint8(offset + i, str.charCodeAt(i));
+          }
+        }
+        writeString(0, 'RIFF');
+        view.setUint32(4, 36 + numSamples * 2, true);
+        writeString(8, 'WAVE');
+        writeString(12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, 1, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        writeString(36, 'data');
+        view.setUint32(40, numSamples * 2, true);
+
         let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-        for (let i = 0; i < length; i++) {
+        for (let i = 0; i < numSamples; i++) {
           const white = Math.random() * 2 - 1;
           b0 = 0.99886 * b0 + white * 0.0555179;
           b1 = 0.99332 * b1 + white * 0.0750759;
@@ -621,58 +622,38 @@
           b3 = 0.86650 * b3 + white * 0.3104856;
           b4 = 0.55000 * b4 + white * 0.5329522;
           b5 = -0.7616 * b5 - white * 0.0168980;
-		  const pink = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.5;
+          const pink = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
           b6 = white * 0.115926;
-          data[i] = Math.max(-1, Math.min(1, pink));
+          const sample = Math.max(-1, Math.min(1, pink));
+          view.setInt16(44 + i * 2, sample * 0x7FFF, true);
         }
-        return buffer;
+        return new Blob([buffer], { type: 'audio/wav' });
       }
 
-	  function startNoise() {
-		  if (isPlaying) return;
-
-		  if (!audioCtx) {
-			audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-		  }
-
-		  const resumePromise = audioCtx.state === 'suspended' ? audioCtx.resume() : Promise.resolve();
-
-		  resumePromise.then(() => {
-			// 强制激活：播放短暂静音
-			const silentBuffer = audioCtx.createBuffer(1, 1, 22050);
-			const silentSource = audioCtx.createBufferSource();
-			silentSource.buffer = silentBuffer;
-			silentSource.connect(audioCtx.destination);
-			silentSource.start(0);
-
-			// 生成粉红噪音
-			const buffer = createPinkNoiseBuffer(audioCtx, 5);
-			noiseSource = audioCtx.createBufferSource();
-			noiseSource.buffer = buffer;
-			noiseSource.loop = true;
-			noiseSource.connect(audioCtx.destination);
-			noiseSource.start();
-
-			isPlaying = true;
-			updateAudioButton();
-			console.log('Noise started, AudioContext state:', audioCtx.state);
-		  }).catch(err => {
-			console.error('AudioContext resume failed:', err);
-			alert('无法播放声音，请检查设备设置');
-		  });
-		}
+      function startNoise() {
+        if (noiseAudio) {
+          noiseAudio.play().catch(() => {});
+          isPlaying = true;
+          updateAudioButton();
+          return;
+        }
+        const wavBlob = generatePinkNoiseWav(30, 22050);
+        const url = URL.createObjectURL(wavBlob);
+        noiseAudio = new Audio(url);
+        noiseAudio.loop = true;
+        noiseAudio.volume = 0.8;
+        noiseAudio.play().then(() => {
+          isPlaying = true;
+          updateAudioButton();
+        }).catch(err => {
+          console.error('播放失败:', err);
+        });
+      }
 
       function stopNoise() {
-        if (noiseSource) {
-          try {
-            noiseSource.stop();
-            noiseSource.disconnect();
-          } catch (e) {}
-          noiseSource = null;
-        }
-        if (noiseGain) {
-          noiseGain.disconnect();
-          noiseGain = null;
+        if (noiseAudio) {
+          noiseAudio.pause();
+          noiseAudio.currentTime = 0;
         }
         isPlaying = false;
         updateAudioButton();
@@ -686,11 +667,12 @@
         }
       });
 
-      // 页面卸载时释放资源
       window.addEventListener('beforeunload', () => {
-        stopNoise();
-        if (audioCtx) {
-          audioCtx.close();
+        if (noiseAudio) {
+          noiseAudio.pause();
+          if (noiseAudio.src) {
+            URL.revokeObjectURL(noiseAudio.src);
+          }
         }
       });
     })();
