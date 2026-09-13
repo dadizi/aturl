@@ -120,7 +120,7 @@
     color:rgba(255,238,222,.22);
   }
 
-  /* 呼吸提示：吸 / 再吸一口 / 呼 */
+  /* 呼吸提示：吸 / 呼 */
   .breath-word{
     font-size:clamp(13px,1.8vmin,16px);
     letter-spacing:.3em;
@@ -130,13 +130,6 @@
     transition:opacity 1.2s ease;
   }
   .breath-word.show{opacity:1}
-
-  #wordSecond{
-    font-size:clamp(11px,1.5vmin,13px);
-    letter-spacing:.18em;
-    padding-left:.18em;
-    transition-duration:.5s;
-  }
 
   .sound{
     position:fixed;right:22px;bottom:22px;
@@ -166,7 +159,6 @@
     .breathe{transform:scale(.8);opacity:.7}
     .guide-text{transition-duration:.5s}
     .breath-word{transition-duration:.5s}
-    #wordSecond{transition-duration:.3s}
     .ripple{animation-duration:1.2s}
   }
 </style>
@@ -186,7 +178,6 @@
           <span class="line2">不用做任何事</span>
         </div>
         <span class="breath-word" id="wordIn">吸</span>
-        <span class="breath-word" id="wordSecond">再吸一口</span>
         <span class="breath-word" id="wordOut">呼</span>
       </div>
     </div>
@@ -208,9 +199,8 @@
   var breathe   = document.getElementById('breathe');
   var guideText = document.getElementById('guideText');
   var wordIn    = document.getElementById('wordIn');
-  var wordSecond= document.getElementById('wordSecond');
   var wordOut   = document.getElementById('wordOut');
-  var allWords  = [wordIn, wordSecond, wordOut];
+  var allWords  = [wordIn, wordOut];
   var soundBtn  = document.getElementById('sound');
 
   var reduceMotion = window.matchMedia &&
@@ -221,9 +211,8 @@
   var MAX_SCALE   = 1;
   var MAX_OPACITY = 1;
 
-  /* 会话计时器（引导）和呼吸计时器分开管理 */
   var tGuide1 = null, tGuide2 = null, tGuide3 = null;
-  var tBreath1 = null, tBreath2 = null, tBreath3 = null;
+  var tBreath1 = null, tBreath2 = null;
 
   function setState(scale, opacity, dur, easing){
     breathe.style.transitionDuration = dur + 'ms';
@@ -238,8 +227,8 @@
   }
 
   function clearBreathTimers(){
-    clearTimeout(tBreath1); clearTimeout(tBreath2); clearTimeout(tBreath3);
-    tBreath1 = tBreath2 = tBreath3 = null;
+    clearTimeout(tBreath1); clearTimeout(tBreath2);
+    tBreath1 = tBreath2 = null;
   }
 
   function clearAllTimers(){
@@ -286,49 +275,6 @@
     breathInhale();
   }
 
-  /* ========== 生理性叹息：吸 2.8s → 再吸一口 1.2s → 长呼 7s ========== */
-  var SIGH_INHALE = 2800;
-  var SIGH_SECOND = 1200;
-  var SIGH_EXHALE = 7000;
-
-  var SIGH_MID_SCALE   = reduceMotion ? 0.9 : 0.85;
-  var SIGH_MID_OPACITY = reduceMotion ? 0.85 : 0.8;
-
-  function sighInhale(){
-    setState(SIGH_MID_SCALE, SIGH_MID_OPACITY, SIGH_INHALE);
-    if (cycleCount < SHOW_WORD_FIRST_N) showWord(wordIn);
-    tBreath1 = setTimeout(sighSecond, SIGH_INHALE);
-  }
-
-  function sighSecond(){
-    setState(MAX_SCALE, MAX_OPACITY, SIGH_SECOND, 'cubic-bezier(.2,.7,.3,1)');
-    if (cycleCount < SHOW_WORD_FIRST_N) showWord(wordSecond);
-    tBreath2 = setTimeout(sighExhale, SIGH_SECOND);
-  }
-
-  function sighExhale(){
-    setState(MIN_SCALE, MIN_OPACITY, SIGH_EXHALE);
-    if (cycleCount < SHOW_WORD_FIRST_N) showWord(wordOut);
-    tBreath3 = setTimeout(function(){
-      cycleCount++;
-      if (cycleCount >= SHOW_WORD_FIRST_N) hideWords();
-      sighInhale();
-    }, SIGH_EXHALE);
-  }
-
-  function startSigh(){
-    clearBreathTimers();
-    sighInhale();
-  }
-
-  /* ========== 随机选择功能 ========== */
-  var FEATURES = [
-    { id: 'breath', run: startBreath },
-    { id: 'sigh',   run: startSigh   }
-  ];
-
-  var picked = FEATURES[Math.floor(Math.random() * FEATURES.length)];
-
   /* ========== 会话流程 ==========
      1.0s  引导文字淡入
      5.0s  引导文字开始淡出（1.4s）
@@ -350,7 +296,7 @@
     }, 5000);
 
     tGuide3 = setTimeout(function(){
-      picked.run();
+      startBreath();
     }, 6400);
   }
 
