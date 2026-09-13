@@ -15,11 +15,14 @@
   }
   #scene{position:fixed;inset:0;z-index:1;touch-action:none}
 
+  /* 顶部 */
   .hud-top{
     position:fixed;top:0;left:0;right:0;
     padding:5vh 5vw 0;text-align:center;
     z-index:10;pointer-events:none;
+    transition:opacity .5s ease;
   }
+  .hud-top.hide{opacity:0}
   .hud-label{
     font-size:clamp(11px,1.4vmin,13px);
     letter-spacing:.3em;padding-left:.3em;
@@ -43,13 +46,48 @@
     color:rgba(255,238,222,.45);font-weight:300;
   }
 
-  /* 底部区域：整块不拦截触摸，只有按钮拦截 */
+  /* 返回按钮 */
+  .back-btn{
+    position:fixed;top:4vh;left:4vw;
+    z-index:20;
+    background:rgba(20,14,10,.55);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(255,225,200,.18);
+    border-radius:100px;
+    padding:9px 20px;
+    color:rgba(255,238,222,.75);
+    font-size:13px;letter-spacing:.14em;padding-left:calc(20px + .14em);
+    font-weight:300;cursor:pointer;
+    opacity:0;pointer-events:none;
+    transition:opacity .4s ease, border-color .3s ease, color .3s ease;
+    pointer-events:none;
+  }
+  .back-btn.show{opacity:1;pointer-events:auto}
+  .back-btn:hover{border-color:rgba(255,225,200,.35);color:rgba(255,238,222,.95)}
+
+  /* 当前省名提示 */
+  .crumb{
+    position:fixed;top:4vh;left:50%;transform:translateX(-50%);
+    z-index:20;
+    font-size:13px;letter-spacing:.28em;padding-left:.28em;
+    color:rgba(255,232,210,.75);
+    font-weight:300;
+    opacity:0;pointer-events:none;
+    transition:opacity .5s ease;
+    text-shadow:0 0 30px rgba(255,190,140,.5);
+  }
+  .crumb.show{opacity:1}
+
+  /* 底部 */
   .hud-bottom{
     position:fixed;bottom:0;left:0;right:0;
     padding:0 5vw 4.5vh;text-align:center;
     z-index:10;
     pointer-events:none;
+    transition:opacity .4s ease;
   }
+  .hud-bottom.hide{opacity:0}
   .daily-line{
     font-size:clamp(11px,1.5vmin,13px);
     letter-spacing:.22em;padding-left:.22em;
@@ -115,6 +153,7 @@
     line-height:1.6;z-index:10;pointer-events:none;
   }
 
+  /* 面板 */
   .panel{
     position:fixed;top:0;right:0;bottom:0;
     width:min(360px,86vw);
@@ -172,7 +211,7 @@
     display:flex;align-items:center;gap:12px;
   }
   .city-name{
-    width:64px;flex-shrink:0;
+    width:70px;flex-shrink:0;
     font-size:13px;font-weight:300;
     letter-spacing:.05em;
     color:rgba(255,238,222,.72);
@@ -205,7 +244,7 @@
       padding:26px 22px 5vh;
     }
     .panel.open{transform:translateY(0)}
-    .city-name{width:56px}
+    .city-name{width:60px}
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -220,13 +259,16 @@
 
 <div id="scene"></div>
 
-<div class="hud-top">
+<div class="hud-top" id="hudTop">
   <span class="hud-label">此刻，有</span>
   <span class="hud-num" id="num">12,847</span>
   <span class="hud-sub">人和你一起停了一下</span>
 </div>
 
-<div class="hud-bottom">
+<button class="back-btn" id="backBtn">← 返回全国</button>
+<div class="crumb" id="crumb"></div>
+
+<div class="hud-bottom" id="hudBottom">
   <div class="daily-line" id="dailyLine"></div>
   <div class="hud-stats">
     此刻最多人停下来的省份：<span class="top-prov" id="topProv">四川</span><br>
@@ -240,7 +282,7 @@
 
 <div class="panel" id="panel">
   <div class="panel-head">
-    <span class="panel-title" id="panelTitle">四川省</span>
+    <span class="panel-title" id="panelTitle">成都市</span>
     <button class="panel-close" id="panelClose">×</button>
   </div>
   <div class="panel-sub">此刻，他们在这里</div>
@@ -258,43 +300,254 @@
 (function(){
   'use strict';
 
+  /* ========== 34 省 + 主要地级市 ========== */
   var provinces = [
-    { name:'新疆',   x:120, y:200, base:250,  cities:['乌鲁木齐','克拉玛依','吐鲁番','哈密','喀什'] },
-    { name:'西藏',   x:200, y:360, base:150,  cities:['拉萨','日喀则','昌都','林芝','山南'] },
-    { name:'青海',   x:260, y:300, base:180,  cities:['西宁','海东','格尔木','德令哈','玉树'] },
-    { name:'甘肃',   x:320, y:260, base:260,  cities:['兰州','天水','白银','酒泉','嘉峪关'] },
-    { name:'宁夏',   x:380, y:240, base:200,  cities:['银川','石嘴山','吴忠','中卫','固原'] },
-    { name:'内蒙古', x:450, y:140, base:350,  cities:['呼和浩特','包头','鄂尔多斯','赤峰','通辽'] },
-    { name:'黑龙江', x:680, y:100, base:400,  cities:['哈尔滨','大庆','齐齐哈尔','牡丹江','佳木斯'] },
-    { name:'吉林',   x:670, y:150, base:350,  cities:['长春','吉林','四平','通化','延边'] },
-    { name:'辽宁',   x:640, y:190, base:420,  cities:['沈阳','大连','鞍山','抚顺','本溪'] },
-    { name:'北京',   x:560, y:220, base:1200, cities:['朝阳','海淀','东城','西城','丰台'] },
-    { name:'天津',   x:590, y:235, base:550,  cities:['和平','河西','南开','滨海新区','武清'] },
-    { name:'河北',   x:555, y:255, base:600,  cities:['石家庄','唐山','保定','廊坊','邯郸'] },
-    { name:'山西',   x:510, y:260, base:400,  cities:['太原','大同','临汾','运城','长治'] },
-    { name:'陕西',   x:440, y:300, base:700,  cities:['西安','宝鸡','咸阳','渭南','汉中'] },
-    { name:'河南',   x:520, y:310, base:850,  cities:['郑州','洛阳','南阳','新乡','周口'] },
-    { name:'山东',   x:610, y:280, base:700,  cities:['济南','青岛','烟台','潍坊','临沂'] },
-    { name:'江苏',   x:620, y:340, base:800,  cities:['南京','苏州','无锡','常州','南通'] },
-    { name:'安徽',   x:590, y:350, base:600,  cities:['合肥','芜湖','蚌埠','安庆','马鞍山'] },
-    { name:'上海',   x:660, y:360, base:1500, cities:['浦东','黄浦','徐汇','静安','长宁'] },
-    { name:'浙江',   x:630, y:390, base:900,  cities:['杭州','宁波','温州','绍兴','嘉兴'] },
-    { name:'江西',   x:570, y:400, base:550,  cities:['南昌','赣州','九江','上饶','宜春'] },
-    { name:'福建',   x:610, y:440, base:650,  cities:['福州','厦门','泉州','漳州','莆田'] },
-    { name:'台湾省', x:665, y:450, base:500,  cities:['台北','高雄','台中','台南','新竹'] },
-    { name:'湖北',   x:530, y:360, base:850,  cities:['武汉','宜昌','襄阳','荆州','黄石'] },
-    { name:'湖南',   x:520, y:410, base:650,  cities:['长沙','株洲','湘潭','衡阳','岳阳'] },
-    { name:'重庆',   x:430, y:380, base:1000, cities:['渝中','江北','沙坪坝','九龙坡','南岸'] },
-    { name:'四川',   x:370, y:370, base:1300, cities:['成都','绵阳','德阳','宜宾','南充'] },
-    { name:'贵州',   x:430, y:440, base:350,  cities:['贵阳','遵义','六盘水','安顺','毕节'] },
-    { name:'云南',   x:350, y:470, base:400,  cities:['昆明','曲靖','玉溪','大理','丽江'] },
-    { name:'广西',   x:480, y:480, base:450,  cities:['南宁','柳州','桂林','梧州','北海'] },
-    { name:'广东',   x:540, y:500, base:1100, cities:['广州','深圳','东莞','佛山','珠海'] },
-    { name:'香港特别行政区', x:565, y:520, base:300, cities:['中西区','湾仔','油尖旺','沙田','观塘'] },
-    { name:'澳门特别行政区', x:540, y:535, base:200, cities:['花地玛堂区','圣安多尼堂区','大堂区','望德堂区','风顺堂区'] },
-    { name:'海南',   x:500, y:560, base:300,  cities:['海口','三亚','儋州','琼海','文昌'] }
+    { name:'北京', x:560, y:220, base:1200, cities:[
+      { name:'朝阳', districts:['国贸','三里屯','望京','亚运村','双井'] },
+      { name:'海淀', districts:['中关村','五道口','上地','万柳','西二旗'] },
+      { name:'东城', districts:['王府井','东直门','和平里','建国门','北新桥'] },
+      { name:'西城', districts:['金融街','西单','月坛','德胜','新街口'] },
+      { name:'丰台', districts:['方庄','丽泽','科技园','南苑','长辛店'] },
+      { name:'昌平', districts:['回龙观','天通苑','沙河','南口','小汤山'] }
+    ]},
+    { name:'上海', x:660, y:360, base:1500, cities:[
+      { name:'浦东', districts:['陆家嘴','张江','金桥','外高桥','临港'] },
+      { name:'黄浦', districts:['人民广场','外滩','豫园','打浦桥','老西门'] },
+      { name:'徐汇', districts:['徐家汇','衡山路','漕河泾','田林','龙华'] },
+      { name:'静安', districts:['南京西路','曹家渡','大宁','彭浦','江宁'] },
+      { name:'长宁', districts:['中山公园','虹桥','天山','古北','仙霞'] },
+      { name:'闵行', districts:['莘庄','七宝','虹桥','浦江','梅陇'] }
+    ]},
+    { name:'天津', x:590, y:235, base:550, cities:[
+      { name:'和平', districts:['五大道','小白楼','南市','劝业场','新兴'] },
+      { name:'南开', districts:['鼓楼','兴南','体育中心','华苑','水上'] },
+      { name:'河西', districts:['友谊路','大营门','下瓦房','陈塘庄','梅江'] },
+      { name:'滨海新区', districts:['塘沽','汉沽','大港','开发区','保税区'] },
+      { name:'武清', districts:['杨村','下朱庄','黄庄','曹子里','大良'] }
+    ]},
+    { name:'重庆', x:430, y:380, base:1000, cities:[
+      { name:'渝中', districts:['解放碑','观音桥','大坪','化龙桥','上清寺'] },
+      { name:'江北', districts:['观音桥','大石坝','寸滩','鱼嘴','铁山坪'] },
+      { name:'沙坪坝', districts:['三峡广场','大学城','磁器口','井口','西永'] },
+      { name:'九龙坡', districts:['杨家坪','谢家湾','石坪桥','二郎','西彭'] },
+      { name:'南岸', districts:['南坪','弹子石','茶园','南山','海棠溪'] }
+    ]},
+    { name:'四川', x:370, y:370, base:1300, cities:[
+      { name:'成都', districts:['锦江','青羊','金牛','武侯','成华','龙泉驿'] },
+      { name:'绵阳', districts:['涪城','游仙','安州','三台','盐亭'] },
+      { name:'德阳', districts:['旌阳','罗江','广汉','什邡','绵竹'] },
+      { name:'宜宾', districts:['翠屏','南溪','叙州','江安','长宁'] },
+      { name:'南充', districts:['顺庆','高坪','嘉陵','南部','营山'] },
+      { name:'泸州', districts:['江阳','纳溪','龙马潭','泸县','合江'] },
+      { name:'乐山', districts:['市中','沙湾','五通桥','犍为','井研'] }
+    ]},
+    { name:'广东', x:540, y:500, base:1100, cities:[
+      { name:'广州', districts:['天河','越秀','海珠','荔湾','白云','番禺'] },
+      { name:'深圳', districts:['福田','南山','罗湖','宝安','龙岗','龙华'] },
+      { name:'东莞', districts:['南城','东城','莞城','虎门','长安','厚街'] },
+      { name:'佛山', districts:['禅城','南海','顺德','三水','高明'] },
+      { name:'珠海', districts:['香洲','斗门','金湾','横琴','唐家湾'] },
+      { name:'惠州', districts:['惠城','惠阳','博罗','惠东','龙门'] }
+    ]},
+    { name:'江苏', x:620, y:340, base:800, cities:[
+      { name:'南京', districts:['玄武','秦淮','鼓楼','建邺','栖霞','江宁'] },
+      { name:'苏州', districts:['姑苏','虎丘','吴中','相城','吴江','昆山'] },
+      { name:'无锡', districts:['梁溪','锡山','惠山','滨湖','新吴','江阴'] },
+      { name:'常州', districts:['天宁','钟楼','新北','武进','金坛'] },
+      { name:'南通', districts:['崇川','通州','海门','启东','如皋'] }
+    ]},
+    { name:'浙江', x:630, y:390, base:900, cities:[
+      { name:'杭州', districts:['上城','拱墅','西湖','滨江','萧山','余杭'] },
+      { name:'宁波', districts:['海曙','江北','鄞州','镇海','北仑','慈溪'] },
+      { name:'温州', districts:['鹿城','龙湾','瓯海','洞头','瑞安','乐清'] },
+      { name:'绍兴', districts:['越城','柯桥','上虞','诸暨','嵊州'] },
+      { name:'嘉兴', districts:['南湖','秀洲','嘉善','海盐','桐乡'] }
+    ]},
+    { name:'山东', x:610, y:280, base:700, cities:[
+      { name:'济南', districts:['历下','市中','槐荫','天桥','历城','长清'] },
+      { name:'青岛', districts:['市南','市北','李沧','崂山','城阳','黄岛'] },
+      { name:'烟台', districts:['芝罘','福山','牟平','莱山','龙口','蓬莱'] },
+      { name:'潍坊', districts:['潍城','寒亭','坊子','奎文','青州','寿光'] },
+      { name:'临沂', districts:['兰山','罗庄','河东','沂南','郯城'] }
+    ]},
+    { name:'河南', x:520, y:310, base:850, cities:[
+      { name:'郑州', districts:['中原','金水','二七','管城','惠济','郑东'] },
+      { name:'洛阳', districts:['涧西','西工','老城','瀍河','洛龙','偃师'] },
+      { name:'南阳', districts:['宛城','卧龙','南召','方城','西峡'] },
+      { name:'新乡', districts:['红旗','卫滨','凤泉','牧野','长垣'] },
+      { name:'周口', districts:['川汇','淮阳','扶沟','西华','商水'] }
+    ]},
+    { name:'河北', x:555, y:255, base:600, cities:[
+      { name:'石家庄', districts:['长安','桥西','新华','裕华','正定','鹿泉'] },
+      { name:'唐山', districts:['路南','路北','古冶','开平','丰润','曹妃甸'] },
+      { name:'保定', districts:['竞秀','莲池','满城','清苑','徐水'] },
+      { name:'廊坊', districts:['安次','广阳','固安','永清','香河'] },
+      { name:'邯郸', districts:['邯山','丛台','复兴','峰峰','武安'] }
+    ]},
+    { name:'湖南', x:520, y:410, base:650, cities:[
+      { name:'长沙', districts:['芙蓉','天心','岳麓','开福','雨花','望城'] },
+      { name:'株洲', districts:['荷塘','芦淞','石峰','天元','渌口'] },
+      { name:'湘潭', districts:['雨湖','岳塘','湘乡','韶山','湘潭县'] },
+      { name:'衡阳', districts:['珠晖','雁峰','石鼓','蒸湘','南岳'] },
+      { name:'岳阳', districts:['岳阳楼','云溪','君山','汨罗','临湘'] }
+    ]},
+    { name:'湖北', x:530, y:360, base:850, cities:[
+      { name:'武汉', districts:['江岸','江汉','硚口','汉阳','武昌','洪山'] },
+      { name:'宜昌', districts:['西陵','伍家岗','点军','猇亭','夷陵'] },
+      { name:'襄阳', districts:['襄城','樊城','襄州','枣阳','宜城'] },
+      { name:'荆州', districts:['沙市','荆州区','公安','监利','洪湖'] },
+      { name:'黄石', districts:['黄石港','西塞山','下陆','铁山','大冶'] }
+    ]},
+    { name:'陕西', x:440, y:300, base:700, cities:[
+      { name:'西安', districts:['新城','碑林','莲湖','雁塔','未央','长安'] },
+      { name:'宝鸡', districts:['渭滨','金台','陈仓','凤翔','岐山'] },
+      { name:'咸阳', districts:['秦都','杨陵','渭城','兴平','彬州'] },
+      { name:'渭南', districts:['临渭','华州','韩城','华阴','蒲城'] },
+      { name:'汉中', districts:['汉台','南郑','城固','洋县','勉县'] }
+    ]},
+    { name:'安徽', x:590, y:350, base:600, cities:[
+      { name:'合肥', districts:['瑶海','庐阳','蜀山','包河','长丰','肥东'] },
+      { name:'芜湖', districts:['镜湖','弋江','鸠江','三山','湾沚'] },
+      { name:'蚌埠', districts:['龙子湖','蚌山','禹会','淮上','怀远'] },
+      { name:'安庆', districts:['迎江','大观','宜秀','桐城','潜山'] },
+      { name:'马鞍山', districts:['花山','雨山','博望','当涂','含山'] }
+    ]},
+    { name:'福建', x:610, y:440, base:650, cities:[
+      { name:'福州', districts:['鼓楼','台江','仓山','马尾','晋安','长乐'] },
+      { name:'厦门', districts:['思明','湖里','集美','海沧','同安','翔安'] },
+      { name:'泉州', districts:['鲤城','丰泽','洛江','泉港','晋江','石狮'] },
+      { name:'漳州', districts:['芗城','龙文','龙海','长泰','漳浦'] },
+      { name:'莆田', districts:['城厢','涵江','荔城','秀屿','仙游'] }
+    ]},
+    { name:'江西', x:570, y:400, base:550, cities:[
+      { name:'南昌', districts:['东湖','西湖','青云谱','青山湖','新建'] },
+      { name:'赣州', districts:['章贡','南康','赣县','信丰','大余'] },
+      { name:'九江', districts:['浔阳','濂溪','柴桑','瑞昌','共青城'] },
+      { name:'上饶', districts:['信州','广丰','广信','德兴','玉山'] },
+      { name:'宜春', districts:['袁州','丰城','樟树','高安','万载'] }
+    ]},
+    { name:'广西', x:480, y:480, base:450, cities:[
+      { name:'南宁', districts:['兴宁','青秀','江南','西乡塘','良庆','邕宁'] },
+      { name:'柳州', districts:['城中','鱼峰','柳南','柳北','柳江'] },
+      { name:'桂林', districts:['秀峰','叠彩','象山','七星','雁山','阳朔'] },
+      { name:'梧州', districts:['万秀','长洲','龙圩','岑溪','苍梧'] },
+      { name:'北海', districts:['海城','银海','铁山港','合浦'] }
+    ]},
+    { name:'云南', x:350, y:470, base:400, cities:[
+      { name:'昆明', districts:['五华','盘龙','官渡','西山','呈贡','晋宁'] },
+      { name:'曲靖', districts:['麒麟','沾益','马龙','宣威','富源'] },
+      { name:'玉溪', districts:['红塔','江川','澄江','通海','华宁'] },
+      { name:'大理', districts:['大理市','漾濞','祥云','宾川','弥渡'] },
+      { name:'丽江', districts:['古城','玉龙','永胜','华坪','宁蒗'] }
+    ]},
+    { name:'贵州', x:430, y:440, base:350, cities:[
+      { name:'贵阳', districts:['南明','云岩','花溪','乌当','白云','观山湖'] },
+      { name:'遵义', districts:['红花岗','汇川','播州','桐梓','仁怀'] },
+      { name:'六盘水', districts:['钟山','六枝','水城','盘州'] },
+      { name:'安顺', districts:['西秀','平坝','普定','镇宁','关岭'] },
+      { name:'毕节', districts:['七星关','大方','黔西','金沙','织金'] }
+    ]},
+    { name:'山西', x:510, y:260, base:400, cities:[
+      { name:'太原', districts:['小店','迎泽','杏花岭','尖草坪','万柏林'] },
+      { name:'大同', districts:['平城','云冈','新荣','云州','阳高'] },
+      { name:'临汾', districts:['尧都','侯马','霍州','曲沃','翼城'] },
+      { name:'运城', districts:['盐湖','永济','河津','临猗','万荣'] },
+      { name:'长治', districts:['潞州','上党','屯留','潞城','襄垣'] }
+    ]},
+    { name:'辽宁', x:640, y:190, base:420, cities:[
+      { name:'沈阳', districts:['和平','沈河','大东','皇姑','铁西','浑南'] },
+      { name:'大连', districts:['中山','西岗','沙河口','甘井子','旅顺','金州'] },
+      { name:'鞍山', districts:['铁东','铁西','立山','千山','海城'] },
+      { name:'抚顺', districts:['新抚','东洲','望花','顺城','抚顺县'] },
+      { name:'本溪', districts:['平山','溪湖','明山','南芬','本溪县'] }
+    ]},
+    { name:'吉林', x:670, y:150, base:350, cities:[
+      { name:'长春', districts:['南关','宽城','朝阳','二道','绿园','双阳'] },
+      { name:'吉林', districts:['昌邑','龙潭','船营','丰满','永吉'] },
+      { name:'四平', districts:['铁西','铁东','梨树','伊通','双辽'] },
+      { name:'通化', districts:['东昌','二道江','通化县','辉南','柳河'] },
+      { name:'延边', districts:['延吉','图们','敦化','珲春','龙井'] }
+    ]},
+    { name:'黑龙江', x:680, y:100, base:400, cities:[
+      { name:'哈尔滨', districts:['道里','南岗','道外','平房','松北','香坊'] },
+      { name:'大庆', districts:['萨尔图','龙凤','让胡路','红岗','大同'] },
+      { name:'齐齐哈尔', districts:['龙沙','建华','铁锋','昂昂溪','富拉尔基'] },
+      { name:'牡丹江', districts:['东安','阳明','爱民','西安','绥芬河'] },
+      { name:'佳木斯', districts:['向阳','前进','东风','郊区','同江'] }
+    ]},
+    { name:'内蒙古', x:450, y:140, base:350, cities:[
+      { name:'呼和浩特', districts:['新城','回民','玉泉','赛罕','土默特左'] },
+      { name:'包头', districts:['东河','昆都仑','青山','石拐','白云鄂博'] },
+      { name:'鄂尔多斯', districts:['东胜','康巴什','达拉特','准格尔','伊金霍洛'] },
+      { name:'赤峰', districts:['红山','元宝山','松山','阿鲁科尔沁','巴林左'] },
+      { name:'通辽', districts:['科尔沁','霍林郭勒','开鲁','库伦','奈曼'] }
+    ]},
+    { name:'新疆', x:120, y:200, base:250, cities:[
+      { name:'乌鲁木齐', districts:['天山','沙依巴克','新市','水磨沟','头屯河'] },
+      { name:'克拉玛依', districts:['独山子','克拉玛依区','白碱滩','乌尔禾'] },
+      { name:'吐鲁番', districts:['高昌','鄯善','托克逊'] },
+      { name:'哈密', districts:['伊州','巴里坤','伊吾'] },
+      { name:'喀什', districts:['喀什市','疏附','疏勒','英吉沙','莎车'] }
+    ]},
+    { name:'西藏', x:200, y:360, base:150, cities:[
+      { name:'拉萨', districts:['城关','堆龙德庆','达孜','林周','当雄'] },
+      { name:'日喀则', districts:['桑珠孜','南木林','江孜','定日','萨迦'] },
+      { name:'昌都', districts:['卡若','江达','贡觉','类乌齐','丁青'] },
+      { name:'林芝', districts:['巴宜','工布江达','米林','墨脱','波密'] },
+      { name:'山南', districts:['乃东','扎囊','贡嘎','桑日','琼结'] }
+    ]},
+    { name:'青海', x:260, y:300, base:180, cities:[
+      { name:'西宁', districts:['城东','城中','城西','城北','湟中'] },
+      { name:'海东', districts:['乐都','平安','民和','互助','化隆'] },
+      { name:'格尔木', districts:['昆仑路','黄河路','河西','西藏路','金峰路'] },
+      { name:'德令哈', districts:['河西','河东','火车站','尕海','柯鲁柯'] },
+      { name:'玉树', districts:['结古','杂多','称多','治多','囊谦'] }
+    ]},
+    { name:'甘肃', x:320, y:260, base:260, cities:[
+      { name:'兰州', districts:['城关','七里河','西固','安宁','红古','榆中'] },
+      { name:'天水', districts:['秦州','麦积','清水','秦安','甘谷'] },
+      { name:'白银', districts:['白银区','平川','靖远','会宁','景泰'] },
+      { name:'酒泉', districts:['肃州','玉门','敦煌','金塔','瓜州'] },
+      { name:'嘉峪关', districts:['雄关','钢城','新城镇'] }
+    ]},
+    { name:'宁夏', x:380, y:240, base:200, cities:[
+      { name:'银川', districts:['兴庆','西夏','金凤','永宁','贺兰'] },
+      { name:'石嘴山', districts:['大武口','惠农','平罗'] },
+      { name:'吴忠', districts:['利通','红寺堡','盐池','同心','青铜峡'] },
+      { name:'中卫', districts:['沙坡头','中宁','海原'] },
+      { name:'固原', districts:['原州','西吉','隆德','泾源','彭阳'] }
+    ]},
+    { name:'海南', x:500, y:560, base:300, cities:[
+      { name:'海口', districts:['秀英','龙华','琼山','美兰'] },
+      { name:'三亚', districts:['海棠','吉阳','天涯','崖州'] },
+      { name:'儋州', districts:['那大','和庆','南丰','大成','雅星'] },
+      { name:'琼海', districts:['嘉积','万泉','石壁','中原','博鳌'] },
+      { name:'文昌', districts:['文城','重兴','蓬莱','会文','东路'] }
+    ]},
+    { name:'台湾省', x:665, y:450, base:500, cities:[
+      { name:'台北', districts:['中正','大同','中山','松山','大安','信义'] },
+      { name:'新北', districts:['板桥','三重','中和','永和','新庄','淡水'] },
+      { name:'桃园', districts:['桃园','中坜','平镇','八德','杨梅'] },
+      { name:'台中', districts:['中区','东区','南区','西区','北区','西屯'] },
+      { name:'高雄', districts:['苓雅','前金','新兴','盐埕','鼓山','左营'] }
+    ]},
+    { name:'香港特别行政区', x:565, y:520, base:300, cities:[
+      { name:'中西区', districts:['中环','上环','西营盘','半山','山顶'] },
+      { name:'湾仔', districts:['湾仔','铜锣湾','跑马地','大坑','渣甸山'] },
+      { name:'油尖旺', districts:['油麻地','尖沙咀','旺角','大角咀','佐敦'] },
+      { name:'沙田', districts:['沙田','大围','火炭','马鞍山','石门'] },
+      { name:'观塘', districts:['观塘','牛头角','九龙湾','蓝田','秀茂坪'] }
+    ]},
+    { name:'澳门特别行政区', x:540, y:535, base:200, cities:[
+      { name:'花地玛堂区', districts:['黑沙环','筷子基','台山','青洲','望厦'] },
+      { name:'圣安多尼堂区', districts:['沙梨头','新桥','三盏灯','高士德'] },
+      { name:'大堂区', districts:['新马路','南湾','板樟堂','水坑尾'] },
+      { name:'望德堂区', districts:['荷兰园','东望洋','塔石'] },
+      { name:'风顺堂区', districts:['妈阁','西湾','下环','新口岸'] }
+    ]}
   ];
 
+  /* ========== 工具 ========== */
   function pseudo(str){
     var h = 0;
     for (var i=0;i<str.length;i++) h = (h*31 + str.charCodeAt(i)) % 100000;
@@ -303,26 +556,23 @@
   function formatNum(n){
     return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
-  function cityBase(provName, cityName){
-    var s = provName + cityName;
+  function seedOf(str){
     var h = 0;
-    for (var i=0;i<s.length;i++) h = (h*37 + s.charCodeAt(i)) % 100000;
-    return 300 + (h % 1100);
+    for (var i=0;i<str.length;i++) h = (h*37 + str.charCodeAt(i)) % 100000;
+    return h;
   }
-  function displayValue(base, key){
+  function valueOf(base, key){
     var t = Date.now() / 1000;
-    var seed = 0;
-    for (var i=0;i<key.length;i++) seed += key.charCodeAt(i);
+    var seed = seedOf(key);
     var wave = Math.sin(t/7 + seed) * base * 0.09;
     return Math.max(0, Math.floor(base + wave));
   }
-
-  /* 3D 坐标：整体稍微上移，让底部的海南离底部 HUD 远一点 */
-  provinces.forEach(function(p){
-    p.px = (p.x - 400) * 1.15;
-    p.py = (300 - p.y) * 1.15;
-    p.pz = (pseudo(p.name) * 2 - 1) * 90;
-  });
+  function cityBase(name){
+    return 200 + (seedOf(name) % 1100);
+  }
+  function districtBase(name){
+    return 40 + (seedOf(name) % 260);
+  }
 
   /* ========== Three.js ========== */
   var scene = new THREE.Scene();
@@ -335,15 +585,12 @@
   renderer.setClearColor(0x050408, 1);
   document.getElementById('scene').appendChild(renderer.domElement);
 
-  var group = new THREE.Group();
-  /* 星系整体向上偏移，让海南更远离底部 HUD */
-  group.position.y = 25;
-  scene.add(group);
+  var rootGroup = new THREE.Group();
+  scene.add(rootGroup);
 
   var baseDistance = 900;
   var currentDistance = baseDistance;
   var targetDistance = baseDistance;
-  /* 允许放得更大，方便手指点小节点 */
   var MIN_DIST = 260;
   var MAX_DIST = 1800;
 
@@ -358,6 +605,43 @@
   currentDistance = baseDistance;
   targetDistance = baseDistance;
 
+  /* 纹理 */
+  var glowTexture = (function(){
+    var c = document.createElement('canvas');
+    c.width = c.height = 128;
+    var ctx = c.getContext('2d');
+    var g = ctx.createRadialGradient(64,64,0, 64,64,64);
+    g.addColorStop(0,   'rgba(255,225,190,0.95)');
+    g.addColorStop(0.25,'rgba(255,190,140,0.45)');
+    g.addColorStop(0.55,'rgba(255,160,110,0.12)');
+    g.addColorStop(1,   'rgba(255,150,100,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,128,128);
+    return new THREE.CanvasTexture(c);
+  })();
+
+  function labelTexture(text, small){
+    var c = document.createElement('canvas');
+    c.width = 320; c.height = 72;
+    var ctx = c.getContext('2d');
+    var size = small ? 26 : 30;
+    ctx.font = '300 ' + size + 'px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(255,180,130,0.55)';
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = 'rgba(255,240,225,0.85)';
+    ctx.fillText(text, 160, 36);
+    var t = new THREE.CanvasTexture(c);
+    t.minFilter = THREE.LinearFilter;
+    return t;
+  }
+
+  /* ========== 省级星系 ========== */
+  var provinceGroup = new THREE.Group();
+  rootGroup.add(provinceGroup);
+
+  /* 背景星点 */
   (function(){
     var geo = new THREE.BufferGeometry();
     var pos = [];
@@ -373,46 +657,17 @@
       color:0xffcc99, size:1.3, transparent:true,
       opacity:0.28, sizeAttenuation:true, depthWrite:false
     });
-    group.add(new THREE.Points(geo, mat));
+    provinceGroup.add(new THREE.Points(geo, mat));
   })();
 
-  var glowTexture = (function(){
-    var c = document.createElement('canvas');
-    c.width = c.height = 128;
-    var ctx = c.getContext('2d');
-    var g = ctx.createRadialGradient(64,64,0, 64,64,64);
-    g.addColorStop(0,   'rgba(255,225,190,0.95)');
-    g.addColorStop(0.25,'rgba(255,190,140,0.45)');
-    g.addColorStop(0.55,'rgba(255,160,110,0.12)');
-    g.addColorStop(1,   'rgba(255,150,100,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,128,128);
-    return new THREE.CanvasTexture(c);
-  })();
-
-  function labelTexture(text){
-    var c = document.createElement('canvas');
-    c.width = 320; c.height = 72;
-    var ctx = c.getContext('2d');
-    ctx.font = '300 30px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.shadowColor = 'rgba(255,180,130,0.55)';
-    ctx.shadowBlur = 12;
-    ctx.fillStyle = 'rgba(255,240,225,0.82)';
-    ctx.fillText(text, 160, 36);
-    var t = new THREE.CanvasTexture(c);
-    t.minFilter = THREE.LinearFilter;
-    return t;
-  }
-
-  /* 只放热区球用于点击检测 */
-  var nodeMeshes = [];
+  var provinceHitMeshes = [];
 
   provinces.forEach(function(p){
     var intensity = p.base / 1500;
+    p.px = (p.x - 400) * 1.15;
+    p.py = (300 - p.y) * 1.15;
+    p.pz = (pseudo(p.name) * 2 - 1) * 90;
 
-    /* 视觉核心球 */
     var coreGeo = new THREE.SphereGeometry(4 + intensity * 6, 20, 20);
     var coreMat = new THREE.MeshBasicMaterial({
       color: new THREE.Color(1, 0.78 + intensity*0.12, 0.6 + intensity*0.1),
@@ -421,9 +676,8 @@
     });
     var core = new THREE.Mesh(coreGeo, coreMat);
     core.position.set(p.px, p.py, p.pz);
-    group.add(core);
+    provinceGroup.add(core);
 
-    /* 光晕 */
     var glowMat = new THREE.SpriteMaterial({
       map: glowTexture,
       color: 0xffc79a,
@@ -436,9 +690,8 @@
     var gs = 30 + intensity * 42;
     glow.scale.set(gs, gs, 1);
     glow.position.copy(core.position);
-    group.add(glow);
+    provinceGroup.add(glow);
 
-    /* 标签 */
     var labelMat = new THREE.SpriteMaterial({
       map: labelTexture(p.name),
       transparent: true,
@@ -448,17 +701,17 @@
     var label = new THREE.Sprite(labelMat);
     label.scale.set(78, 17.5, 1);
     label.position.set(p.px, p.py + 24, p.pz);
-    group.add(label);
+    provinceGroup.add(label);
 
-    /* 透明热区：半径 26，手机上手指点得中 */
-    var hitMat = new THREE.MeshBasicMaterial({ visible: false });
-    var hitArea = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), hitMat);
-    hitArea.scale.setScalar(26);
-    hitArea.position.set(p.px, p.py, p.pz);
-    hitArea.userData.province = p;
-    group.add(hitArea);
-    nodeMeshes.push(hitArea);
-    p.hitArea = hitArea;
+    /* 热区 */
+    var hit = new THREE.Mesh(
+      new THREE.SphereGeometry(26, 10, 10),
+      new THREE.MeshBasicMaterial({visible:false})
+    );
+    hit.position.set(p.px, p.py, p.pz);
+    hit.userData.province = p;
+    provinceGroup.add(hit);
+    provinceHitMeshes.push(hit);
 
     p.core = core;
     p.glow = glow;
@@ -467,6 +720,7 @@
     p.scaleCurrent = 1;
   });
 
+  /* 省级连线 */
   (function(){
     var positions = [];
     provinces.forEach(function(a, i){
@@ -490,8 +744,112 @@
       blending: THREE.AdditiveBlending,
       depthWrite: false
     });
-    group.add(new THREE.LineSegments(geo, mat));
+    provinceGroup.add(new THREE.LineSegments(geo, mat));
   })();
+
+  /* ========== 地级市星系（动态构建） ========== */
+  var cityGroup = new THREE.Group();
+  cityGroup.visible = false;
+  rootGroup.add(cityGroup);
+
+  var cityHitMeshes = [];
+  var currentProvince = null;
+
+  function buildCityGalaxy(province){
+    /* 清空 */
+    while (cityGroup.children.length > 0) {
+      cityGroup.remove(cityGroup.children[0]);
+    }
+    cityHitMeshes = [];
+
+    var cities = province.cities;
+    var n = cities.length;
+
+    cities.forEach(function(c, i){
+      /* 圆形均匀分布 + 小随机 */
+      var angle = (i / n) * Math.PI * 2;
+      var radius = 280 + pseudo(c.name) * 60;
+      c.px = Math.cos(angle) * radius;
+      c.py = Math.sin(angle) * radius * 0.75;
+      c.pz = (pseudo(c.name) * 2 - 1) * 40;
+
+      var base = cityBase(c.name);
+      c.base = base;
+      var intensity = base / 1300;
+
+      /* 视觉核心球：地级市节点略小 */
+      var coreGeo = new THREE.SphereGeometry(4 + intensity * 6, 20, 20);
+      var coreMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(1, 0.78 + intensity*0.12, 0.6 + intensity*0.1),
+        transparent: true,
+        opacity: 0.85 + intensity * 0.15
+      });
+      var core = new THREE.Mesh(coreGeo, coreMat);
+      core.position.set(c.px, c.py, c.pz);
+      cityGroup.add(core);
+
+      /* 光晕 */
+      var glowMat = new THREE.SpriteMaterial({
+        map: glowTexture,
+        color: 0xffc79a,
+        transparent: true,
+        opacity: 0.35 + intensity * 0.4,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      var glow = new THREE.Sprite(glowMat);
+      var gs = 30 + intensity * 42;
+      glow.scale.set(gs, gs, 1);
+      glow.position.copy(core.position);
+      cityGroup.add(glow);
+
+      /* 标签 */
+      var labelMat = new THREE.SpriteMaterial({
+        map: labelTexture(c.name, true),
+        transparent: true,
+        opacity: 0.78,
+        depthWrite: false
+      });
+      var label = new THREE.Sprite(labelMat);
+      label.scale.set(74, 16.5, 1);
+      label.position.set(c.px, c.py + 22, c.pz);
+      cityGroup.add(label);
+
+      /* 热区 */
+      var hit = new THREE.Mesh(
+        new THREE.SphereGeometry(24, 10, 10),
+        new THREE.MeshBasicMaterial({visible:false})
+      );
+      hit.position.set(c.px, c.py, c.pz);
+      hit.userData.city = c;
+      cityGroup.add(hit);
+      cityHitMeshes.push(hit);
+
+      c.core = core;
+      c.glow = glow;
+      c.intensity = intensity;
+      c.scaleTarget = 1;
+      c.scaleCurrent = 1;
+    });
+
+    /* 连线：相邻城市连成星环 */
+    var positions = [];
+    for (var i = 0; i < n; i++){
+      var a = cities[i];
+      var b = cities[(i+1) % n];
+      positions.push(a.px, a.py, a.pz, b.px, b.py, b.pz);
+    }
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    var mat = new THREE.LineBasicMaterial({
+      color: 0xff9e6e,
+      transparent: true,
+      opacity: 0.11,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    cityGroup.add(new THREE.LineSegments(geo, mat));
+  }
 
   /* ========== 交互 ========== */
   var raycaster = new THREE.Raycaster();
@@ -499,11 +857,16 @@
   var dragging = false;
   var dragMoved = 0;
   var lastX = 0, lastY = 0;
-  var targetRotY = 0, targetRotX = 0;
+
+  var targetRotY_p = 0, targetRotX_p = 0;
+  var targetRotY_c = 0, targetRotX_c = 0;
 
   var pinching = false;
   var pinchStartDist = 0;
   var pinchStartCamDist = 0;
+
+  /* 当前视图状态 */
+  var viewLevel = 'province'; // 'province' | 'city'
 
   function getTouchDist(touches){
     var dx = touches[0].clientX - touches[1].clientX;
@@ -540,9 +903,15 @@
     var dx = x - lastX;
     var dy = y - lastY;
     dragMoved += Math.abs(dx) + Math.abs(dy);
-    targetRotY += dx * 0.005;
-    targetRotX += dy * 0.003;
-    targetRotX = Math.max(-0.5, Math.min(0.5, targetRotX));
+    if (viewLevel === 'province'){
+      targetRotY_p += dx * 0.005;
+      targetRotX_p += dy * 0.003;
+      targetRotX_p = Math.max(-0.5, Math.min(0.5, targetRotX_p));
+    } else {
+      targetRotY_c += dx * 0.005;
+      targetRotX_c += dy * 0.003;
+      targetRotX_c = Math.max(-0.5, Math.min(0.5, targetRotX_c));
+    }
     lastX = x; lastY = y;
   }
 
@@ -555,7 +924,6 @@
     }
     if (!dragging) return;
     dragging = false;
-    /* 手机手指容易抖，阈值放大到 12 */
     if (dragMoved < 12) handleClick(e);
   }
 
@@ -572,44 +940,165 @@
     pointer.x = (p.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(p.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
-    var hits = raycaster.intersectObjects(nodeMeshes);
-    if (hits.length > 0){
-      selectProvince(hits[0].object.userData.province);
+
+    if (viewLevel === 'province'){
+      var hits = raycaster.intersectObjects(provinceHitMeshes);
+      if (hits.length > 0){
+        enterProvince(hits[0].object.userData.province);
+      }
     } else {
-      closePanel();
+      var hits2 = raycaster.intersectObjects(cityHitMeshes);
+      if (hits2.length > 0){
+        openCityPanel(hits2[0].object.userData.city);
+      } else {
+        closePanel();
+      }
     }
   }
 
-  /* ========== 面板 ========== */
-  var panel      = document.getElementById('panel');
+  /* ========== 视图切换 ========== */
+  var hudTop = document.getElementById('hudTop');
+  var hudBottom = document.getElementById('hudBottom');
+  var backBtn = document.getElementById('backBtn');
+  var crumb = document.getElementById('crumb');
+  var panel = document.getElementById('panel');
   var panelTitle = document.getElementById('panelTitle');
   var panelTotal = document.getElementById('panelTotal');
-  var panelList  = document.getElementById('panelList');
-  var selectedProv = null;
+  var panelList = document.getElementById('panelList');
 
-  function selectProvince(p){
-    selectedProv = p;
-    provinces.forEach(function(q){
-      q.scaleTarget = (q === p) ? 1.9 : 1;
-    });
-    panelTitle.textContent = p.name;
+  function enterProvince(p){
+    if (!p || !p.cities || p.cities.length === 0) return;
+
+    currentProvince = p;
+    viewLevel = 'city';
+
+    buildCityGalaxy(p);
+    cityGroup.visible = true;
+
+    /* 省级星系淡出 */
+    provinceGroup.visible = true;
+    var t0 = performance.now();
+    (function fadeOutProvince(){
+      var k = (performance.now() - t0) / 350;
+      if (k >= 1){
+        provinceGroup.visible = false;
+        return;
+      }
+      provinceGroup.scale.setScalar(1 - k * 0.6);
+      provinceGroup.children.forEach(function(obj){
+        if (obj.material && obj.material.transparent){
+          if (obj.userData._baseOpacity === undefined){
+            obj.userData._baseOpacity = obj.material.opacity;
+          }
+        }
+      });
+      requestAnimationFrame(fadeOutProvince);
+    })();
+
+    /* 地级市星系淡入 */
+    cityGroup.scale.setScalar(0.4);
+    var t1 = performance.now();
+    (function fadeInCity(){
+      var k = (performance.now() - t1) / 550;
+      if (k >= 1){
+        cityGroup.scale.setScalar(1);
+        return;
+      }
+      var e = 1 - Math.pow(1 - k, 3);
+      cityGroup.scale.setScalar(0.4 + e * 0.6);
+      requestAnimationFrame(fadeInCity);
+    })();
+
+    /* HUD 更新 */
+    hudTop.classList.add('hide');
+    hudBottom.classList.add('hide');
+    backBtn.classList.add('show');
+    crumb.textContent = p.name + ' · ' + p.cities.length + ' 个市';
+    crumb.classList.add('show');
+
+    targetRotY_c = 0;
+    targetRotX_c = 0;
+    targetDistance = computeBaseDistance() * 0.9;
+
+    closePanel();
+  }
+
+  function exitProvince(){
+    if (viewLevel === 'province') return;
+
+    viewLevel = 'province';
+    currentProvince = null;
+
+    /* 地级市星系淡出 */
+    cityGroup.visible = true;
+    var t0 = performance.now();
+    (function fadeOutCity(){
+      var k = (performance.now() - t0) / 350;
+      if (k >= 1){
+        cityGroup.visible = false;
+        return;
+      }
+      cityGroup.scale.setScalar(1 - k * 0.6);
+      requestAnimationFrame(fadeOutCity);
+    })();
+
+    /* 省级星系淡入 */
+    provinceGroup.visible = true;
+    provinceGroup.scale.setScalar(0.6);
+    var t1 = performance.now();
+    (function fadeInProvince(){
+      var k = (performance.now() - t1) / 500;
+      if (k >= 1){
+        provinceGroup.scale.setScalar(1);
+        return;
+      }
+      var e = 1 - Math.pow(1 - k, 3);
+      provinceGroup.scale.setScalar(0.6 + e * 0.4);
+      requestAnimationFrame(fadeInProvince);
+    })();
+
+    hudTop.classList.remove('hide');
+    hudBottom.classList.remove('hide');
+    backBtn.classList.remove('show');
+    crumb.classList.remove('show');
+
+    targetDistance = computeBaseDistance();
+
+    closePanel();
+  }
+
+  backBtn.addEventListener('click', exitProvince);
+
+  /* ========== 地级市面板 ========== */
+  var selectedCity = null;
+
+  function openCityPanel(c){
+    selectedCity = c;
+    if (currentProvince && currentProvince.cities){
+      currentProvince.cities.forEach(function(q){
+        q.scaleTarget = (q === c) ? 1.9 : 1;
+      });
+    }
+    panelTitle.textContent = c.name;
     panel.classList.add('open');
-    renderPanel();
+    renderCityPanel();
   }
 
   function closePanel(){
-    selectedProv = null;
-    provinces.forEach(function(q){ q.scaleTarget = 1; });
+    selectedCity = null;
+    if (currentProvince && currentProvince.cities){
+      currentProvince.cities.forEach(function(q){ q.scaleTarget = 1; });
+    }
     panel.classList.remove('open');
   }
 
   document.getElementById('panelClose').addEventListener('click', closePanel);
 
-  function renderPanel(){
-    if (!selectedProv) return;
-    var p = selectedProv;
-    var rows = p.cities.map(function(city){
-      return { name: city, value: displayValue(cityBase(p.name, city), p.name + city) };
+  function renderCityPanel(){
+    if (!selectedCity) return;
+    var c = selectedCity;
+    var rows = c.districts.map(function(d){
+      return { name: d, value: valueOf(districtBase(d), c.name + d) };
     });
     var total = rows.reduce(function(s, r){ return s + r.value; }, 0);
     var max = Math.max.apply(null, rows.map(function(r){ return r.value; }));
@@ -654,7 +1143,7 @@
     todayEl.textContent = formatNum(getTodayTotal() + localAdd);
   }
 
-  function updateIntensities(){
+  function updateProvinceIntensities(){
     var now = new Date();
     var h = now.getHours() + now.getMinutes() / 60;
     var top = provinces[0];
@@ -679,6 +1168,22 @@
     });
 
     topProvEl.textContent = top.name;
+  }
+
+  function updateCityIntensities(){
+    if (!currentProvince) return;
+    var now = new Date();
+    currentProvince.cities.forEach(function(c){
+      var wave = Math.sin(now.getTime() / 60000 + c.px) * 0.1;
+      var val = c.base / 1300 * (0.6 + wave);
+      c.core.material.color.setRGB(
+        1,
+        Math.min(1, 0.74 + val * 0.14),
+        Math.min(1, 0.55 + val * 0.13)
+      );
+      c.core.material.opacity = Math.min(1, 0.82 + val * 0.18);
+      c.glow.material.opacity = Math.min(0.95, 0.32 + val * 0.42);
+    });
   }
 
   var DAILY_LINES = [
@@ -714,7 +1219,7 @@
 
     var rp = provinces[Math.floor(Math.random()*provinces.length)];
     rp.scaleTarget = 2.4;
-    setTimeout(function(){ rp.scaleTarget = (selectedProv === rp ? 1.9 : 1); }, 700);
+    setTimeout(function(){ rp.scaleTarget = 1; }, 700);
   });
 
   /* ========== 尺寸自适应 ========== */
@@ -740,10 +1245,14 @@
     var dt = clock.getDelta();
 
     if (!dragging && !pinching){
-      targetRotY += dt * 0.09;
+      if (viewLevel === 'province') targetRotY_p += dt * 0.09;
+      else targetRotY_c += dt * 0.09;
     }
-    group.rotation.y += (targetRotY - group.rotation.y) * 0.06;
-    group.rotation.x += (targetRotX - group.rotation.x) * 0.06;
+
+    provinceGroup.rotation.y += (targetRotY_p - provinceGroup.rotation.y) * 0.06;
+    provinceGroup.rotation.x += (targetRotX_p - provinceGroup.rotation.x) * 0.06;
+    cityGroup.rotation.y += (targetRotY_c - cityGroup.rotation.y) * 0.06;
+    cityGroup.rotation.x += (targetRotX_c - cityGroup.rotation.x) * 0.06;
 
     currentDistance += (targetDistance - currentDistance) * 0.1;
     camera.position.set(0, 0, currentDistance);
@@ -751,11 +1260,21 @@
 
     provinces.forEach(function(p){
       p.scaleCurrent += (p.scaleTarget - p.scaleCurrent) * 0.1;
-      p.core.scale.setScalar(p.scaleCurrent);
-      p.glow.scale.setScalar(
-        (30 + p.intensity * 42) * (0.6 + p.scaleCurrent * 0.4)
-      );
+      if (p.core){
+        p.core.scale.setScalar(p.scaleCurrent);
+        p.glow.scale.setScalar((30 + p.intensity * 42) * (0.6 + p.scaleCurrent * 0.4));
+      }
     });
+
+    if (currentProvince && currentProvince.cities){
+      currentProvince.cities.forEach(function(c){
+        c.scaleCurrent += (c.scaleTarget - c.scaleCurrent) * 0.1;
+        if (c.core){
+          c.core.scale.setScalar(c.scaleCurrent);
+          c.glow.scale.setScalar((30 + c.intensity * 42) * (0.6 + c.scaleCurrent * 0.4));
+        }
+      });
+    }
 
     renderer.render(scene, camera);
   }
@@ -763,13 +1282,14 @@
 
   /* ========== 启动 ========== */
   updateNumbers();
-  updateIntensities();
+  updateProvinceIntensities();
   updateDailyLine();
 
   setInterval(updateNumbers, 3000);
   setInterval(function(){
-    updateIntensities();
-    if (selectedProv) renderPanel();
+    updateProvinceIntensities();
+    updateCityIntensities();
+    if (selectedCity) renderCityPanel();
   }, 3500);
   setInterval(updateDailyLine, 60000);
 
