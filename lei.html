@@ -43,11 +43,12 @@
     color:rgba(255,238,222,.45);font-weight:300;
   }
 
-  /* 底部区域：统计 → 截图引导 → 按钮，全部用正常流排列，不会重叠 */
+  /* 底部区域：整块不拦截触摸，只有按钮拦截 */
   .hud-bottom{
     position:fixed;bottom:0;left:0;right:0;
     padding:0 5vw 4.5vh;text-align:center;
     z-index:10;
+    pointer-events:none;
   }
   .daily-line{
     font-size:clamp(11px,1.5vmin,13px);
@@ -65,7 +66,6 @@
   }
   .hud-stats .top-prov{color:rgba(255,215,175,.65)}
 
-  /* 截图引导：放在统计和按钮之间，不重叠 */
   .share-hint{
     font-size:11px;
     letter-spacing:.2em;padding-left:.2em;
@@ -74,11 +74,9 @@
     margin-bottom:14px;
     min-height:1.2em;
     transition:color 2s ease;
-    pointer-events:none;
   }
   .share-hint.show{color:rgba(255,238,222,.22)}
 
-  /* 单个按钮 */
   .btns{
     display:flex;justify-content:center;
   }
@@ -94,6 +92,7 @@
     letter-spacing:.2em;padding-left:calc(38px + .2em);
     font-weight:300;cursor:pointer;
     transition:all .35s ease;
+    pointer-events:auto;
   }
   .btn:hover{
     border-color:rgba(255,225,200,.35);
@@ -116,7 +115,6 @@
     line-height:1.6;z-index:10;pointer-events:none;
   }
 
-  /* 面板 */
   .panel{
     position:fixed;top:0;right:0;bottom:0;
     width:min(360px,86vw);
@@ -129,6 +127,7 @@
     transition:transform .5s cubic-bezier(.22,.8,.3,1);
     display:flex;flex-direction:column;
     padding:5vh 26px 4vh;
+    pointer-events:auto;
   }
   .panel.open{transform:translateX(0)}
   .panel-head{
@@ -227,7 +226,6 @@
   <span class="hud-sub">人和你一起停了一下</span>
 </div>
 
-<!-- 底部区域：统计 → 截图引导 → 按钮，正常流排列 -->
 <div class="hud-bottom">
   <div class="daily-line" id="dailyLine"></div>
   <div class="hud-stats">
@@ -319,6 +317,7 @@
     return Math.max(0, Math.floor(base + wave));
   }
 
+  /* 3D 坐标：整体稍微上移，让底部的海南离底部 HUD 远一点 */
   provinces.forEach(function(p){
     p.px = (p.x - 400) * 1.15;
     p.py = (300 - p.y) * 1.15;
@@ -337,19 +336,22 @@
   document.getElementById('scene').appendChild(renderer.domElement);
 
   var group = new THREE.Group();
+  /* 星系整体向上偏移，让海南更远离底部 HUD */
+  group.position.y = 25;
   scene.add(group);
 
   var baseDistance = 900;
   var currentDistance = baseDistance;
   var targetDistance = baseDistance;
-  var MIN_DIST = 350;
+  /* 允许放得更大，方便手指点小节点 */
+  var MIN_DIST = 260;
   var MAX_DIST = 1800;
 
   function computeBaseDistance(){
     var w = window.innerWidth, h = window.innerHeight;
     var d = 900;
     if (w < h) d = 1150;
-    if (w < 480) d = 1250;
+    if (w < 480) d = 1200;
     return d;
   }
   baseDistance = computeBaseDistance();
@@ -404,11 +406,13 @@
     return t;
   }
 
+  /* 只放热区球用于点击检测 */
   var nodeMeshes = [];
 
   provinces.forEach(function(p){
     var intensity = p.base / 1500;
 
+    /* 视觉核心球 */
     var coreGeo = new THREE.SphereGeometry(4 + intensity * 6, 20, 20);
     var coreMat = new THREE.MeshBasicMaterial({
       color: new THREE.Color(1, 0.78 + intensity*0.12, 0.6 + intensity*0.1),
@@ -419,6 +423,7 @@
     core.position.set(p.px, p.py, p.pz);
     group.add(core);
 
+    /* 光晕 */
     var glowMat = new THREE.SpriteMaterial({
       map: glowTexture,
       color: 0xffc79a,
@@ -433,6 +438,7 @@
     glow.position.copy(core.position);
     group.add(glow);
 
+    /* 标签 */
     var labelMat = new THREE.SpriteMaterial({
       map: labelTexture(p.name),
       transparent: true,
@@ -444,14 +450,21 @@
     label.position.set(p.px, p.py + 24, p.pz);
     group.add(label);
 
+    /* 透明热区：半径 26，手机上手指点得中 */
+    var hitMat = new THREE.MeshBasicMaterial({ visible: false });
+    var hitArea = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 10), hitMat);
+    hitArea.scale.setScalar(26);
+    hitArea.position.set(p.px, p.py, p.pz);
+    hitArea.userData.province = p;
+    group.add(hitArea);
+    nodeMeshes.push(hitArea);
+    p.hitArea = hitArea;
+
     p.core = core;
     p.glow = glow;
     p.intensity = intensity;
     p.scaleTarget = 1;
     p.scaleCurrent = 1;
-
-    core.userData.province = p;
-    nodeMeshes.push(core);
   });
 
   (function(){
@@ -542,7 +555,8 @@
     }
     if (!dragging) return;
     dragging = false;
-    if (dragMoved < 6) handleClick(e);
+    /* 手机手指容易抖，阈值放大到 12 */
+    if (dragMoved < 12) handleClick(e);
   }
 
   renderer.domElement.addEventListener('mousedown', onDown);
@@ -612,7 +626,7 @@
     }).join('');
   }
 
-  /* ========== 数字与数据 ========== */
+  /* ========== 数据 ========== */
   var numEl = document.getElementById('num');
   var topProvEl = document.getElementById('topProv');
   var todayEl = document.getElementById('todayTotal');
