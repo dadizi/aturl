@@ -43,7 +43,7 @@
     color:rgba(255,238,222,.45);font-weight:300;
   }
 
-  /* 底部区域：统计在上，按钮在最下，不会被挡住 */
+  /* 底部区域：统计 → 截图引导 → 按钮，全部用正常流排列，不会重叠 */
   .hud-bottom{
     position:fixed;bottom:0;left:0;right:0;
     padding:0 5vw 4.5vh;text-align:center;
@@ -61,9 +61,22 @@
     letter-spacing:.18em;padding-left:.18em;
     color:rgba(255,238,222,.24);font-weight:300;
     line-height:1.9;
-    margin-bottom:16px;
+    margin-bottom:10px;
   }
   .hud-stats .top-prov{color:rgba(255,215,175,.65)}
+
+  /* 截图引导：放在统计和按钮之间，不重叠 */
+  .share-hint{
+    font-size:11px;
+    letter-spacing:.2em;padding-left:.2em;
+    color:rgba(255,238,222,0);
+    font-weight:300;
+    margin-bottom:14px;
+    min-height:1.2em;
+    transition:color 2s ease;
+    pointer-events:none;
+  }
+  .share-hint.show{color:rgba(255,238,222,.22)}
 
   /* 单个按钮 */
   .btns{
@@ -94,19 +107,6 @@
     background:rgba(60,35,20,.65);
     cursor:default;
   }
-
-  .share-hint{
-    position:fixed;
-    left:0;right:0;
-    bottom:calc(4.5vh + 78px);
-    text-align:center;
-    font-size:11px;letter-spacing:.2em;padding-left:.2em;
-    color:rgba(255,238,222,0);
-    font-weight:300;
-    transition:color 2s ease;
-    z-index:10;pointer-events:none;
-  }
-  .share-hint.show{color:rgba(255,238,222,.22)}
 
   .disclaimer{
     position:fixed;left:0;right:0;bottom:0.8vh;
@@ -227,14 +227,14 @@
   <span class="hud-sub">人和你一起停了一下</span>
 </div>
 
-<div class="share-hint" id="shareHint">截图发给你想到的那个人</div>
-
+<!-- 底部区域：统计 → 截图引导 → 按钮，正常流排列 -->
 <div class="hud-bottom">
   <div class="daily-line" id="dailyLine"></div>
   <div class="hud-stats">
     此刻最多人停下来的省份：<span class="top-prov" id="topProv">四川</span><br>
     今天已有 <span id="todayTotal">89,231</span> 人选择了不硬撑
   </div>
+  <div class="share-hint" id="shareHint">截图发给你想到的那个人</div>
   <div class="btns">
     <button class="btn" id="pauseBtn">我停一下</button>
   </div>
@@ -339,7 +339,6 @@
   var group = new THREE.Group();
   scene.add(group);
 
-  /* 相机距离：支持双指缩放 */
   var baseDistance = 900;
   var currentDistance = baseDistance;
   var targetDistance = baseDistance;
@@ -357,7 +356,6 @@
   currentDistance = baseDistance;
   targetDistance = baseDistance;
 
-  /* 背景星点 */
   (function(){
     var geo = new THREE.BufferGeometry();
     var pos = [];
@@ -482,7 +480,7 @@
     group.add(new THREE.LineSegments(geo, mat));
   })();
 
-  /* ========== 交互：单指旋转 + 双指缩放 ========== */
+  /* ========== 交互 ========== */
   var raycaster = new THREE.Raycaster();
   var pointer = new THREE.Vector2();
   var dragging = false;
@@ -490,7 +488,6 @@
   var lastX = 0, lastY = 0;
   var targetRotY = 0, targetRotX = 0;
 
-  // 双指缩放
   var pinching = false;
   var pinchStartDist = 0;
   var pinchStartCamDist = 0;
@@ -688,7 +685,6 @@
     dailyLineEl.textContent = DAILY_LINES[idx];
   }
 
-  /* 单个按钮 */
   var hasClicked = false;
   var pauseBtn = document.getElementById('pauseBtn');
   pauseBtn.addEventListener('click', function(){
@@ -715,7 +711,6 @@
     renderer.setSize(w, h);
 
     baseDistance = computeBaseDistance();
-    // 不重置用户缩放，但确保在范围内
     targetDistance = Math.max(MIN_DIST, Math.min(MAX_DIST, targetDistance));
   }
   window.addEventListener('resize', onResize);
@@ -736,7 +731,6 @@
     group.rotation.y += (targetRotY - group.rotation.y) * 0.06;
     group.rotation.x += (targetRotX - group.rotation.x) * 0.06;
 
-    // 相机距离平滑过渡
     currentDistance += (targetDistance - currentDistance) * 0.1;
     camera.position.set(0, 0, currentDistance);
     camera.lookAt(0, 0, 0);
