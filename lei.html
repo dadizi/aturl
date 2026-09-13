@@ -3,291 +3,654 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#08070a">
 <title>累了吗？- leilema.cn</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{
-    height:100%;background:#08070a;
+    height:100%;overflow:hidden;background:#050408;
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-    -webkit-tap-highlight-color:transparent;
-    -webkit-font-smoothing:antialiased;
-    color:#fff;user-select:none;
+    -webkit-tap-highlight-color:transparent;color:#fff;user-select:none;
   }
-  body{
-    display:flex;flex-direction:column;align-items:center;
-    padding:6vh 5vw 4vh;overflow-x:hidden;
-  }
+  #scene{position:fixed;inset:0;z-index:1}
 
-  /* 顶部数字 */
-  .counter-wrap{text-align:center;margin-bottom:3vh}
-  .counter-label{
-    font-size:clamp(12px,1.6vmin,14px);
-    letter-spacing:.28em;padding-left:.28em;
-    color:rgba(255,238,222,.3);font-weight:300;
+  .hud-top{
+    position:fixed;top:0;left:0;right:0;
+    padding:4vh 5vw 0;text-align:center;
+    z-index:10;pointer-events:none;
   }
-  .counter-num{
-    display:block;margin-top:14px;
-    font-size:clamp(42px,11vmin,86px);
+  .hud-label{
+    font-size:clamp(11px,1.4vmin,13px);
+    letter-spacing:.28em;padding-left:.28em;
+    color:rgba(255,238,222,.32);font-weight:300;
+  }
+  .hud-num{
+    display:block;margin-top:8px;
+    font-size:clamp(34px,8.5vmin,64px);
     font-weight:200;letter-spacing:.04em;
-    color:rgba(255,232,210,.92);
-    text-shadow:0 0 40px rgba(255,190,140,.18);
+    color:rgba(255,232,210,.95);
+    text-shadow:0 0 50px rgba(255,190,140,.35);
     transition:transform .25s ease;
   }
-  .counter-num.pop{transform:scale(1.06)}
+  .hud-num.pop{transform:scale(1.06)}
 
-  /* 地图 */
-  .map-wrap{
-    position:relative;width:100%;max-width:700px;
-    margin-bottom:3vh;
+  .hud-bottom{
+    position:fixed;bottom:0;left:0;right:0;
+    padding:0 5vw 4vh;text-align:center;
+    z-index:10;
   }
-  svg.map{display:block;width:100%;height:auto}
-  .city-dot{
-    cursor:pointer;
-    transition:opacity .4s ease, r .4s ease;
-  }
-  .city-dot:hover{opacity:1 !important}
-
-  /* 按钮 */
   .btns{
-    display:flex;gap:10px;margin-bottom:3vh;
-    width:100%;max-width:560px;justify-content:center;
-    flex-wrap:wrap;
+    display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+    margin-bottom:14px;
   }
   .btn{
-    flex:1;min-width:100px;max-width:180px;
-    padding:14px 10px;
-    border:1px solid rgba(255,225,200,.12);
+    padding:12px 22px;
+    border:1px solid rgba(255,225,200,.14);
     border-radius:100px;
-    background:rgba(255,200,160,.03);
-    color:rgba(255,238,222,.6);
-    font-size:clamp(13px,1.7vmin,15px);
-    letter-spacing:.14em;padding-left:.14em;
+    background:rgba(20,14,10,.5);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    color:rgba(255,238,222,.65);
+    font-size:clamp(12px,1.6vmin,14px);
+    letter-spacing:.14em;padding-left:calc(22px + .14em);
     font-weight:300;cursor:pointer;
     transition:all .35s ease;
-    -webkit-tap-highlight-color:transparent;
   }
   .btn:hover{
-    border-color:rgba(255,225,200,.28);
-    color:rgba(255,238,222,.85);
-    background:rgba(255,200,160,.06);
+    border-color:rgba(255,225,200,.3);
+    color:rgba(255,238,222,.9);
+    background:rgba(30,20,14,.7);
   }
   .btn:active{transform:scale(.97)}
   .btn.done{
-    border-color:rgba(255,204,166,.35);
-    color:rgba(255,212,172,.9);
-    background:rgba(255,190,140,.08);
+    border-color:rgba(255,204,166,.4);
+    color:rgba(255,212,172,.95);
+    background:rgba(60,35,20,.6);
     cursor:default;
   }
-
-  /* 底部信息 */
-  .stats{
-    text-align:center;
-    font-size:clamp(11px,1.4vmin,13px);
-    letter-spacing:.2em;padding-left:.2em;
-    color:rgba(255,238,222,.28);font-weight:300;
-    line-height:2;
-  }
-  .stats .top-city{
-    color:rgba(255,210,170,.55);
-  }
-  .footer{
-    margin-top:2.5vh;
-    font-size:clamp(10px,1.2vmin,11.5px);
+  .hud-stats{
+    font-size:clamp(10px,1.3vmin,12px);
     letter-spacing:.18em;padding-left:.18em;
-    color:rgba(255,238,222,.12);font-weight:300;
-    text-align:center;
+    color:rgba(255,238,222,.26);font-weight:300;
+    line-height:1.9;
+  }
+  .hud-stats .top-prov{color:rgba(255,215,175,.7)}
+
+  .disclaimer{
+    position:fixed;left:0;right:0;bottom:1.2vh;
+    text-align:center;font-size:9.5px;
+    letter-spacing:.1em;
+    color:rgba(255,238,222,.12);
+    line-height:1.7;z-index:10;pointer-events:none;
+  }
+
+  .panel{
+    position:fixed;top:0;right:0;bottom:0;
+    width:min(360px,86vw);
+    background:linear-gradient(180deg, rgba(16,11,8,.92) 0%, rgba(10,7,5,.95) 100%);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    border-left:1px solid rgba(255,200,150,.09);
+    z-index:30;
+    transform:translateX(100%);
+    transition:transform .5s cubic-bezier(.22,.8,.3,1);
+    display:flex;flex-direction:column;
+    padding:5vh 26px 4vh;
+  }
+  .panel.open{transform:translateX(0)}
+  .panel-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    margin-bottom:6px;
+  }
+  .panel-title{
+    font-size:clamp(20px,3vmin,26px);
+    font-weight:300;letter-spacing:.1em;
+    color:rgba(255,235,215,.95);
+  }
+  .panel-close{
+    background:none;border:none;color:rgba(255,238,222,.4);
+    font-size:22px;cursor:pointer;padding:4px 8px;
+    transition:color .3s ease;line-height:1;
+  }
+  .panel-close:hover{color:rgba(255,238,222,.85)}
+  .panel-sub{
+    font-size:11px;letter-spacing:.22em;
+    color:rgba(255,238,222,.3);font-weight:300;
+    margin-bottom:20px;
+  }
+  .panel-total{
+    font-size:12px;letter-spacing:.1em;
+    color:rgba(255,210,170,.6);
+    margin-bottom:18px;font-weight:300;
+    line-height:1.7;
+  }
+  .panel-list{
+    flex:1;overflow-y:auto;
+    display:flex;flex-direction:column;gap:14px;
+    padding-right:4px;
+  }
+  .panel-list::-webkit-scrollbar{width:3px}
+  .panel-list::-webkit-scrollbar-thumb{background:rgba(255,200,150,.15);border-radius:2px}
+
+  .city-row{
+    display:flex;align-items:center;gap:12px;
+  }
+  .city-name{
+    width:64px;flex-shrink:0;
+    font-size:13px;font-weight:300;
+    letter-spacing:.05em;
+    color:rgba(255,238,222,.72);
+  }
+  .city-bar{
+    flex:1;height:4px;border-radius:2px;
+    background:rgba(255,200,150,.08);
+    overflow:hidden;
+  }
+  .city-bar-fill{
+    height:100%;border-radius:2px;
+    background:linear-gradient(90deg, rgba(255,160,100,.7), rgba(255,215,175,.9));
+    transition:width 1.2s cubic-bezier(.22,.8,.3,1);
+  }
+  .city-num{
+    width:52px;text-align:right;flex-shrink:0;
+    font-size:12px;font-weight:300;
+    color:rgba(255,215,175,.55);
+    font-variant-numeric:tabular-nums;
+  }
+
+  @media (max-width:640px){
+    .panel{
+      top:auto;left:0;right:0;bottom:0;
+      width:100%;height:auto;max-height:62vh;
+      border-left:none;
+      border-top:1px solid rgba(255,200,150,.1);
+      border-radius:22px 22px 0 0;
+      transform:translateY(100%);
+      padding:26px 22px 5vh;
+    }
+    .panel.open{transform:translateY(0)}
+    .city-name{width:56px}
   }
 
   @media (prefers-reduced-motion: reduce){
-    .counter-num{transition:none}
-    .city-dot{transition:none}
-    .btn{transition:none}
+    .panel{transition:none}
+    .hud-num{transition:none}
+    .city-bar-fill{transition:none}
   }
 </style>
 </head>
 <body>
 
-  <div class="counter-wrap">
-    <span class="counter-label">此刻，有</span>
-    <span class="counter-num" id="num">12,847</span>
-    <span class="counter-label">人和你一样累</span>
-  </div>
+<div id="scene"></div>
 
-  <div class="map-wrap">
-    <svg class="map" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
-      <!-- 简化中国轮廓 -->
-      <path d="M 660,100 L 700,120 L 720,180 L 680,220 L 660,260 L 690,280 L 680,320 L 720,340 L 700,380 L 680,420 L 640,460 L 600,500 L 560,530 L 520,540 L 480,520 L 460,480 L 440,440 L 400,460 L 360,440 L 320,400 L 280,380 L 220,360 L 180,320 L 160,280 L 200,240 L 180,200 L 220,160 L 280,140 L 340,160 L 400,140 L 440,160 L 480,140 L 520,120 L 560,100 L 600,80 L 640,90 Z"
-            fill="rgba(255,180,130,.025)"
-            stroke="rgba(255,180,130,.08)"
-            stroke-width="1"/>
-      <g id="dots"></g>
-    </svg>
-  </div>
+<div class="hud-top">
+  <span class="hud-label">此刻，有</span>
+  <span class="hud-num" id="num">12,847</span>
+  <span class="hud-label">人和你一起停了一下</span>
+</div>
 
+<div class="hud-bottom">
   <div class="btns">
-    <button class="btn" data-level="tired">有点累</button>
-    <button class="btn" data-level="very">很累</button>
-    <button class="btn" data-level="cant">累到不想说话</button>
+    <button class="btn" data-level="pause">我停一下</button>
+    <button class="btn" data-level="here">我也在这里</button>
+    <button class="btn" data-level="rest">我选择歇会儿</button>
   </div>
-
-  <div class="stats">
-    此刻最累的城市：<span class="top-city" id="topCity">成都</span><br>
-    今天已有 <span id="todayTotal">89,231</span> 人标记过
+  <div class="hud-stats">
+    此刻最多人停下来的省份：<span class="top-prov" id="topProv">四川</span><br>
+    今天已有 <span id="todayTotal">89,231</span> 人选择了不硬撑
   </div>
+</div>
 
-  <div class="footer">截图发给你想到的那个人</div>
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <span class="panel-title" id="panelTitle">四川省</span>
+    <button class="panel-close" id="panelClose">×</button>
+  </div>
+  <div class="panel-sub">此刻，他们在这里</div>
+  <div class="panel-total" id="panelTotal">该省此刻有 8,432 人停了一下</div>
+  <div class="panel-list" id="panelList"></div>
+</div>
 
+<div class="disclaimer">
+  本页面为抽象节点示意图，非地图，不表示任何地理边界。<br>
+  台湾省、香港特别行政区、澳门特别行政区均为中国的一部分。
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
   'use strict';
 
-  var numEl     = document.getElementById('num');
-  var topCityEl = document.getElementById('topCity');
-  var todayEl   = document.getElementById('todayTotal');
-  var dotsGroup = document.getElementById('dots');
-  var btns      = document.querySelectorAll('.btn');
-
-  /* ========== 城市数据 ========== */
-  var cities = [
-    { name: '北京',    x: 560, y: 224, base: 1200 },
-    { name: '上海',    x: 626, y: 373, base: 1500 },
-    { name: '广州',    x: 520, y: 511, base: 1000 },
-    { name: '深圳',    x: 530, y: 521, base: 1100 },
-    { name: '成都',    x: 401, y: 381, base: 1300 },
-    { name: '重庆',    x: 432, y: 400, base: 1000 },
-    { name: '杭州',    x: 609, y: 388, base: 900  },
-    { name: '武汉',    x: 533, y: 383, base: 850  },
-    { name: '西安',    x: 463, y: 320, base: 700  },
-    { name: '南京',    x: 591, y: 357, base: 750  },
-    { name: '长沙',    x: 516, y: 424, base: 650  },
-    { name: '郑州',    x: 524, y: 313, base: 600  },
-    { name: '天津',    x: 570, y: 238, base: 550  },
-    { name: '苏州',    x: 614, y: 371, base: 600  },
-    { name: '青岛',    x: 611, y: 289, base: 450  },
-    { name: '大连',    x: 627, y: 241, base: 400  },
-    { name: '厦门',    x: 582, y: 487, base: 450  },
-    { name: '昆明',    x: 383, y: 479, base: 400  },
-    { name: '贵阳',    x: 435, y: 451, base: 350  },
-    { name: '哈尔滨',  x: 691, y: 123, base: 400  },
-    { name: '沈阳',    x: 650, y: 191, base: 400  },
-    { name: '兰州',    x: 397, y: 289, base: 300  },
-    { name: '乌鲁木齐',x: 188, y: 157, base: 250  },
-    { name: '拉萨',    x: 233, y: 400, base: 150  }
+  /* ========== 34 个省级行政区数据 ========== */
+  var provinces = [
+    { name:'新疆',   x:120, y:200, base:250,  cities:['乌鲁木齐','克拉玛依','吐鲁番','哈密','喀什'] },
+    { name:'西藏',   x:200, y:360, base:150,  cities:['拉萨','日喀则','昌都','林芝','山南'] },
+    { name:'青海',   x:260, y:300, base:180,  cities:['西宁','海东','格尔木','德令哈','玉树'] },
+    { name:'甘肃',   x:320, y:260, base:260,  cities:['兰州','天水','白银','酒泉','嘉峪关'] },
+    { name:'宁夏',   x:380, y:240, base:200,  cities:['银川','石嘴山','吴忠','中卫','固原'] },
+    { name:'内蒙古', x:450, y:140, base:350,  cities:['呼和浩特','包头','鄂尔多斯','赤峰','通辽'] },
+    { name:'黑龙江', x:680, y:100, base:400,  cities:['哈尔滨','大庆','齐齐哈尔','牡丹江','佳木斯'] },
+    { name:'吉林',   x:670, y:150, base:350,  cities:['长春','吉林','四平','通化','延边'] },
+    { name:'辽宁',   x:640, y:190, base:420,  cities:['沈阳','大连','鞍山','抚顺','本溪'] },
+    { name:'北京',   x:560, y:220, base:1200, cities:['朝阳','海淀','东城','西城','丰台'] },
+    { name:'天津',   x:590, y:235, base:550,  cities:['和平','河西','南开','滨海新区','武清'] },
+    { name:'河北',   x:555, y:255, base:600,  cities:['石家庄','唐山','保定','廊坊','邯郸'] },
+    { name:'山西',   x:510, y:260, base:400,  cities:['太原','大同','临汾','运城','长治'] },
+    { name:'陕西',   x:440, y:300, base:700,  cities:['西安','宝鸡','咸阳','渭南','汉中'] },
+    { name:'河南',   x:520, y:310, base:850,  cities:['郑州','洛阳','南阳','新乡','周口'] },
+    { name:'山东',   x:610, y:280, base:700,  cities:['济南','青岛','烟台','潍坊','临沂'] },
+    { name:'江苏',   x:620, y:340, base:800,  cities:['南京','苏州','无锡','常州','南通'] },
+    { name:'安徽',   x:590, y:350, base:600,  cities:['合肥','芜湖','蚌埠','安庆','马鞍山'] },
+    { name:'上海',   x:660, y:360, base:1500, cities:['浦东','黄浦','徐汇','静安','长宁'] },
+    { name:'浙江',   x:630, y:390, base:900,  cities:['杭州','宁波','温州','绍兴','嘉兴'] },
+    { name:'江西',   x:570, y:400, base:550,  cities:['南昌','赣州','九江','上饶','宜春'] },
+    { name:'福建',   x:610, y:440, base:650,  cities:['福州','厦门','泉州','漳州','莆田'] },
+    { name:'台湾省', x:665, y:450, base:500,  cities:['台北','高雄','台中','台南','新竹'] },
+    { name:'湖北',   x:530, y:360, base:850,  cities:['武汉','宜昌','襄阳','荆州','黄石'] },
+    { name:'湖南',   x:520, y:410, base:650,  cities:['长沙','株洲','湘潭','衡阳','岳阳'] },
+    { name:'重庆',   x:430, y:380, base:1000, cities:['渝中','江北','沙坪坝','九龙坡','南岸'] },
+    { name:'四川',   x:370, y:370, base:1300, cities:['成都','绵阳','德阳','宜宾','南充'] },
+    { name:'贵州',   x:430, y:440, base:350,  cities:['贵阳','遵义','六盘水','安顺','毕节'] },
+    { name:'云南',   x:350, y:470, base:400,  cities:['昆明','曲靖','玉溪','大理','丽江'] },
+    { name:'广西',   x:480, y:480, base:450,  cities:['南宁','柳州','桂林','梧州','北海'] },
+    { name:'广东',   x:540, y:500, base:1100, cities:['广州','深圳','东莞','佛山','珠海'] },
+    { name:'香港特别行政区', x:565, y:520, base:300, cities:['中西区','湾仔','油尖旺','沙田','观塘'] },
+    { name:'澳门特别行政区', x:540, y:535, base:200, cities:['花地玛堂区','圣安多尼堂区','大堂区','望德堂区','风顺堂区'] },
+    { name:'海南',   x:500, y:560, base:300,  cities:['海口','三亚','儋州','琼海','文昌'] }
   ];
 
-  /* 生成光点 */
-  cities.forEach(function(c){
-    var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    circle.setAttribute('cx', c.x);
-    circle.setAttribute('cy', c.y);
-    circle.setAttribute('r', 6);
-    circle.setAttribute('fill', 'rgba(255,190,140,.6)');
-    circle.setAttribute('class', 'city-dot');
-    circle.dataset.name = c.name;
-    dotsGroup.appendChild(circle);
-    c.el = circle;
-  });
-
-  /* ========== 模拟实时数字 ========== */
-  function getSimulatedCount(){
-    var now = new Date();
-    var h = now.getHours() + now.getMinutes() / 60;
-
-    var morningPeak = Math.exp(-Math.pow((h - 9) / 3, 2)) * 4000;
-    var eveningPeak = Math.exp(-Math.pow((h - 21) / 3, 2)) * 6000;
-    var base = 3000;
-    var wave = Math.sin(now.getTime() / 45000) * 200;
-
-    return Math.max(0, Math.floor(base + morningPeak + eveningPeak + wave));
+  function pseudo(str){
+    var h = 0;
+    for (var i=0;i<str.length;i++) h = (h*31 + str.charCodeAt(i)) % 100000;
+    return h / 100000;
   }
-
-  function getTodayTotal(){
-    var now = new Date();
-    var h = now.getHours() + now.getMinutes() / 60;
-    var base = Math.floor(h * 4200);
-    var jitter = Math.floor(Math.sin(now.getTime() / 60000) * 200);
-    return Math.max(0, base + jitter + 2000);
-  }
-
   function formatNum(n){
     return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
+  function cityBase(provName, cityName){
+    var s = provName + cityName;
+    var h = 0;
+    for (var i=0;i<s.length;i++) h = (h*37 + s.charCodeAt(i)) % 100000;
+    return 300 + (h % 1100);
+  }
+  function displayValue(base, key){
+    var t = Date.now() / 1000;
+    var seed = 0;
+    for (var i=0;i<key.length;i++) seed += key.charCodeAt(i);
+    var wave = Math.sin(t/7 + seed) * base * 0.09;
+    return Math.max(0, Math.floor(base + wave));
+  }
 
-  /* ========== 更新数字 ========== */
+  /* 3D 坐标 */
+  provinces.forEach(function(p){
+    p.px = (p.x - 400) * 1.15;
+    p.py = (300 - p.y) * 1.15;
+    p.pz = (pseudo(p.name) * 2 - 1) * 90;
+  });
+
+  /* ========== Three.js 场景 ========== */
+  var scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x050408, 0.00055);
+
+  var camera = new THREE.PerspectiveCamera(52, window.innerWidth/window.innerHeight, 1, 4000);
+  var renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x050408, 1);
+  document.getElementById('scene').appendChild(renderer.domElement);
+
+  var group = new THREE.Group();
+  scene.add(group);
+
+  /* 背景星点 */
+  (function(){
+    var geo = new THREE.BufferGeometry();
+    var pos = [];
+    for (var i=0;i<1600;i++){
+      pos.push(
+        (Math.random()-0.5)*2600,
+        (Math.random()-0.5)*2000,
+        (Math.random()-0.5)*1600
+      );
+    }
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    var mat = new THREE.PointsMaterial({
+      color:0xffcc99, size:1.3, transparent:true,
+      opacity:0.28, sizeAttenuation:true, depthWrite:false
+    });
+    group.add(new THREE.Points(geo, mat));
+  })();
+
+  /* 光晕纹理 */
+  var glowTexture = (function(){
+    var c = document.createElement('canvas');
+    c.width = c.height = 128;
+    var ctx = c.getContext('2d');
+    var g = ctx.createRadialGradient(64,64,0, 64,64,64);
+    g.addColorStop(0,   'rgba(255,225,190,0.95)');
+    g.addColorStop(0.25,'rgba(255,190,140,0.45)');
+    g.addColorStop(0.55,'rgba(255,160,110,0.12)');
+    g.addColorStop(1,   'rgba(255,150,100,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,128,128);
+    return new THREE.CanvasTexture(c);
+  })();
+
+  function labelTexture(text){
+    var c = document.createElement('canvas');
+    c.width = 320; c.height = 72;
+    var ctx = c.getContext('2d');
+    ctx.font = '300 30px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(255,180,130,0.55)';
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = 'rgba(255,240,225,0.82)';
+    ctx.fillText(text, 160, 36);
+    var t = new THREE.CanvasTexture(c);
+    t.minFilter = THREE.LinearFilter;
+    return t;
+  }
+
+  var nodeMeshes = [];
+
+  provinces.forEach(function(p){
+    var intensity = p.base / 1500;
+
+    var coreGeo = new THREE.SphereGeometry(4 + intensity * 6, 20, 20);
+    var coreMat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(1, 0.78 + intensity*0.12, 0.6 + intensity*0.1),
+      transparent: true,
+      opacity: 0.85 + intensity * 0.15
+    });
+    var core = new THREE.Mesh(coreGeo, coreMat);
+    core.position.set(p.px, p.py, p.pz);
+    group.add(core);
+
+    var glowMat = new THREE.SpriteMaterial({
+      map: glowTexture,
+      color: 0xffc79a,
+      transparent: true,
+      opacity: 0.35 + intensity * 0.4,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    var glow = new THREE.Sprite(glowMat);
+    var gs = 30 + intensity * 42;
+    glow.scale.set(gs, gs, 1);
+    glow.position.copy(core.position);
+    group.add(glow);
+
+    var labelMat = new THREE.SpriteMaterial({
+      map: labelTexture(p.name),
+      transparent: true,
+      opacity: 0.75,
+      depthWrite: false
+    });
+    var label = new THREE.Sprite(labelMat);
+    label.scale.set(78, 17.5, 1);
+    label.position.set(p.px, p.py + 24, p.pz);
+    group.add(label);
+
+    p.core = core;
+    p.glow = glow;
+    p.intensity = intensity;
+    p.scaleTarget = 1;
+    p.scaleCurrent = 1;
+
+    core.userData.province = p;
+    nodeMeshes.push(core);
+  });
+
+  /* 连线 */
+  (function(){
+    var positions = [];
+    provinces.forEach(function(a, i){
+      var nearest = [];
+      provinces.forEach(function(b, j){
+        if (i === j) return;
+        var dx = a.px - b.px, dy = a.py - b.py, dz = a.pz - b.pz;
+        nearest.push({ b:b, d: dx*dx + dy*dy + dz*dz });
+      });
+      nearest.sort(function(x,y){ return x.d - y.d; });
+      nearest.slice(0,2).forEach(function(n){
+        positions.push(a.px, a.py, a.pz, n.b.px, n.b.py, n.b.pz);
+      });
+    });
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    var mat = new THREE.LineBasicMaterial({
+      color: 0xff9e6e,
+      transparent: true,
+      opacity: 0.075,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    group.add(new THREE.LineSegments(geo, mat));
+  })();
+
+  /* ========== 交互 ========== */
+  var raycaster = new THREE.Raycaster();
+  var pointer = new THREE.Vector2();
+  var dragging = false;
+  var dragMoved = 0;
+  var lastX = 0, lastY = 0;
+  var targetRotY = 0, targetRotX = 0;
+
+  function onDown(e){
+    dragging = true;
+    dragMoved = 0;
+    lastX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    lastY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+  }
+  function onMove(e){
+    if (!dragging) return;
+    var x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    var y = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+    var dx = x - lastX;
+    var dy = y - lastY;
+    dragMoved += Math.abs(dx) + Math.abs(dy);
+    targetRotY += dx * 0.005;
+    targetRotX += dy * 0.003;
+    targetRotX = Math.max(-0.5, Math.min(0.5, targetRotX));
+    lastX = x; lastY = y;
+  }
+  function onUp(e){
+    if (!dragging) return;
+    dragging = false;
+    if (dragMoved < 6) handleClick(e);
+  }
+
+  renderer.domElement.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  renderer.domElement.addEventListener('touchstart', onDown, {passive:true});
+  window.addEventListener('touchmove', onMove, {passive:true});
+  window.addEventListener('touchend', onUp);
+
+  function handleClick(e){
+    var x = e.clientX || (e.changedTouches && e.changedTouches[0].clientX) || 0;
+    var y = e.clientY || (e.changedTouches && e.changedTouches[0].clientY) || 0;
+    pointer.x = (x / window.innerWidth) * 2 - 1;
+    pointer.y = -(y / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    var hits = raycaster.intersectObjects(nodeMeshes);
+    if (hits.length > 0){
+      selectProvince(hits[0].object.userData.province);
+    } else {
+      closePanel();
+    }
+  }
+
+  /* ========== 面板 ========== */
+  var panel      = document.getElementById('panel');
+  var panelTitle = document.getElementById('panelTitle');
+  var panelTotal = document.getElementById('panelTotal');
+  var panelList  = document.getElementById('panelList');
+  var selectedProv = null;
+
+  function selectProvince(p){
+    selectedProv = p;
+    provinces.forEach(function(q){
+      q.scaleTarget = (q === p) ? 1.9 : 1;
+    });
+    panelTitle.textContent = p.name;
+    panel.classList.add('open');
+    renderPanel();
+  }
+
+  function closePanel(){
+    selectedProv = null;
+    provinces.forEach(function(q){ q.scaleTarget = 1; });
+    panel.classList.remove('open');
+  }
+
+  document.getElementById('panelClose').addEventListener('click', closePanel);
+
+  function renderPanel(){
+    if (!selectedProv) return;
+    var p = selectedProv;
+    var rows = p.cities.map(function(city){
+      return { name: city, value: displayValue(cityBase(p.name, city), p.name + city) };
+    });
+    var total = rows.reduce(function(s, r){ return s + r.value; }, 0);
+    var max = Math.max.apply(null, rows.map(function(r){ return r.value; }));
+
+    panelTotal.textContent = '该省此刻有 ' + formatNum(total) + ' 人停了一下';
+
+    panelList.innerHTML = rows.map(function(r){
+      var pct = max > 0 ? (r.value / max * 100) : 0;
+      return '<div class="city-row">'
+           +   '<span class="city-name">' + r.name + '</span>'
+           +   '<div class="city-bar"><div class="city-bar-fill" style="width:' + pct.toFixed(1) + '%"></div></div>'
+           +   '<span class="city-num">' + formatNum(r.value) + '</span>'
+           + '</div>';
+    }).join('');
+  }
+
+  /* ========== 数字与数据 ========== */
+  var numEl = document.getElementById('num');
+  var topProvEl = document.getElementById('topProv');
+  var todayEl = document.getElementById('todayTotal');
   var localAdd = 0;
 
+  function getSimulatedCount(){
+    var now = new Date();
+    var h = now.getHours() + now.getMinutes() / 60;
+    var morning = Math.exp(-Math.pow((h - 9) / 3, 2)) * 4000;
+    var evening = Math.exp(-Math.pow((h - 21) / 3, 2)) * 6000;
+    var wave = Math.sin(now.getTime() / 45000) * 200;
+    return Math.max(0, Math.floor(3000 + morning + evening + wave));
+  }
+  function getTodayTotal(){
+    var now = new Date();
+    var h = now.getHours() + now.getMinutes() / 60;
+    var jitter = Math.sin(now.getTime() / 60000) * 200;
+    return Math.max(0, Math.floor(h * 4200 + jitter + 2000));
+  }
+
   function updateNumbers(){
-    var count = getSimulatedCount() + localAdd;
-    numEl.textContent = formatNum(count);
+    numEl.textContent = formatNum(getSimulatedCount() + localAdd);
     todayEl.textContent = formatNum(getTodayTotal() + localAdd);
   }
 
-  /* ========== 更新光点 ========== */
-  function updateDots(){
+  function updateIntensities(){
     var now = new Date();
     var h = now.getHours() + now.getMinutes() / 60;
+    var top = provinces[0];
+    var topVal = -1;
 
-    var maxIntensity = 0;
-    var topCity = cities[0].name;
+    provinces.forEach(function(p){
+      var offset = (p.name.charCodeAt(0) % 12) - 6;
+      var lh = (h + offset + 24) % 24;
+      var peak = Math.exp(-Math.pow((lh - 21) / 4, 2)) * 0.6
+               + Math.exp(-Math.pow((lh - 9) / 4, 2)) * 0.4;
+      var wave = Math.sin(now.getTime() / 60000 + p.px) * 0.1;
+      var val = p.base / 1500 * (peak + 0.3 + wave);
+      if (val > topVal){ topVal = val; top = p; }
 
-    cities.forEach(function(c){
-      var offset = (c.name.charCodeAt(0) % 12) - 6;
-      var cityHour = (h + offset + 24) % 24;
-      var peak = Math.exp(-Math.pow((cityHour - 21) / 4, 2)) * 0.6 +
-                 Math.exp(-Math.pow((cityHour - 9) / 4, 2)) * 0.4;
-      var wave = Math.sin(now.getTime() / 60000 + c.x) * 0.1;
-      var intensity = Math.max(0.1, c.base / 1500 * (peak + 0.3 + wave));
-
-      if (intensity > maxIntensity){
-        maxIntensity = intensity;
-        topCity = c.name;
-      }
-
-      c.el.setAttribute('r', 3 + intensity * 8);
-      c.el.setAttribute('fill', 'rgba(255,190,140,' + Math.min(0.85, 0.25 + intensity * 0.5) + ')');
+      p.core.material.color.setRGB(
+        1,
+        Math.min(1, 0.72 + val * 0.15),
+        Math.min(1, 0.52 + val * 0.14)
+      );
+      p.core.material.opacity = Math.min(1, 0.8 + val * 0.2);
+      p.glow.material.opacity = Math.min(0.95, 0.3 + val * 0.45);
     });
 
-    topCityEl.textContent = topCity;
+    topProvEl.textContent = top.name;
   }
 
-  /* ========== 按钮交互 ========== */
+  /* 按钮 */
   var hasClicked = false;
-
+  var btns = document.querySelectorAll('.btn');
   btns.forEach(function(btn){
     btn.addEventListener('click', function(){
       if (hasClicked) return;
       hasClicked = true;
-
       localAdd++;
       updateNumbers();
-
       numEl.classList.add('pop');
       setTimeout(function(){ numEl.classList.remove('pop'); }, 260);
-
       btns.forEach(function(b){
         b.classList.add('done');
         b.style.pointerEvents = 'none';
       });
       btn.textContent = '记住了';
-
-      // 让对应光点稍微亮一下
-      var randomCity = cities[Math.floor(Math.random() * cities.length)];
-      randomCity.el.setAttribute('r', 14);
-      randomCity.el.setAttribute('fill', 'rgba(255,220,180,.9)');
-      setTimeout(function(){
-        randomCity.el.setAttribute('r', 6);
-      }, 600);
+      var rp = provinces[Math.floor(Math.random()*provinces.length)];
+      rp.scaleTarget = 2.4;
+      setTimeout(function(){ rp.scaleTarget = (selectedProv === rp ? 1.9 : 1); }, 700);
     });
   });
 
-  /* ========== 启动 ========== */
-  updateNumbers();
-  updateDots();
+  /* ========== 尺寸自适应 ========== */
+  function onResize(){
+    var w = window.innerWidth, h = window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
 
+    var dist = 900;
+    if (w < h) dist = 1150;
+    if (w < 480) dist = 1250;
+    camera.position.set(0, 0, dist);
+    camera.lookAt(0, 0, 0);
+  }
+  window.addEventListener('resize', onResize);
+  onResize();
+
+  /* ========== 动画循环 ========== */
+  var clock = new THREE.Clock();
+
+  function animate(){
+    requestAnimationFrame(animate);
+    var dt = clock.getDelta();
+
+    if (!dragging){
+      targetRotY += dt * 0.09;
+    }
+    group.rotation.y += (targetRotY - group.rotation.y) * 0.06;
+    group.rotation.x += (targetRotX - group.rotation.x) * 0.06;
+
+    provinces.forEach(function(p){
+      p.scaleCurrent += (p.scaleTarget - p.scaleCurrent) * 0.1;
+      p.core.scale.setScalar(p.scaleCurrent);
+      p.glow.scale.setScalar(
+        (30 + p.intensity * 42) * (0.6 + p.scaleCurrent * 0.4)
+      );
+    });
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  /* ========== 定时更新 ========== */
+  updateNumbers();
+  updateIntensities();
   setInterval(updateNumbers, 3000);
-  setInterval(updateDots, 10000);
+  setInterval(function(){
+    updateIntensities();
+    if (selectedProv) renderPanel();
+  }, 3500);
 
 })();
 </script>
