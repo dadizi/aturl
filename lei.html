@@ -907,6 +907,10 @@
   var lastX = 0, lastY = 0;
   var mouseMode = 'pan';
 
+  /* 点击判定用 */
+  var downX = 0, downY = 0, downTime = 0;
+  var clickCooldownUntil = 0;
+
   var targetRotY_p = 0, targetRotX_p = 0;
   var targetRotY_c = 0, targetRotX_c = 0;
 
@@ -934,7 +938,6 @@
   function onDown(e){
     lastInteractionTime = performance.now();
 
-    /* 双指：进入平移 + 缩放模式 */
     if (e.touches && e.touches.length >= 2){
       pinching = true;
       pinchLock = true;
@@ -951,11 +954,9 @@
 
     if (pinching || pinchLock) return;
 
-    /* 鼠标：区分左右键 */
     if (e.type === 'mousedown'){
       mouseMode = (e.button === 2) ? 'rotate' : 'pan';
     } else {
-      /* 触摸单指：旋转 */
       mouseMode = 'rotate';
     }
 
@@ -964,10 +965,12 @@
     var p = e.touches ? e.touches[0] : e;
     lastX = p.clientX;
     lastY = p.clientY;
+    downX = p.clientX;
+    downY = p.clientY;
+    downTime = performance.now();
   }
 
   function onMove(e){
-    /* 双指：平移 + 缩放 */
     if (e.touches && e.touches.length >= 2){
       if (!pinching){
         pinching = true;
@@ -982,12 +985,10 @@
         pinchStartPanY = targetPanY;
       }
 
-      /* 缩放 */
       var d = getTouchDist(e.touches);
       var ratio = pinchStartDist / d;
       targetDistance = Math.max(MIN_DIST, Math.min(MAX_DIST, pinchStartCamDist * ratio));
 
-      /* 平移：中心点位移 */
       var c = getTouchCenter(e.touches);
       var dcx = c.x - pinchCenterX;
       var dcy = c.y - pinchCenterY;
@@ -1011,7 +1012,6 @@
     dragMoved += Math.abs(dx) + Math.abs(dy);
 
     if (mouseMode === 'rotate'){
-      /* 单指 / 右键：旋转 */
       if (viewLevel === 'province'){
         targetRotY_p += dx * 0.005;
         targetRotX_p += dy * 0.003;
@@ -1025,7 +1025,6 @@
         clearFocus();
       }
     } else {
-      /* 左键：平移 */
       var wpp2 = 0.975 * currentDistance / window.innerHeight;
       targetPanX -= dx * wpp2;
       targetPanY += dy * wpp2;
@@ -1044,16 +1043,30 @@
     if (pinching){
       if (!e.touches || e.touches.length < 2){
         pinching = false;
+        clickCooldownUntil = performance.now() + 300;
       }
       return;
     }
+
     if (!e.touches || e.touches.length === 0){
       pinchLock = false;
     }
     if (pinchLock) return;
     if (!dragging) return;
     dragging = false;
-    if (dragMoved < 12) handleClick(e);
+
+    var p = (e.changedTouches && e.changedTouches[0]) || e;
+    var upX = p.clientX || 0;
+    var upY = p.clientY || 0;
+    var tdx = upX - downX;
+    var tdy = upY - downY;
+    var totalDist = Math.sqrt(tdx*tdx + tdy*tdy);
+    var duration = performance.now() - downTime;
+    var inCooldown = performance.now() < clickCooldownUntil;
+
+    if (totalDist < 15 && duration < 400 && !inCooldown){
+      handleClick(e);
+    }
   }
 
   renderer.domElement.addEventListener('mousedown', onDown);
