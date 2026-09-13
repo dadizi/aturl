@@ -15,7 +15,6 @@
   }
   #scene{position:fixed;inset:0;z-index:1;touch-action:none}
 
-  /* 顶部 */
   .hud-top{
     position:fixed;top:0;left:0;right:0;
     padding:5vh 5vw 0;text-align:center;
@@ -46,7 +45,6 @@
     color:rgba(255,238,222,.45);font-weight:300;
   }
 
-  /* 返回按钮 */
   .back-btn{
     position:fixed;top:4vh;left:4vw;
     z-index:20;
@@ -59,14 +57,13 @@
     color:rgba(255,238,222,.75);
     font-size:13px;letter-spacing:.14em;padding-left:calc(20px + .14em);
     font-weight:300;cursor:pointer;
-    opacity:0;pointer-events:none;
+    opacity:0;
     transition:opacity .4s ease, border-color .3s ease, color .3s ease;
     pointer-events:none;
   }
   .back-btn.show{opacity:1;pointer-events:auto}
   .back-btn:hover{border-color:rgba(255,225,200,.35);color:rgba(255,238,222,.95)}
 
-  /* 当前省名提示 */
   .crumb{
     position:fixed;top:4vh;left:50%;transform:translateX(-50%);
     z-index:20;
@@ -79,7 +76,6 @@
   }
   .crumb.show{opacity:1}
 
-  /* 底部 */
   .hud-bottom{
     position:fixed;bottom:0;left:0;right:0;
     padding:0 5vw 4.5vh;text-align:center;
@@ -153,7 +149,6 @@
     line-height:1.6;z-index:10;pointer-events:none;
   }
 
-  /* 面板 */
   .panel{
     position:fixed;top:0;right:0;bottom:0;
     width:min(360px,86vw);
@@ -300,7 +295,7 @@
 (function(){
   'use strict';
 
-  /* ========== 34 省 + 主要地级市 ========== */
+  /* ========== 数据 ========== */
   var provinces = [
     { name:'北京', x:560, y:220, base:1200, cities:[
       { name:'朝阳', districts:['国贸','三里屯','望京','亚运村','双井'] },
@@ -573,6 +568,14 @@
   function districtBase(name){
     return 40 + (seedOf(name) % 260);
   }
+  /* 省份人数：规模稍大 */
+  function provincePeople(p){
+    return valueOf(p.base * 8, p.name);
+  }
+  /* 城市人数 */
+  function cityPeople(c){
+    return valueOf(cityBase(c.name) * 4, c.name);
+  }
 
   /* ========== Three.js ========== */
   var scene = new THREE.Scene();
@@ -605,7 +608,7 @@
   currentDistance = baseDistance;
   targetDistance = baseDistance;
 
-  /* 纹理 */
+  /* 光晕纹理 */
   var glowTexture = (function(){
     var c = document.createElement('canvas');
     c.width = c.height = 128;
@@ -620,21 +623,55 @@
     return new THREE.CanvasTexture(c);
   })();
 
-  function labelTexture(text, small){
-    var c = document.createElement('canvas');
-    c.width = 320; c.height = 72;
-    var ctx = c.getContext('2d');
-    var size = small ? 26 : 30;
-    ctx.font = '300 ' + size + 'px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.shadowColor = 'rgba(255,180,130,0.55)';
-    ctx.shadowBlur = 12;
-    ctx.fillStyle = 'rgba(255,240,225,0.85)';
-    ctx.fillText(text, 160, 36);
-    var t = new THREE.CanvasTexture(c);
-    t.minFilter = THREE.LinearFilter;
-    return t;
+  /* ========== 节点标签：名字 + 人数 ========== */
+  function createLabelNode(name){
+    var dpr = 2;
+    var W = 640;
+    var H = 220;
+
+    var canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    var ctx = canvas.getContext('2d');
+    var texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+
+    function draw(count){
+      ctx.clearRect(0, 0, W, H);
+
+      /* 名字 */
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = '300 ' + (34 * dpr) + 'px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+      ctx.shadowColor = 'rgba(255,180,130,0.6)';
+      ctx.shadowBlur = 14 * dpr;
+      ctx.fillStyle = 'rgba(255,240,225,0.88)';
+      ctx.fillText(name, W/2, 66);
+
+      /* 人数：稍小一号，颜色略淡 */
+      ctx.font = '300 ' + (28 * dpr) + 'px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+      ctx.shadowColor = 'rgba(255,170,120,0.5)';
+      ctx.shadowBlur = 10 * dpr;
+      ctx.fillStyle = 'rgba(255,215,175,0.78)';
+      ctx.fillText(formatNum(count), W/2, 148);
+
+      texture.needsUpdate = true;
+    }
+
+    var mat = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 0.9,
+      depthWrite: false,
+      depthTest: false
+    });
+    var sprite = new THREE.Sprite(mat);
+    /* 宽高比 640:220 ≈ 2.91，视觉尺寸 92 x 31.6 */
+    sprite.scale.set(92, 31.6, 1);
+    sprite.renderOrder = 10;
+
+    return { sprite: sprite, draw: draw };
   }
 
   /* ========== 省级星系 ========== */
@@ -692,16 +729,11 @@
     glow.position.copy(core.position);
     provinceGroup.add(glow);
 
-    var labelMat = new THREE.SpriteMaterial({
-      map: labelTexture(p.name),
-      transparent: true,
-      opacity: 0.75,
-      depthWrite: false
-    });
-    var label = new THREE.Sprite(labelMat);
-    label.scale.set(78, 17.5, 1);
-    label.position.set(p.px, p.py + 24, p.pz);
-    provinceGroup.add(label);
+    /* 标签：名字 + 人数 */
+    var labelNode = createLabelNode(p.name);
+    labelNode.draw(provincePeople(p));
+    labelNode.sprite.position.set(p.px, p.py + 34, p.pz);
+    provinceGroup.add(labelNode.sprite);
 
     /* 热区 */
     var hit = new THREE.Mesh(
@@ -715,6 +747,7 @@
 
     p.core = core;
     p.glow = glow;
+    p.labelNode = labelNode;
     p.intensity = intensity;
     p.scaleTarget = 1;
     p.scaleCurrent = 1;
@@ -747,7 +780,7 @@
     provinceGroup.add(new THREE.LineSegments(geo, mat));
   })();
 
-  /* ========== 地级市星系（动态构建） ========== */
+  /* ========== 地级市星系 ========== */
   var cityGroup = new THREE.Group();
   cityGroup.visible = false;
   rootGroup.add(cityGroup);
@@ -756,7 +789,6 @@
   var currentProvince = null;
 
   function buildCityGalaxy(province){
-    /* 清空 */
     while (cityGroup.children.length > 0) {
       cityGroup.remove(cityGroup.children[0]);
     }
@@ -766,7 +798,6 @@
     var n = cities.length;
 
     cities.forEach(function(c, i){
-      /* 圆形均匀分布 + 小随机 */
       var angle = (i / n) * Math.PI * 2;
       var radius = 280 + pseudo(c.name) * 60;
       c.px = Math.cos(angle) * radius;
@@ -777,7 +808,6 @@
       c.base = base;
       var intensity = base / 1300;
 
-      /* 视觉核心球：地级市节点略小 */
       var coreGeo = new THREE.SphereGeometry(4 + intensity * 6, 20, 20);
       var coreMat = new THREE.MeshBasicMaterial({
         color: new THREE.Color(1, 0.78 + intensity*0.12, 0.6 + intensity*0.1),
@@ -788,7 +818,6 @@
       core.position.set(c.px, c.py, c.pz);
       cityGroup.add(core);
 
-      /* 光晕 */
       var glowMat = new THREE.SpriteMaterial({
         map: glowTexture,
         color: 0xffc79a,
@@ -803,19 +832,12 @@
       glow.position.copy(core.position);
       cityGroup.add(glow);
 
-      /* 标签 */
-      var labelMat = new THREE.SpriteMaterial({
-        map: labelTexture(c.name, true),
-        transparent: true,
-        opacity: 0.78,
-        depthWrite: false
-      });
-      var label = new THREE.Sprite(labelMat);
-      label.scale.set(74, 16.5, 1);
-      label.position.set(c.px, c.py + 22, c.pz);
-      cityGroup.add(label);
+      /* 标签：名字 + 人数 */
+      var labelNode = createLabelNode(c.name);
+      labelNode.draw(cityPeople(c));
+      labelNode.sprite.position.set(c.px, c.py + 32, c.pz);
+      cityGroup.add(labelNode.sprite);
 
-      /* 热区 */
       var hit = new THREE.Mesh(
         new THREE.SphereGeometry(24, 10, 10),
         new THREE.MeshBasicMaterial({visible:false})
@@ -827,12 +849,13 @@
 
       c.core = core;
       c.glow = glow;
+      c.labelNode = labelNode;
       c.intensity = intensity;
       c.scaleTarget = 1;
       c.scaleCurrent = 1;
     });
 
-    /* 连线：相邻城市连成星环 */
+    /* 城市连线成环 */
     var positions = [];
     for (var i = 0; i < n; i++){
       var a = cities[i];
@@ -865,8 +888,7 @@
   var pinchStartDist = 0;
   var pinchStartCamDist = 0;
 
-  /* 当前视图状态 */
-  var viewLevel = 'province'; // 'province' | 'city'
+  var viewLevel = 'province';
 
   function getTouchDist(touches){
     var dx = touches[0].clientX - touches[1].clientX;
@@ -975,7 +997,6 @@
     buildCityGalaxy(p);
     cityGroup.visible = true;
 
-    /* 省级星系淡出 */
     provinceGroup.visible = true;
     var t0 = performance.now();
     (function fadeOutProvince(){
@@ -985,17 +1006,9 @@
         return;
       }
       provinceGroup.scale.setScalar(1 - k * 0.6);
-      provinceGroup.children.forEach(function(obj){
-        if (obj.material && obj.material.transparent){
-          if (obj.userData._baseOpacity === undefined){
-            obj.userData._baseOpacity = obj.material.opacity;
-          }
-        }
-      });
       requestAnimationFrame(fadeOutProvince);
     })();
 
-    /* 地级市星系淡入 */
     cityGroup.scale.setScalar(0.4);
     var t1 = performance.now();
     (function fadeInCity(){
@@ -1009,7 +1022,6 @@
       requestAnimationFrame(fadeInCity);
     })();
 
-    /* HUD 更新 */
     hudTop.classList.add('hide');
     hudBottom.classList.add('hide');
     backBtn.classList.add('show');
@@ -1029,7 +1041,6 @@
     viewLevel = 'province';
     currentProvince = null;
 
-    /* 地级市星系淡出 */
     cityGroup.visible = true;
     var t0 = performance.now();
     (function fadeOutCity(){
@@ -1042,7 +1053,6 @@
       requestAnimationFrame(fadeOutCity);
     })();
 
-    /* 省级星系淡入 */
     provinceGroup.visible = true;
     provinceGroup.scale.setScalar(0.6);
     var t1 = performance.now();
@@ -1165,6 +1175,9 @@
       );
       p.core.material.opacity = Math.min(1, 0.8 + val * 0.2);
       p.glow.material.opacity = Math.min(0.95, 0.3 + val * 0.45);
+
+      /* 更新标签里的人数 */
+      if (p.labelNode) p.labelNode.draw(provincePeople(p));
     });
 
     topProvEl.textContent = top.name;
@@ -1183,6 +1196,9 @@
       );
       c.core.material.opacity = Math.min(1, 0.82 + val * 0.18);
       c.glow.material.opacity = Math.min(0.95, 0.32 + val * 0.42);
+
+      /* 更新标签里的人数 */
+      if (c.labelNode) c.labelNode.draw(cityPeople(c));
     });
   }
 
