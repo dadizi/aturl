@@ -9,390 +9,286 @@
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{
-    height:100%;overflow:hidden;background:#08070a;
+    height:100%;background:#08070a;
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
     -webkit-tap-highlight-color:transparent;
     -webkit-font-smoothing:antialiased;
+    color:#fff;user-select:none;
   }
-  body{display:grid;place-items:center;color:#fff;user-select:none}
-
-  body::before{
-    content:'';position:fixed;inset:-20%;
-    background:radial-gradient(circle at 50% 46%, rgba(255,180,130,.05), transparent 55%);
-    pointer-events:none;
+  body{
+    display:flex;flex-direction:column;align-items:center;
+    padding:6vh 5vw 4vh;overflow-x:hidden;
   }
 
-  .stage{position:relative;width:100%;height:100%;display:grid;place-items:center}
+  /* 顶部数字 */
+  .counter-wrap{text-align:center;margin-bottom:3vh}
+  .counter-label{
+    font-size:clamp(12px,1.6vmin,14px);
+    letter-spacing:.28em;padding-left:.28em;
+    color:rgba(255,238,222,.3);font-weight:300;
+  }
+  .counter-num{
+    display:block;margin-top:14px;
+    font-size:clamp(42px,11vmin,86px);
+    font-weight:200;letter-spacing:.04em;
+    color:rgba(255,232,210,.92);
+    text-shadow:0 0 40px rgba(255,190,140,.18);
+    transition:transform .25s ease;
+  }
+  .counter-num.pop{transform:scale(1.06)}
 
-  .drift{
-    position:relative;
-    opacity:0;
-    animation:drift 46s ease-in-out infinite, fadeIn 3.2s ease .4s forwards;
-    will-change:transform;
+  /* 地图 */
+  .map-wrap{
+    position:relative;width:100%;max-width:700px;
+    margin-bottom:3vh;
   }
-  @keyframes fadeIn{to{opacity:1}}
-  @keyframes drift{
-    0%,100%{transform:translate(0,0)}
-    25%{transform:translate(1.8vmin,-1.4vmin)}
-    50%{transform:translate(.4vmin,2vmin)}
-    75%{transform:translate(-1.9vmin,-.8vmin)}
+  svg.map{display:block;width:100%;height:auto}
+  .city-dot{
+    cursor:pointer;
+    transition:opacity .4s ease, r .4s ease;
   }
+  .city-dot:hover{opacity:1 !important}
 
-  .breathe{
-    position:relative;
-    width:58vmin;height:58vmin;max-width:460px;max-height:460px;
-    display:grid;place-items:center;
-    transform:scale(.62);opacity:.5;
-    transition-property:transform,opacity;
-    transition-timing-function:cubic-bezier(.37,0,.63,1);
-    transition-duration:4s;
-    will-change:transform,opacity;
+  /* 按钮 */
+  .btns{
+    display:flex;gap:10px;margin-bottom:3vh;
+    width:100%;max-width:560px;justify-content:center;
+    flex-wrap:wrap;
   }
-
-  .halo{
-    position:absolute;inset:-38%;border-radius:50%;
-    background:radial-gradient(circle,
-      rgba(255,178,128,.17) 0%,
-      rgba(255,150,110,.06) 38%,
-      transparent 66%);
-    filter:blur(28px);
+  .btn{
+    flex:1;min-width:100px;max-width:180px;
+    padding:14px 10px;
+    border:1px solid rgba(255,225,200,.12);
+    border-radius:100px;
+    background:rgba(255,200,160,.03);
+    color:rgba(255,238,222,.6);
+    font-size:clamp(13px,1.7vmin,15px);
+    letter-spacing:.14em;padding-left:.14em;
+    font-weight:300;cursor:pointer;
+    transition:all .35s ease;
+    -webkit-tap-highlight-color:transparent;
   }
-
-  .core{
-    position:absolute;inset:14%;border-radius:50%;
-    background:radial-gradient(circle,
-      rgba(255,228,198,.95) 0%,
-      rgba(255,192,142,.58) 18%,
-      rgba(255,158,110,.2) 40%,
-      rgba(255,140,100,.05) 58%,
-      transparent 72%);
-    filter:blur(10px);
+  .btn:hover{
+    border-color:rgba(255,225,200,.28);
+    color:rgba(255,238,222,.85);
+    background:rgba(255,200,160,.06);
   }
-
-  .spark{
-    position:absolute;width:13%;height:13%;border-radius:50%;
-    background:radial-gradient(circle,
-      rgba(255,244,232,.92) 0%,
-      rgba(255,214,176,.28) 58%,
-      transparent 74%);
-    filter:blur(6px);
-  }
-
-  /* 文字区域：光球正下方，引导和呼吸提示共用同一位置 */
-  .text-area{
-    position:absolute;
-    left:0;right:0;
-    top:100%;
-    margin-top:3vmin;
-    height:3em;
-    pointer-events:none;
-  }
-  .text-area > *{
-    position:absolute;
-    left:50%;top:0;
-    transform:translateX(-50%);
-    white-space:nowrap;
-    opacity:0;
-    will-change:opacity;
+  .btn:active{transform:scale(.97)}
+  .btn.done{
+    border-color:rgba(255,204,166,.35);
+    color:rgba(255,212,172,.9);
+    background:rgba(255,190,140,.08);
+    cursor:default;
   }
 
-  /* 引导文字：两行，淡入淡出 1.4s */
-  .guide-text{
+  /* 底部信息 */
+  .stats{
     text-align:center;
-    transition:opacity 1.4s ease;
+    font-size:clamp(11px,1.4vmin,13px);
+    letter-spacing:.2em;padding-left:.2em;
+    color:rgba(255,238,222,.28);font-weight:300;
+    line-height:2;
   }
-  .guide-text.show{opacity:1}
-  .guide-text .line1{
-    display:block;
-    font-size:clamp(14px,1.9vmin,17px);
-    letter-spacing:.24em;
-    padding-left:.24em;
-    font-weight:300;
-    color:rgba(255,238,222,.55);
+  .stats .top-city{
+    color:rgba(255,210,170,.55);
   }
-  .guide-text .line2{
-    display:block;
-    margin-top:10px;
-    font-size:clamp(11px,1.4vmin,12.5px);
-    letter-spacing:.18em;
-    padding-left:.18em;
-    font-weight:300;
-    color:rgba(255,238,222,.22);
-  }
-
-  /* 呼吸提示：吸 / 呼，两轮显示，第二轮更淡 */
-  .breath-word{
-    font-size:clamp(13px,1.8vmin,16px);
-    letter-spacing:.3em;
-    padding-left:.3em;
-    font-weight:300;
-    color:rgba(255,238,222,.4);
-    transition:opacity 1.2s ease, color 1.2s ease;
-  }
-  .breath-word.show{opacity:1}
-  .breath-word.faint{color:rgba(255,238,222,.25)}
-
-  .sound{
-    position:fixed;right:22px;bottom:22px;
-    width:42px;height:42px;border-radius:50%;
-    border:1px solid rgba(255,235,220,.1);
-    background:transparent;
-    color:rgba(255,235,220,.26);
-    cursor:pointer;display:grid;place-items:center;padding:0;
-    transition:color .5s ease,border-color .5s ease,background .5s ease;
-  }
-  .sound:hover{color:rgba(255,235,220,.55);border-color:rgba(255,235,220,.2)}
-  .sound.on{color:rgba(255,212,172,.8);border-color:rgba(255,204,166,.28);background:rgba(255,190,140,.04)}
-
-  .ripple{
-    position:fixed;width:10px;height:10px;margin:-5px 0 0 -5px;
-    border-radius:50%;border:1px solid rgba(255,200,160,.4);
-    pointer-events:none;
-    animation:rippleOut 3s cubic-bezier(.2,.6,.3,1) forwards;
-  }
-  @keyframes rippleOut{
-    0%{transform:scale(1);opacity:.75}
-    100%{transform:scale(34);opacity:0}
+  .footer{
+    margin-top:2.5vh;
+    font-size:clamp(10px,1.2vmin,11.5px);
+    letter-spacing:.18em;padding-left:.18em;
+    color:rgba(255,238,222,.12);font-weight:300;
+    text-align:center;
   }
 
   @media (prefers-reduced-motion: reduce){
-    .drift{animation:fadeIn 3.2s ease .4s forwards}
-    .breathe{transform:scale(.8);opacity:.7}
-    .guide-text{transition-duration:.5s}
-    .breath-word{transition-duration:.5s}
-    .ripple{animation-duration:1.2s}
+    .counter-num{transition:none}
+    .city-dot{transition:none}
+    .btn{transition:none}
   }
 </style>
 </head>
 <body>
-  <main class="stage">
-    <div class="drift">
-      <div class="breathe" id="breathe">
-        <div class="halo"></div>
-        <div class="core"></div>
-        <div class="spark"></div>
-      </div>
 
-      <div class="text-area" aria-hidden="true">
-        <div class="guide-text" id="guideText">
-          <span class="line1">跟着光球呼吸</span>
-          <span class="line2">不用做任何事</span>
-        </div>
-        <span class="breath-word" id="wordIn">吸</span>
-        <span class="breath-word" id="wordOut">呼</span>
-      </div>
-    </div>
-  </main>
+  <div class="counter-wrap">
+    <span class="counter-label">此刻，有</span>
+    <span class="counter-num" id="num">12,847</span>
+    <span class="counter-label">人和你一样累</span>
+  </div>
 
-  <button class="sound" id="sound" aria-label="粉红噪声开关" title="粉红噪声">
-    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
-         stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M11 5 6.5 9H3v6h3.5L11 19z"/>
-      <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
-      <path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+  <div class="map-wrap">
+    <svg class="map" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+      <!-- 简化中国轮廓 -->
+      <path d="M 660,100 L 700,120 L 720,180 L 680,220 L 660,260 L 690,280 L 680,320 L 720,340 L 700,380 L 680,420 L 640,460 L 600,500 L 560,530 L 520,540 L 480,520 L 460,480 L 440,440 L 400,460 L 360,440 L 320,400 L 280,380 L 220,360 L 180,320 L 160,280 L 200,240 L 180,200 L 220,160 L 280,140 L 340,160 L 400,140 L 440,160 L 480,140 L 520,120 L 560,100 L 600,80 L 640,90 Z"
+            fill="rgba(255,180,130,.025)"
+            stroke="rgba(255,180,130,.08)"
+            stroke-width="1"/>
+      <g id="dots"></g>
     </svg>
-  </button>
+  </div>
+
+  <div class="btns">
+    <button class="btn" data-level="tired">有点累</button>
+    <button class="btn" data-level="very">很累</button>
+    <button class="btn" data-level="cant">累到不想说话</button>
+  </div>
+
+  <div class="stats">
+    此刻最累的城市：<span class="top-city" id="topCity">成都</span><br>
+    今天已有 <span id="todayTotal">89,231</span> 人标记过
+  </div>
+
+  <div class="footer">截图发给你想到的那个人</div>
 
 <script>
 (function(){
   'use strict';
 
-  var breathe   = document.getElementById('breathe');
-  var guideText = document.getElementById('guideText');
-  var wordIn    = document.getElementById('wordIn');
-  var wordOut   = document.getElementById('wordOut');
-  var allWords  = [wordIn, wordOut];
-  var soundBtn  = document.getElementById('sound');
+  var numEl     = document.getElementById('num');
+  var topCityEl = document.getElementById('topCity');
+  var todayEl   = document.getElementById('todayTotal');
+  var dotsGroup = document.getElementById('dots');
+  var btns      = document.querySelectorAll('.btn');
 
-  var reduceMotion = window.matchMedia &&
-                     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* ========== 城市数据 ========== */
+  var cities = [
+    { name: '北京',    x: 560, y: 224, base: 1200 },
+    { name: '上海',    x: 626, y: 373, base: 1500 },
+    { name: '广州',    x: 520, y: 511, base: 1000 },
+    { name: '深圳',    x: 530, y: 521, base: 1100 },
+    { name: '成都',    x: 401, y: 381, base: 1300 },
+    { name: '重庆',    x: 432, y: 400, base: 1000 },
+    { name: '杭州',    x: 609, y: 388, base: 900  },
+    { name: '武汉',    x: 533, y: 383, base: 850  },
+    { name: '西安',    x: 463, y: 320, base: 700  },
+    { name: '南京',    x: 591, y: 357, base: 750  },
+    { name: '长沙',    x: 516, y: 424, base: 650  },
+    { name: '郑州',    x: 524, y: 313, base: 600  },
+    { name: '天津',    x: 570, y: 238, base: 550  },
+    { name: '苏州',    x: 614, y: 371, base: 600  },
+    { name: '青岛',    x: 611, y: 289, base: 450  },
+    { name: '大连',    x: 627, y: 241, base: 400  },
+    { name: '厦门',    x: 582, y: 487, base: 450  },
+    { name: '昆明',    x: 383, y: 479, base: 400  },
+    { name: '贵阳',    x: 435, y: 451, base: 350  },
+    { name: '哈尔滨',  x: 691, y: 123, base: 400  },
+    { name: '沈阳',    x: 650, y: 191, base: 400  },
+    { name: '兰州',    x: 397, y: 289, base: 300  },
+    { name: '乌鲁木齐',x: 188, y: 157, base: 250  },
+    { name: '拉萨',    x: 233, y: 400, base: 150  }
+  ];
 
-  var MIN_SCALE   = reduceMotion ? 0.8 : 0.62;
-  var MIN_OPACITY = reduceMotion ? 0.7 : 0.5;
-  var MAX_SCALE   = 1;
-  var MAX_OPACITY = 1;
+  /* 生成光点 */
+  cities.forEach(function(c){
+    var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx', c.x);
+    circle.setAttribute('cy', c.y);
+    circle.setAttribute('r', 6);
+    circle.setAttribute('fill', 'rgba(255,190,140,.6)');
+    circle.setAttribute('class', 'city-dot');
+    circle.dataset.name = c.name;
+    dotsGroup.appendChild(circle);
+    c.el = circle;
+  });
 
-  var tGuide1 = null, tGuide2 = null, tGuide3 = null;
-  var tBreath1 = null, tBreath2 = null;
+  /* ========== 模拟实时数字 ========== */
+  function getSimulatedCount(){
+    var now = new Date();
+    var h = now.getHours() + now.getMinutes() / 60;
 
-  function setState(scale, opacity, dur, easing){
-    breathe.style.transitionDuration = dur + 'ms';
-    breathe.style.transitionTimingFunction = easing || 'cubic-bezier(.37,0,.63,1)';
-    breathe.style.transform = 'scale(' + scale + ')';
-    breathe.style.opacity = opacity;
+    var morningPeak = Math.exp(-Math.pow((h - 9) / 3, 2)) * 4000;
+    var eveningPeak = Math.exp(-Math.pow((h - 21) / 3, 2)) * 6000;
+    var base = 3000;
+    var wave = Math.sin(now.getTime() / 45000) * 200;
+
+    return Math.max(0, Math.floor(base + morningPeak + eveningPeak + wave));
   }
 
-  function clearGuideTimers(){
-    clearTimeout(tGuide1); clearTimeout(tGuide2); clearTimeout(tGuide3);
-    tGuide1 = tGuide2 = tGuide3 = null;
+  function getTodayTotal(){
+    var now = new Date();
+    var h = now.getHours() + now.getMinutes() / 60;
+    var base = Math.floor(h * 4200);
+    var jitter = Math.floor(Math.sin(now.getTime() / 60000) * 200);
+    return Math.max(0, base + jitter + 2000);
   }
 
-  function clearBreathTimers(){
-    clearTimeout(tBreath1); clearTimeout(tBreath2);
-    tBreath1 = tBreath2 = null;
+  function formatNum(n){
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
-  function clearAllTimers(){
-    clearGuideTimers();
-    clearBreathTimers();
+  /* ========== 更新数字 ========== */
+  var localAdd = 0;
+
+  function updateNumbers(){
+    var count = getSimulatedCount() + localAdd;
+    numEl.textContent = formatNum(count);
+    todayEl.textContent = formatNum(getTodayTotal() + localAdd);
   }
 
-  function showWord(el){
-    allWords.forEach(function(w){
-      if (w === el) w.classList.add('show');
-      else w.classList.remove('show');
-    });
-  }
+  /* ========== 更新光点 ========== */
+  function updateDots(){
+    var now = new Date();
+    var h = now.getHours() + now.getMinutes() / 60;
 
-  function hideWords(){
-    allWords.forEach(function(w){ w.classList.remove('show'); });
-  }
+    var maxIntensity = 0;
+    var topCity = cities[0].name;
 
-  /* ========== 呼吸引导 4s 吸 / 6s 呼 ========== */
-  var BREATH_INHALE = 4000;
-  var BREATH_EXHALE = 6000;
+    cities.forEach(function(c){
+      var offset = (c.name.charCodeAt(0) % 12) - 6;
+      var cityHour = (h + offset + 24) % 24;
+      var peak = Math.exp(-Math.pow((cityHour - 21) / 4, 2)) * 0.6 +
+                 Math.exp(-Math.pow((cityHour - 9) / 4, 2)) * 0.4;
+      var wave = Math.sin(now.getTime() / 60000 + c.x) * 0.1;
+      var intensity = Math.max(0.1, c.base / 1500 * (peak + 0.3 + wave));
 
-  var cycleCount = 0;
-  var SHOW_WORD_FIRST_N = 2;   // 显示两轮
-  var FAINT_AFTER = 1;         // 第二轮开始变淡
-
-  function breathInhale(){
-    setState(MAX_SCALE, MAX_OPACITY, BREATH_INHALE);
-    if (cycleCount < SHOW_WORD_FIRST_N) showWord(wordIn);
-    tBreath1 = setTimeout(breathExhale, BREATH_INHALE);
-  }
-
-  function breathExhale(){
-    setState(MIN_SCALE, MIN_OPACITY, BREATH_EXHALE);
-    if (cycleCount < SHOW_WORD_FIRST_N) showWord(wordOut);
-    tBreath2 = setTimeout(function(){
-      cycleCount++;
-      if (cycleCount >= SHOW_WORD_FIRST_N) {
-        hideWords();
-      } else if (cycleCount >= FAINT_AFTER) {
-        // 进入第二轮，文字变淡
-        allWords.forEach(function(w){ w.classList.add('faint'); });
+      if (intensity > maxIntensity){
+        maxIntensity = intensity;
+        topCity = c.name;
       }
-      breathInhale();
-    }, BREATH_EXHALE);
+
+      c.el.setAttribute('r', 3 + intensity * 8);
+      c.el.setAttribute('fill', 'rgba(255,190,140,' + Math.min(0.85, 0.25 + intensity * 0.5) + ')');
+    });
+
+    topCityEl.textContent = topCity;
   }
 
-  function startBreath(){
-    clearBreathTimers();
-    breathInhale();
-  }
+  /* ========== 按钮交互 ========== */
+  var hasClicked = false;
 
-  /* ========== 会话流程 ==========
-     1.0s  引导文字淡入
-     5.0s  引导文字开始淡出（1.4s）
-     6.4s  引导文字消失，光球开始第一轮呼吸，“吸”淡入
-     16.4s 第一轮结束，进入第二轮，文字变淡
-     26.4s 第二轮结束，文字全部退场，只剩光球
-  */
-  function startSession(){
-    clearAllTimers();
-    cycleCount = 0;
-    hideWords();
-    allWords.forEach(function(w){ w.classList.remove('faint'); });
-    guideText.classList.remove('show');
-    setState(MIN_SCALE, MIN_OPACITY, 0);
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if (hasClicked) return;
+      hasClicked = true;
 
-    tGuide1 = setTimeout(function(){
-      guideText.classList.add('show');
-    }, 1000);
+      localAdd++;
+      updateNumbers();
 
-    tGuide2 = setTimeout(function(){
-      guideText.classList.remove('show');
-    }, 5000);
+      numEl.classList.add('pop');
+      setTimeout(function(){ numEl.classList.remove('pop'); }, 260);
 
-    tGuide3 = setTimeout(function(){
-      startBreath();
-    }, 6400);
-  }
+      btns.forEach(function(b){
+        b.classList.add('done');
+        b.style.pointerEvents = 'none';
+      });
+      btn.textContent = '记住了';
 
-  startSession();
-
-  document.addEventListener('visibilitychange', function(){
-    if (document.hidden) {
-      clearAllTimers();
-    } else {
-      startSession();
-    }
+      // 让对应光点稍微亮一下
+      var randomCity = cities[Math.floor(Math.random() * cities.length)];
+      randomCity.el.setAttribute('r', 14);
+      randomCity.el.setAttribute('fill', 'rgba(255,220,180,.9)');
+      setTimeout(function(){
+        randomCity.el.setAttribute('r', 6);
+      }, 600);
+    });
   });
 
-  /* ========== 点击涟漪 ========== */
-  document.addEventListener('pointerdown', function(e){
-    if (e.target && e.target.closest && e.target.closest('.sound')) return;
-    var r = document.createElement('div');
-    r.className = 'ripple';
-    r.style.left = e.clientX + 'px';
-    r.style.top  = e.clientY + 'px';
-    document.body.appendChild(r);
-    setTimeout(function(){ r.remove(); }, 3200);
-  });
+  /* ========== 启动 ========== */
+  updateNumbers();
+  updateDots();
 
-  /* ========== 可选环境音：粉红噪声 ========== */
-  var audio = null;
+  setInterval(updateNumbers, 3000);
+  setInterval(updateDots, 10000);
 
-  function initAudio(){
-    if (audio) return audio;
-    var Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return null;
-
-    var ctx = new Ctx();
-
-    var master = ctx.createGain();
-    master.gain.value = 0;
-    master.connect(ctx.destination);
-
-    var bufferSize = 5 * ctx.sampleRate;
-    var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    var data = buffer.getChannelData(0);
-
-    var b0, b1, b2, b3, b4, b5, b6;
-    b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
-    for (var i = 0; i < bufferSize; i++) {
-      var white = Math.random() * 2 - 1;
-      b0 = 0.99886 * b0 + white * 0.0555179;
-      b1 = 0.99332 * b1 + white * 0.0750759;
-      b2 = 0.96900 * b2 + white * 0.1538520;
-      b3 = 0.86650 * b3 + white * 0.3104856;
-      b4 = 0.55000 * b4 + white * 0.5329522;
-      b5 = -0.7616 * b5 - white * 0.0168980;
-      var pink = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-      b6 = white * 0.115926;
-      data[i] = pink * 0.11;
-    }
-
-    var noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-    noise.loop = true;
-    noise.connect(master);
-    noise.start();
-
-    audio = { ctx: ctx, master: master, on: false };
-    return audio;
-  }
-
-  soundBtn.addEventListener('click', function(){
-    var a = initAudio();
-    if (!a) return;
-    if (a.ctx.state === 'suspended') a.ctx.resume();
-
-    var t = a.ctx.currentTime;
-    a.master.gain.cancelScheduledValues(t);
-    a.master.gain.setValueAtTime(a.master.gain.value, t);
-
-    if (a.on) {
-      a.master.gain.linearRampToValueAtTime(0, t + 1.2);
-      a.on = false;
-      soundBtn.classList.remove('on');
-    } else {
-      a.master.gain.linearRampToValueAtTime(0.1, t + 2);
-      a.on = true;
-      soundBtn.classList.add('on');
-    }
-  });
 })();
 </script>
 </body>
