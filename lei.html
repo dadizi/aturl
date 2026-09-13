@@ -111,6 +111,20 @@
   }
   .share-hint.show{color:rgba(255,238,222,.22)}
 
+  .pc-hint{
+    position:fixed;
+    left:50%;bottom:calc(4.5vh + 130px);
+    transform:translateX(-50%);
+    z-index:11;
+    font-size:12px;letter-spacing:.16em;padding-left:.16em;
+    color:rgba(255,238,222,0);
+    font-weight:300;white-space:nowrap;
+    pointer-events:none;
+    transition:color 2s ease;
+  }
+  .pc-hint.show{color:rgba(255,238,222,.28)}
+  @media (max-width:900px){ .pc-hint{display:none} }
+
   .btns{
     display:flex;justify-content:center;
   }
@@ -262,6 +276,8 @@
 
 <button class="back-btn" id="backBtn">← 返回全国</button>
 <div class="crumb" id="crumb"></div>
+
+<div class="pc-hint" id="pcHint">左键拖动平移 · 右键拖动旋转 · 滚轮缩放</div>
 
 <div class="hud-bottom" id="hudBottom">
   <div class="daily-line" id="dailyLine"></div>
@@ -593,15 +609,12 @@
   var MIN_DIST = 260;
   var MAX_DIST = 1800;
 
-  /* 平移偏移：相机和看向点一起平移 */
   var panX = 0, panY = 0;
   var targetPanX = 0, targetPanY = 0;
 
-  /* 焦点 */
   var focusState = { node: null, group: null };
   var lookAtPoint = new THREE.Vector3(0, 0, 0);
 
-  /* 自动旋转暂停计时 */
   var lastInteractionTime = 0;
 
   function computeBaseDistance(){
@@ -877,6 +890,7 @@
   var dragging = false;
   var dragMoved = 0;
   var lastX = 0, lastY = 0;
+  var mouseMode = 'pan';
 
   var targetRotY_p = 0, targetRotX_p = 0;
   var targetRotY_c = 0, targetRotX_c = 0;
@@ -902,6 +916,7 @@
 
   function onDown(e){
     lastInteractionTime = performance.now();
+
     if (e.touches && e.touches.length === 2){
       pinching = true;
       dragging = false;
@@ -911,6 +926,13 @@
       pinchStartRotY = (viewLevel === 'province') ? targetRotY_p : targetRotY_c;
       return;
     }
+
+    if (e.type === 'mousedown'){
+      mouseMode = (e.button === 2) ? 'rotate' : 'pan';
+    } else {
+      mouseMode = 'pan';
+    }
+
     dragging = true;
     dragMoved = 0;
     var p = e.touches ? e.touches[0] : e;
@@ -921,12 +943,10 @@
   function onMove(e){
     if (pinching && e.touches && e.touches.length === 2){
       lastInteractionTime = performance.now();
-      /* 缩放 */
       var d = getTouchDist(e.touches);
       var ratio = pinchStartDist / d;
       targetDistance = Math.max(MIN_DIST, Math.min(MAX_DIST, pinchStartCamDist * ratio));
 
-      /* 旋转 */
       var angle = getTouchAngle(e.touches);
       var deltaAngle = angle - pinchStartAngle;
       if (deltaAngle > Math.PI) deltaAngle -= 2 * Math.PI;
@@ -948,19 +968,28 @@
     var dy = y - lastY;
     dragMoved += Math.abs(dx) + Math.abs(dy);
 
-    /* 单指平移：屏幕像素换算成世界单位 */
-    var wpp = 0.975 * currentDistance / window.innerHeight;
-    targetPanX -= dx * wpp;
-    targetPanY += dy * wpp;
+    if (mouseMode === 'rotate'){
+      if (viewLevel === 'province'){
+        targetRotY_p += dx * 0.005;
+        targetRotX_p += dy * 0.003;
+        targetRotX_p = Math.max(-0.6, Math.min(0.6, targetRotX_p));
+      } else {
+        targetRotY_c += dx * 0.005;
+        targetRotX_c += dy * 0.003;
+        targetRotX_c = Math.max(-0.6, Math.min(0.6, targetRotX_c));
+      }
+    } else {
+      var wpp = 0.975 * currentDistance / window.innerHeight;
+      targetPanX -= dx * wpp;
+      targetPanY += dy * wpp;
 
-    /* 限制平移范围 */
-    var limit = baseDistance * 1.5;
-    targetPanX = Math.max(-limit, Math.min(limit, targetPanX));
-    targetPanY = Math.max(-limit, Math.min(limit, targetPanY));
+      var limit = baseDistance * 1.5;
+      targetPanX = Math.max(-limit, Math.min(limit, targetPanX));
+      targetPanY = Math.max(-limit, Math.min(limit, targetPanY));
 
-    /* 拖动时清除焦点 */
-    if (dragMoved > 30 && focusState.node){
-      clearFocus();
+      if (dragMoved > 30 && focusState.node){
+        clearFocus();
+      }
     }
 
     lastX = x; lastY = y;
@@ -985,6 +1014,19 @@
   window.addEventListener('touchmove', onMove, {passive:true});
   window.addEventListener('touchend', onUp);
   window.addEventListener('touchcancel', onUp);
+
+  /* PC 滚轮缩放 */
+  renderer.domElement.addEventListener('wheel', function(e){
+    e.preventDefault();
+    lastInteractionTime = performance.now();
+    var factor = e.deltaY > 0 ? 1.1 : 0.9;
+    targetDistance = Math.max(MIN_DIST, Math.min(MAX_DIST, targetDistance * factor));
+  }, {passive:false});
+
+  /* 屏蔽右键菜单 */
+  renderer.domElement.addEventListener('contextmenu', function(e){
+    e.preventDefault();
+  });
 
   function findNearestNode(clickX, clickY, nodes, group, maxDist){
     group.updateMatrixWorld(true);
@@ -1072,7 +1114,6 @@
   function enterProvince(p){
     if (!p || !p.cities || p.cities.length === 0) return;
 
-    /* 先把 pan 重置，避免进入市级时视图偏掉 */
     targetPanX = 0;
     targetPanY = 0;
 
@@ -1128,7 +1169,6 @@
     viewLevel = 'province';
     currentProvince = null;
 
-    /* 返回全国时 pan 也重置 */
     targetPanX = 0;
     targetPanY = 0;
 
@@ -1355,11 +1395,9 @@
     requestAnimationFrame(animate);
     var dt = clock.getDelta();
 
-    /* 平移平滑 */
     panX += (targetPanX - panX) * 0.18;
     panY += (targetPanY - panY) * 0.18;
 
-    /* 自动旋转：交互后 3 秒内不旋转，聚焦时不旋转 */
     var now = performance.now();
     var canAutoRotate = !dragging && !pinching && !focusState.node
                      && (now - lastInteractionTime > 3000);
@@ -1376,7 +1414,6 @@
 
     currentDistance += (targetDistance - currentDistance) * 0.1;
 
-    /* 相机逻辑 */
     if (focusState.node && focusState.group){
       focusState.group.updateMatrixWorld(true);
       var wp = focusState.node.localPos.clone();
@@ -1386,7 +1423,6 @@
       camera.position.lerp(targetCamPos, 0.15);
       lookAtPoint.lerp(wp, 0.15);
     } else {
-      /* 基础状态：相机和看向点都带着 pan 偏移一起平移 */
       var restPos = new THREE.Vector3(panX, panY, currentDistance);
       var restLook = new THREE.Vector3(panX, panY, 0);
       camera.position.lerp(restPos, 0.15);
@@ -1432,6 +1468,13 @@
   setTimeout(function(){
     shareHint.classList.add('show');
   }, 20000);
+
+  /* PC 端操作提示：5 秒后出现，12 秒后消失 */
+  var pcHint = document.getElementById('pcHint');
+  if (window.matchMedia && window.matchMedia('(pointer:fine)').matches){
+    setTimeout(function(){ pcHint.classList.add('show'); }, 5000);
+    setTimeout(function(){ pcHint.classList.remove('show'); }, 17000);
+  }
 
 })();
 </script>
