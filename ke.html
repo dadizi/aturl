@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生活基础课 · 家庭应急准备与生活常识</title>
+<meta name="description" content="生活基础课 jichuke.com，整理官方应急科普链接与家庭防灾、生活常识内容。急救请参加红十字会等正规培训。">
+<style>
+  :root{
+    --red:#d93025;
+    --red-dark:#b3261e;
+    --blue:#1a73e8;
+    --ink:#1f2328;
+    --gray:#6b7280;
+    --line:#e5e7eb;
+    --bg:#f7f8fa;
+    --card:#ffffff;
+    --ok:#0f9d58;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* 顶部紧急条 */
+  .alert-bar{
+    background:var(--red);
+    color:#fff;
+    text-align:center;
+    padding:10px 16px;
+    font-size:14px;
+    font-weight:600;
+    position:sticky;
+    top:0;
+    z-index:100;
+    box-shadow:0 2px 8px rgba(217,48,37,.25);
+  }
+  .alert-bar span{opacity:.9;font-weight:400;}
+
+  /* 头部 */
+  header{
+    background:var(--card);
+    border-bottom:1px solid var(--line);
+    padding:22px 16px 18px;
+    text-align:center;
+  }
+  .logo{
+    font-size:24px;
+    font-weight:800;
+    letter-spacing:2px;
+    color:var(--ink);
+  }
+  .logo .dot{color:var(--red);}
+  .domain{
+    font-size:13px;
+    color:var(--gray);
+    margin-top:4px;
+    letter-spacing:1px;
+  }
+  .slogan{
+    margin-top:12px;
+    font-size:14px;
+    color:var(--gray);
+    line-height:1.7;
+  }
+  .slogan strong{color:var(--ink);}
+
+  /* 主体容器 */
+  main{
+    max-width:900px;
+    margin:0 auto;
+    padding:20px 16px 60px;
+  }
+
+  /* 区块标题 */
+  .section-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:28px 0 14px;
+    font-size:18px;
+    font-weight:700;
+  }
+  .section-title .tag{
+    font-size:12px;
+    font-weight:600;
+    padding:2px 8px;
+    border-radius:20px;
+    color:#fff;
+  }
+  .tag-official{background:var(--red);}
+  .tag-self{background:var(--blue);}
+  .section-desc{
+    font-size:13px;
+    color:var(--gray);
+    margin:-8px 0 14px;
+    line-height:1.7;
+  }
+
+  /* 紧急导航卡片 */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:12px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 14px;
+    transition:.15s;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .card:hover{
+    border-color:var(--red);
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(0,0,0,.06);
+  }
+  .card .icon{
+    font-size:22px;
+    line-height:1;
+  }
+  .card .name{
+    font-size:15px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .card .src{
+    font-size:12px;
+    color:var(--gray);
+  }
+  .card.official:hover{border-color:var(--red);}
+
+  /* 自营内容卡片 */
+  .card.self:hover{border-color:var(--blue);}
+  .card.self .src{color:var(--blue);}
+
+  /* 紧急提示框 */
+  .notice{
+    background:#fff4f3;
+    border:1px solid #f5c6c2;
+    border-left:4px solid var(--red);
+    border-radius:8px;
+    padding:14px 16px;
+    font-size:13px;
+    color:#7a1c16;
+    line-height:1.8;
+    margin-top:20px;
+  }
+  .notice strong{color:var(--red-dark);}
+
+  /* 分隔 */
+  .divider{
+    height:1px;
+    background:var(--line);
+    margin:34px 0 0;
+  }
+
+  /* 页脚 */
+  footer{
+    border-top:1px solid var(--line);
+    background:var(--card);
+    padding:26px 16px 40px;
+    font-size:12px;
+    color:var(--gray);
+    line-height:1.9;
+    text-align:center;
+  }
+  footer .foot-logo{
+    font-weight:700;
+    color:var(--ink);
+    font-size:14px;
+    margin-bottom:8px;
+  }
+  footer a{color:var(--blue);}
+  footer .warn{
+    color:var(--red-dark);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部紧急条 -->
+<div class="alert-bar">
+  紧急情况请立即拨打 <span>120 / 119 / 110</span>，并开启免提
+</div>
+
+<!-- 头部 -->
+<header>
+  <div class="logo">生活基础课<span class="dot">.</span></div>
+  <div class="domain">jichuke.com</div>
+  <div class="slogan">
+    <strong>官方负责正确，我们负责让你找得到、存得下、记得住。</strong><br>
+    整理官方应急科普链接 · 分享家庭防灾与生活常识
+  </div>
+</header>
+
+<main>
+
+  <!-- 紧急导航 -->
+  <div class="section-title">
+    <span class="tag tag-official">官方</span>
+    紧急导航 · 直达权威科普
+  </div>
+  <div class="section-desc">
+    以下链接均来自官方机构，本站只做整理，不提供急救操作教学。请点击进入官方页面学习。
+  </div>
+
+  <div class="grid">
+    <a class="card official" href="#" target="_blank" rel="noopener">
+      <span class="icon">🫁</span>
+      <span class="name">气道异物梗阻</span>
+      <span class="src">来源：中国红十字会</span>
+    </a>
+    <a class="card official" href="#" target="_blank" rel="noopener">
+      <span class="icon">❤️</span>
+      <span class="name">心肺复苏与 AED</span>
+      <span class="src">来源：中国红十字会</span>
+    </a>
+    <a class="card official" href="#" target="_blank" rel="noopener">
+      <span class="icon">🩸</span>
+      <span class="name">大量流血</span>
+      <span class="src">来源：当地急救中心</span>
+    </a>
+    <a class="card official" href="#" target="_blank" rel="noopener">
+      <span class="icon">🔥</span>
+      <span class="name">烫伤烧伤</span>
+      <span class="src">来源：国家卫健委</span>
+    </a>
+    <a class="card official" href="#" target="_blank" rel="noopener">
+      <span class="icon">🚒</span>
+      <span class="name">火灾逃生</span>
+      <span class="src">来源：中国消防</span>
+    </a>
+    <a class="card official" href="#" target="_blank" rel="noopener">
+      <span class="icon">🌏</span>
+      <span class="name">地震避险</span>
+      <span class="src">来源：应急管理部</span>
+    </a>
+    <a class="card official" href="#" target="_blank" rel="noopener">
+      <span class="icon">💨</span>
+      <span class="name">燃气泄漏</span>
+      <span class="src">来源：应急管理部</span>
+    </a>
+    <a class="card official" href="#" target="_blank" rel="noopener">
+      <span class="icon">🌊</span>
+      <span class="name">溺水</span>
+      <span class="src">来源：中国红十字会</span>
+    </a>
+    <a class="card official" href="#" target="_blank" rel="noopener">
+      <span class="icon">🧠</span>
+      <span class="name">中风识别</span>
+      <span class="src">来源：国家卫健委</span>
+    </a>
+    <a class="card official" href="#" target="_blank" rel="noopener">
+      <span class="icon">⚡</span>
+      <span class="name">癫痫发作</span>
+      <span class="src">来源：国家卫健委</span>
+    </a>
+  </div>
+
+  <div class="notice">
+    <strong>重要提示：</strong>本站不提供诊断、治疗或急救操作指导。所有急救方法请以官方最新发布为准，并建议参加红十字会、急救中心等正规线下培训。独自一人遇到紧急情况时，请先设法发出声响，再拨打 120 并开启免提，按调度员指示行动。
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 自营内容 -->
+  <div class="section-title">
+    <span class="tag tag-self">自营</span>
+    生活基础课 · 家庭应急准备
+  </div>
+  <div class="section-desc">
+    以下内容由「生活基础课」自己整理和拍摄，仅为个人学习记录与经验分享，不替代专业培训。
+  </div>
+
+  <div class="grid">
+    <a class="card self" href="#" target="_blank" rel="noopener">
+      <span class="icon">🎒</span>
+      <span class="name">家庭应急包清单</span>
+      <span class="src">B站 · 视频</span>
+    </a>
+    <a class="card self" href="#" target="_blank" rel="noopener">
+      <span class="icon">🗺️</span>
+      <span class="name">全家逃生图怎么画</span>
+      <span class="src">公众号 · 图文</span>
+    </a>
+    <a class="card self" href="#" target="_blank" rel="noopener">
+      <span class="icon">📱</span>
+      <span class="name">手机地震预警设置</span>
+      <span class="src">视频号 · 视频</span>
+    </a>
+    <a class="card self" href="#" target="_blank" rel="noopener">
+      <span class="icon">📍</span>
+      <span class="name">附近避难场所怎么查</span>
+      <span class="src">小红书 · 图文</span>
+    </a>
+    <a class="card self" href="#" target="_blank" rel="noopener">
+      <span class="icon">🏠</span>
+      <span class="name">独居安全清单</span>
+      <span class="src">知乎 · 图文</span>
+    </a>
+    <a class="card self" href="#" target="_blank" rel="noopener">
+      <span class="icon">👴</span>
+      <span class="name">老人防跌倒改造</span>
+      <span class="src">B站 · 视频</span>
+    </a>
+    <a class="card self" href="#" target="_blank" rel="noopener">
+      <span class="icon">🧒</span>
+      <span class="name">儿童防走失</span>
+      <span class="src">公众号 · 图文</span>
+    </a>
+    <a class="card self" href="#" target="_blank" rel="noopener">
+      <span class="icon">📄</span>
+      <span class="name">证件备份怎么做</span>
+      <span class="src">视频号 · 视频</span>
+    </a>
+    <a class="card self" href="#" target="_blank" rel="noopener">
+      <span class="icon">🎓</span>
+      <span class="name">我带爸妈去学急救</span>
+      <span class="src">B站 · 记录</span>
+    </a>
+    <a class="card self" href="#" target="_blank" rel="noopener">
+      <span class="icon">📝</span>
+      <span class="name">家庭应急演练记录</span>
+      <span class="src">公众号 · 图文</span>
+    </a>
+  </div>
+
+  <div class="notice" style="background:#f0f6ff;border-color:#c2d9f5;border-left-color:var(--blue);color:#1a3a6b;">
+    <strong>关于急救操作：</strong>心肺复苏、海姆立克、止血包扎等操作教学，本站一律指向官方来源，不自行拍摄、不转载、不改编。你可以在上方「紧急导航」中找到官方入口。
+  </div>
+
+</main>
+
+<!-- 页脚 -->
+<footer>
+  <div class="foot-logo">生活基础课 · jichuke.com</div>
+  <div class="warn">紧急情况请立即拨打 120 / 119 / 110</div>
+  <div>
+    本站仅整理公开官方链接与个人学习记录，不提供医疗诊断、治疗建议或急救操作指导。<br>
+    链接内容版权归原发布机构所有，请以官方最新发布为准。<br>
+    急救技能请参加红十字会、急救中心等正规线下培训。
+  </div>
+  <div style="margin-top:14px;">
+    © 2026 生活基础课 · <a href="#">关于本站</a> · <a href="#">免责声明</a> · <a href="#">联系我</a>
+  </div>
+</footer>
+
+</body>
+</html>
