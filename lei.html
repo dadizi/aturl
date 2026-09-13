@@ -593,11 +593,16 @@
   var MIN_DIST = 260;
   var MAX_DIST = 1800;
 
-  /* 相机看向点：平滑跟随焦点 */
+  /* 平移偏移：相机和看向点一起平移 */
+  var panX = 0, panY = 0;
+  var targetPanX = 0, targetPanY = 0;
+
+  /* 焦点 */
+  var focusState = { node: null, group: null };
   var lookAtPoint = new THREE.Vector3(0, 0, 0);
 
-  /* 焦点状态 */
-  var focusState = { node: null, group: null };
+  /* 自动旋转暂停计时 */
+  var lastInteractionTime = 0;
 
   function computeBaseDistance(){
     var w = window.innerWidth, h = window.innerHeight;
@@ -879,6 +884,8 @@
   var pinching = false;
   var pinchStartDist = 0;
   var pinchStartCamDist = 0;
+  var pinchStartAngle = 0;
+  var pinchStartRotY = 0;
 
   var viewLevel = 'province';
 
@@ -887,13 +894,21 @@
     var dy = touches[0].clientY - touches[1].clientY;
     return Math.sqrt(dx*dx + dy*dy);
   }
+  function getTouchAngle(touches){
+    var dx = touches[1].clientX - touches[0].clientX;
+    var dy = touches[1].clientY - touches[0].clientY;
+    return Math.atan2(dy, dx);
+  }
 
   function onDown(e){
+    lastInteractionTime = performance.now();
     if (e.touches && e.touches.length === 2){
       pinching = true;
       dragging = false;
       pinchStartDist = getTouchDist(e.touches);
       pinchStartCamDist = targetDistance;
+      pinchStartAngle = getTouchAngle(e.touches);
+      pinchStartRotY = (viewLevel === 'province') ? targetRotY_p : targetRotY_c;
       return;
     }
     dragging = true;
@@ -905,31 +920,49 @@
 
   function onMove(e){
     if (pinching && e.touches && e.touches.length === 2){
+      lastInteractionTime = performance.now();
+      /* 缩放 */
       var d = getTouchDist(e.touches);
       var ratio = pinchStartDist / d;
-      var nd = pinchStartCamDist * ratio;
-      targetDistance = Math.max(MIN_DIST, Math.min(MAX_DIST, nd));
+      targetDistance = Math.max(MIN_DIST, Math.min(MAX_DIST, pinchStartCamDist * ratio));
+
+      /* 旋转 */
+      var angle = getTouchAngle(e.touches);
+      var deltaAngle = angle - pinchStartAngle;
+      if (deltaAngle > Math.PI) deltaAngle -= 2 * Math.PI;
+      if (deltaAngle < -Math.PI) deltaAngle += 2 * Math.PI;
+
+      if (viewLevel === 'province'){
+        targetRotY_p = pinchStartRotY + deltaAngle;
+      } else {
+        targetRotY_c = pinchStartRotY + deltaAngle;
+      }
       return;
     }
+
     if (!dragging) return;
+    lastInteractionTime = performance.now();
     var p = e.touches ? e.touches[0] : e;
     var x = p.clientX, y = p.clientY;
     var dx = x - lastX;
     var dy = y - lastY;
     dragMoved += Math.abs(dx) + Math.abs(dy);
-    /* 一旦拖动超过阈值，清除焦点，避免冲突 */
+
+    /* 单指平移：屏幕像素换算成世界单位 */
+    var wpp = 0.975 * currentDistance / window.innerHeight;
+    targetPanX -= dx * wpp;
+    targetPanY += dy * wpp;
+
+    /* 限制平移范围 */
+    var limit = baseDistance * 1.5;
+    targetPanX = Math.max(-limit, Math.min(limit, targetPanX));
+    targetPanY = Math.max(-limit, Math.min(limit, targetPanY));
+
+    /* 拖动时清除焦点 */
     if (dragMoved > 30 && focusState.node){
       clearFocus();
     }
-    if (viewLevel === 'province'){
-      targetRotY_p += dx * 0.005;
-      targetRotX_p += dy * 0.003;
-      targetRotX_p = Math.max(-0.5, Math.min(0.5, targetRotX_p));
-    } else {
-      targetRotY_c += dx * 0.005;
-      targetRotX_c += dy * 0.003;
-      targetRotX_c = Math.max(-0.5, Math.min(0.5, targetRotX_c));
-    }
+
     lastX = x; lastY = y;
   }
 
@@ -953,7 +986,6 @@
   window.addEventListener('touchend', onUp);
   window.addEventListener('touchcancel', onUp);
 
-  /* 屏幕空间找最近节点：解决边缘节点难点的问题 */
   function findNearestNode(clickX, clickY, nodes, group, maxDist){
     group.updateMatrixWorld(true);
     var camDir = new THREE.Vector3();
@@ -963,7 +995,6 @@
     nodes.forEach(function(node){
       var v = node.localPos.clone();
       v.applyMatrix4(group.matrixWorld);
-      /* 相机背后的点跳过 */
       var toNode = v.clone().sub(camera.position);
       if (toNode.dot(camDir) <= 0) return;
       v.project(camera);
@@ -990,14 +1021,12 @@
     raycaster.setFromCamera(pointer, camera);
 
     if (viewLevel === 'province'){
-      /* 先精确射线 */
       var hits = raycaster.intersectObjects(provinceHitMeshes);
       if (hits.length > 0){
         enterProvince(hits[0].object.userData.province);
         return;
       }
-      /* 再屏幕空间找 70px 内最近 */
-      var nearest = findNearestNode(clickX, clickY, provinces, provinceGroup, 70);
+      var nearest = findNearestNode(clickX, clickY, provinces, provinceGroup, 60);
       if (nearest){
         enterProvince(nearest);
       }
@@ -1007,7 +1036,7 @@
         focusOnCity(hits2[0].object.userData.city);
         return;
       }
-      var nearest2 = findNearestNode(clickX, clickY, currentProvince.cities, cityGroup, 70);
+      var nearest2 = findNearestNode(clickX, clickY, currentProvince.cities, cityGroup, 60);
       if (nearest2){
         focusOnCity(nearest2);
       } else {
@@ -1017,7 +1046,7 @@
     }
   }
 
-  /* ========== 焦点控制 ========== */
+  /* ========== 焦点 ========== */
   function focusOnNode(node, group, zoom){
     focusState.node = node;
     focusState.group = group;
@@ -1043,57 +1072,54 @@
   function enterProvince(p){
     if (!p || !p.cities || p.cities.length === 0) return;
 
-    /* 第一步：聚焦到省，让用户看清 */
-    focusOnNode(p, provinceGroup, 0.6);
+    /* 先把 pan 重置，避免进入市级时视图偏掉 */
+    targetPanX = 0;
+    targetPanY = 0;
 
-    /* 第二步：稍后过渡到市级视图 */
-    setTimeout(function(){
-      currentProvince = p;
-      viewLevel = 'city';
+    currentProvince = p;
+    viewLevel = 'city';
 
-      buildCityGalaxy(p);
-      cityGroup.visible = true;
+    buildCityGalaxy(p);
+    cityGroup.visible = true;
 
-      provinceGroup.visible = true;
-      var t0 = performance.now();
-      (function fadeOutProvince(){
-        var k = (performance.now() - t0) / 350;
-        if (k >= 1){
-          provinceGroup.visible = false;
-          return;
-        }
-        provinceGroup.scale.setScalar(1 - k * 0.6);
-        requestAnimationFrame(fadeOutProvince);
-      })();
+    provinceGroup.visible = true;
+    var t0 = performance.now();
+    (function fadeOutProvince(){
+      var k = (performance.now() - t0) / 350;
+      if (k >= 1){
+        provinceGroup.visible = false;
+        return;
+      }
+      provinceGroup.scale.setScalar(1 - k * 0.6);
+      requestAnimationFrame(fadeOutProvince);
+    })();
 
-      cityGroup.scale.setScalar(0.4);
-      var t1 = performance.now();
-      (function fadeInCity(){
-        var k = (performance.now() - t1) / 550;
-        if (k >= 1){
-          cityGroup.scale.setScalar(1);
-          return;
-        }
-        var e = 1 - Math.pow(1 - k, 3);
-        cityGroup.scale.setScalar(0.4 + e * 0.6);
-        requestAnimationFrame(fadeInCity);
-      })();
+    cityGroup.scale.setScalar(0.4);
+    var t1 = performance.now();
+    (function fadeInCity(){
+      var k = (performance.now() - t1) / 550;
+      if (k >= 1){
+        cityGroup.scale.setScalar(1);
+        return;
+      }
+      var e = 1 - Math.pow(1 - k, 3);
+      cityGroup.scale.setScalar(0.4 + e * 0.6);
+      requestAnimationFrame(fadeInCity);
+    })();
 
-      hudTop.classList.add('hide');
-      hudBottom.classList.add('hide');
-      backBtn.classList.add('show');
-      crumb.textContent = p.name + ' · ' + p.cities.length + ' 个市';
-      crumb.classList.add('show');
+    hudTop.classList.add('hide');
+    hudBottom.classList.add('hide');
+    backBtn.classList.add('show');
+    crumb.textContent = p.name + ' · ' + p.cities.length + ' 个市';
+    crumb.classList.add('show');
 
-      /* 清除焦点，相机回到原点，市级视图围绕原点 */
-      focusState.node = null;
-      focusState.group = null;
-      targetRotY_c = 0;
-      targetRotX_c = 0;
-      targetDistance = computeBaseDistance() * 0.9;
+    focusState.node = null;
+    focusState.group = null;
+    targetRotY_c = 0;
+    targetRotX_c = 0;
+    targetDistance = computeBaseDistance() * 0.9;
 
-      closePanel();
-    }, 260);
+    closePanel();
   }
 
   function exitProvince(){
@@ -1101,6 +1127,10 @@
 
     viewLevel = 'province';
     currentProvince = null;
+
+    /* 返回全国时 pan 也重置 */
+    targetPanX = 0;
+    targetPanY = 0;
 
     cityGroup.visible = true;
     var t0 = performance.now();
@@ -1134,7 +1164,6 @@
     crumb.classList.remove('show');
 
     clearFocus();
-
     closePanel();
   }
 
@@ -1150,7 +1179,6 @@
         q.scaleTarget = (q === c) ? 1.9 : 1;
       });
     }
-    /* 让相机对准这个城市 */
     focusOnNode(c, cityGroup, 0.55);
 
     panelTitle.textContent = c.name;
@@ -1164,10 +1192,12 @@
       currentProvince.cities.forEach(function(q){ q.scaleTarget = 1; });
     }
     panel.classList.remove('open');
-    clearFocus();
   }
 
-  document.getElementById('panelClose').addEventListener('click', closePanel);
+  document.getElementById('panelClose').addEventListener('click', function(){
+    closePanel();
+    clearFocus();
+  });
 
   function renderCityPanel(){
     if (!selectedCity) return;
@@ -1325,8 +1355,16 @@
     requestAnimationFrame(animate);
     var dt = clock.getDelta();
 
-    /* 有焦点时暂停自动旋转，避免相机一直追 */
-    if (!dragging && !pinching && !focusState.node){
+    /* 平移平滑 */
+    panX += (targetPanX - panX) * 0.18;
+    panY += (targetPanY - panY) * 0.18;
+
+    /* 自动旋转：交互后 3 秒内不旋转，聚焦时不旋转 */
+    var now = performance.now();
+    var canAutoRotate = !dragging && !pinching && !focusState.node
+                     && (now - lastInteractionTime > 3000);
+
+    if (canAutoRotate){
       if (viewLevel === 'province') targetRotY_p += dt * 0.09;
       else targetRotY_c += dt * 0.09;
     }
@@ -1338,7 +1376,7 @@
 
     currentDistance += (targetDistance - currentDistance) * 0.1;
 
-    /* 相机跟随焦点 */
+    /* 相机逻辑 */
     if (focusState.node && focusState.group){
       focusState.group.updateMatrixWorld(true);
       var wp = focusState.node.localPos.clone();
@@ -1348,9 +1386,11 @@
       camera.position.lerp(targetCamPos, 0.15);
       lookAtPoint.lerp(wp, 0.15);
     } else {
-      var restPos = new THREE.Vector3(0, 0, currentDistance);
-      camera.position.lerp(restPos, 0.1);
-      lookAtPoint.lerp(new THREE.Vector3(0, 0, 0), 0.1);
+      /* 基础状态：相机和看向点都带着 pan 偏移一起平移 */
+      var restPos = new THREE.Vector3(panX, panY, currentDistance);
+      var restLook = new THREE.Vector3(panX, panY, 0);
+      camera.position.lerp(restPos, 0.15);
+      lookAtPoint.lerp(restLook, 0.15);
     }
     camera.lookAt(lookAtPoint);
 
