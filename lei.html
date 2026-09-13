@@ -83,6 +83,24 @@
     filter:blur(6px);
   }
 
+  /* 第一轮状态字：吸 / 再吸一口 / 呼，之后退场 */
+  .state-word{
+    position:absolute;
+    left:50%;
+    bottom:-3.5vmin;
+    transform:translateX(-50%);
+    font-size:clamp(12px,1.6vmin,14px);
+    letter-spacing:.3em;
+    padding-left:.3em;
+    font-weight:300;
+    color:rgba(255,238,222,.2);
+    opacity:0;
+    transition:opacity .9s ease;
+    white-space:nowrap;
+    pointer-events:none;
+  }
+  .state-word.show{opacity:1}
+
   /* 文案：出现一次就退场 */
   .hint{
     position:fixed;left:50%;bottom:11vh;transform:translateX(-50%);
@@ -132,6 +150,7 @@
   @media (prefers-reduced-motion: reduce){
     .drift{animation:fadeIn 3.2s ease .4s forwards}
     .breathe{transform:scale(.8);opacity:.7}
+    .state-word{transition-duration:.4s}
     .ripple{animation-duration:1.2s}
   }
 </style>
@@ -143,12 +162,13 @@
         <div class="halo"></div>
         <div class="core"></div>
         <div class="spark"></div>
+        <div class="state-word" id="stateWord"></div>
       </div>
     </div>
   </main>
 
   <p class="hint" id="hint">
-    <span class="a" id="hintA">看着它就好</span>
+    <span class="a" id="hintA">跟着光球呼吸</span>
     <span class="b" id="hintB">不用做任何事</span>
   </p>
 
@@ -165,11 +185,12 @@
 (function(){
   'use strict';
 
-  var breathe  = document.getElementById('breathe');
-  var hint     = document.getElementById('hint');
-  var hintA    = document.getElementById('hintA');
-  var hintB    = document.getElementById('hintB');
-  var soundBtn = document.getElementById('sound');
+  var breathe   = document.getElementById('breathe');
+  var stateWord = document.getElementById('stateWord');
+  var hint      = document.getElementById('hint');
+  var hintA     = document.getElementById('hintA');
+  var hintB     = document.getElementById('hintB');
+  var soundBtn  = document.getElementById('sound');
 
   /* ========== 公共参数 ========== */
   var reduceMotion = window.matchMedia &&
@@ -194,18 +215,36 @@
     t1 = t2 = t3 = null;
   }
 
+  /* ========== 状态字：只在第一轮显示 ========== */
+  var cycleCount = 0;
+  var SHOW_WORD_FIRST_N = 1;
+
+  function showWord(text){
+    stateWord.textContent = text;
+    stateWord.classList.add('show');
+  }
+  function hideWord(){
+    stateWord.classList.remove('show');
+  }
+
   /* ========== 功能一：呼吸引导 4s 吸 / 6s 呼 ========== */
   var BREATH_INHALE = 4000;
   var BREATH_EXHALE = 6000;
 
   function breathInhale(){
     setState(MAX_SCALE, MAX_OPACITY, BREATH_INHALE);
+    if (cycleCount < SHOW_WORD_FIRST_N) showWord('吸');
     t1 = setTimeout(breathExhale, BREATH_INHALE);
   }
 
   function breathExhale(){
     setState(MIN_SCALE, MIN_OPACITY, BREATH_EXHALE);
-    t2 = setTimeout(breathInhale, BREATH_EXHALE);
+    if (cycleCount < SHOW_WORD_FIRST_N) showWord('呼');
+    t2 = setTimeout(function(){
+      cycleCount++;
+      if (cycleCount >= SHOW_WORD_FIRST_N) hideWord();
+      breathInhale();
+    }, BREATH_EXHALE);
   }
 
   function startBreath(){
@@ -214,30 +253,36 @@
   }
 
   /* ========== 功能二：生理性叹息 ==========
-     吸气 → 追加短吸 → 长呼气
-     2.8s 吸 + 1.2s 追加吸 + 7s 呼 = 11s 一循环
+     吸 → 再吸一口 → 长呼
+     2.8s + 1.2s + 7s = 11s 一循环
   */
-  var SIGH_INHALE  = 2800;
-  var SIGH_SECOND  = 1200;
-  var SIGH_EXHALE  = 7000;
+  var SIGH_INHALE = 2800;
+  var SIGH_SECOND = 1200;
+  var SIGH_EXHALE = 7000;
 
   var SIGH_MID_SCALE   = reduceMotion ? 0.9 : 0.85;
   var SIGH_MID_OPACITY = reduceMotion ? 0.85 : 0.8;
 
   function sighInhale(){
     setState(SIGH_MID_SCALE, SIGH_MID_OPACITY, SIGH_INHALE);
+    if (cycleCount < SHOW_WORD_FIRST_N) showWord('吸');
     t1 = setTimeout(sighSecond, SIGH_INHALE);
   }
 
   function sighSecond(){
-    // 追加短吸：稍微放大一点，缓动稍快，让第二口吸有明显但柔和的“再吸一点”
     setState(MAX_SCALE, MAX_OPACITY, SIGH_SECOND, 'cubic-bezier(.2,.7,.3,1)');
+    if (cycleCount < SHOW_WORD_FIRST_N) showWord('再吸一口');
     t2 = setTimeout(sighExhale, SIGH_SECOND);
   }
 
   function sighExhale(){
     setState(MIN_SCALE, MIN_OPACITY, SIGH_EXHALE);
-    t3 = setTimeout(sighInhale, SIGH_EXHALE);
+    if (cycleCount < SHOW_WORD_FIRST_N) showWord('呼');
+    t3 = setTimeout(function(){
+      cycleCount++;
+      if (cycleCount >= SHOW_WORD_FIRST_N) hideWord();
+      sighInhale();
+    }, SIGH_EXHALE);
   }
 
   function startSigh(){
@@ -247,28 +292,17 @@
 
   /* ========== 随机选择功能 ========== */
   var FEATURES = [
-    {
-      id: 'breath',
-      hintA: '看着它就好',
-      hintB: '不用做任何事',
-      run: startBreath
-    },
-    {
-      id: 'sigh',
-      hintA: '跟着它就好',
-      hintB: '不用做任何事',
-      run: startSigh
-    }
+    { id: 'breath', run: startBreath },
+    { id: 'sigh',   run: startSigh   }
   ];
 
   var picked = FEATURES[Math.floor(Math.random() * FEATURES.length)];
 
-  // 设置文案
-  hintA.textContent = picked.hintA;
-  hintB.textContent = picked.hintB;
+  // 文案统一：跟着光球呼吸 / 不用做任何事
+  hintA.textContent = '跟着光球呼吸';
+  hintB.textContent = '不用做任何事';
 
   /* ========== 启动 ========== */
-  // 初始落在呼尽状态，1.5s 后开始第一个循环
   setState(MIN_SCALE, MIN_OPACITY, 0);
   setTimeout(function(){ picked.run(); }, 1500);
 
@@ -310,7 +344,6 @@
     master.gain.value = 0;
     master.connect(ctx.destination);
 
-    // 生成粉红噪声缓冲区（5秒循环）
     var bufferSize = 5 * ctx.sampleRate;
     var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     var data = buffer.getChannelData(0);
