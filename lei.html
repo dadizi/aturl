@@ -295,7 +295,6 @@
 (function(){
   'use strict';
 
-  /* ========== 数据 ========== */
   var provinces = [
     { name:'北京', x:560, y:220, base:1200, cities:[
       { name:'朝阳', districts:['国贸','三里屯','望京','亚运村','双井'] },
@@ -542,7 +541,6 @@
     ]}
   ];
 
-  /* ========== 工具 ========== */
   function pseudo(str){
     var h = 0;
     for (var i=0;i<str.length;i++) h = (h*31 + str.charCodeAt(i)) % 100000;
@@ -568,11 +566,9 @@
   function districtBase(name){
     return 40 + (seedOf(name) % 260);
   }
-  /* 省份人数：规模稍大 */
   function provincePeople(p){
     return valueOf(p.base * 8, p.name);
   }
-  /* 城市人数 */
   function cityPeople(c){
     return valueOf(cityBase(c.name) * 4, c.name);
   }
@@ -597,6 +593,12 @@
   var MIN_DIST = 260;
   var MAX_DIST = 1800;
 
+  /* 相机看向点：平滑跟随焦点 */
+  var lookAtPoint = new THREE.Vector3(0, 0, 0);
+
+  /* 焦点状态 */
+  var focusState = { node: null, group: null };
+
   function computeBaseDistance(){
     var w = window.innerWidth, h = window.innerHeight;
     var d = 900;
@@ -608,7 +610,6 @@
   currentDistance = baseDistance;
   targetDistance = baseDistance;
 
-  /* 光晕纹理 */
   var glowTexture = (function(){
     var c = document.createElement('canvas');
     c.width = c.height = 128;
@@ -623,7 +624,6 @@
     return new THREE.CanvasTexture(c);
   })();
 
-  /* ========== 节点标签：名字 + 人数 ========== */
   function createLabelNode(name){
     var dpr = 2;
     var W = 640;
@@ -639,8 +639,6 @@
 
     function draw(count){
       ctx.clearRect(0, 0, W, H);
-
-      /* 名字 */
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.font = '300 ' + (34 * dpr) + 'px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
@@ -649,7 +647,6 @@
       ctx.fillStyle = 'rgba(255,240,225,0.88)';
       ctx.fillText(name, W/2, 66);
 
-      /* 人数：稍小一号，颜色略淡 */
       ctx.font = '300 ' + (28 * dpr) + 'px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
       ctx.shadowColor = 'rgba(255,170,120,0.5)';
       ctx.shadowBlur = 10 * dpr;
@@ -667,7 +664,6 @@
       depthTest: false
     });
     var sprite = new THREE.Sprite(mat);
-    /* 宽高比 640:220 ≈ 2.91，视觉尺寸 92 x 31.6 */
     sprite.scale.set(92, 31.6, 1);
     sprite.renderOrder = 10;
 
@@ -678,7 +674,6 @@
   var provinceGroup = new THREE.Group();
   rootGroup.add(provinceGroup);
 
-  /* 背景星点 */
   (function(){
     var geo = new THREE.BufferGeometry();
     var pos = [];
@@ -704,6 +699,7 @@
     p.px = (p.x - 400) * 1.15;
     p.py = (300 - p.y) * 1.15;
     p.pz = (pseudo(p.name) * 2 - 1) * 90;
+    p.localPos = new THREE.Vector3(p.px, p.py, p.pz);
 
     var coreGeo = new THREE.SphereGeometry(4 + intensity * 6, 20, 20);
     var coreMat = new THREE.MeshBasicMaterial({
@@ -712,7 +708,7 @@
       opacity: 0.85 + intensity * 0.15
     });
     var core = new THREE.Mesh(coreGeo, coreMat);
-    core.position.set(p.px, p.py, p.pz);
+    core.position.copy(p.localPos);
     provinceGroup.add(core);
 
     var glowMat = new THREE.SpriteMaterial({
@@ -729,18 +725,16 @@
     glow.position.copy(core.position);
     provinceGroup.add(glow);
 
-    /* 标签：名字 + 人数 */
     var labelNode = createLabelNode(p.name);
     labelNode.draw(provincePeople(p));
     labelNode.sprite.position.set(p.px, p.py + 34, p.pz);
     provinceGroup.add(labelNode.sprite);
 
-    /* 热区 */
     var hit = new THREE.Mesh(
       new THREE.SphereGeometry(26, 10, 10),
       new THREE.MeshBasicMaterial({visible:false})
     );
-    hit.position.set(p.px, p.py, p.pz);
+    hit.position.copy(p.localPos);
     hit.userData.province = p;
     provinceGroup.add(hit);
     provinceHitMeshes.push(hit);
@@ -753,7 +747,6 @@
     p.scaleCurrent = 1;
   });
 
-  /* 省级连线 */
   (function(){
     var positions = [];
     provinces.forEach(function(a, i){
@@ -803,6 +796,7 @@
       c.px = Math.cos(angle) * radius;
       c.py = Math.sin(angle) * radius * 0.75;
       c.pz = (pseudo(c.name) * 2 - 1) * 40;
+      c.localPos = new THREE.Vector3(c.px, c.py, c.pz);
 
       var base = cityBase(c.name);
       c.base = base;
@@ -815,7 +809,7 @@
         opacity: 0.85 + intensity * 0.15
       });
       var core = new THREE.Mesh(coreGeo, coreMat);
-      core.position.set(c.px, c.py, c.pz);
+      core.position.copy(c.localPos);
       cityGroup.add(core);
 
       var glowMat = new THREE.SpriteMaterial({
@@ -832,7 +826,6 @@
       glow.position.copy(core.position);
       cityGroup.add(glow);
 
-      /* 标签：名字 + 人数 */
       var labelNode = createLabelNode(c.name);
       labelNode.draw(cityPeople(c));
       labelNode.sprite.position.set(c.px, c.py + 32, c.pz);
@@ -842,7 +835,7 @@
         new THREE.SphereGeometry(24, 10, 10),
         new THREE.MeshBasicMaterial({visible:false})
       );
-      hit.position.set(c.px, c.py, c.pz);
+      hit.position.copy(c.localPos);
       hit.userData.city = c;
       cityGroup.add(hit);
       cityHitMeshes.push(hit);
@@ -855,7 +848,6 @@
       c.scaleCurrent = 1;
     });
 
-    /* 城市连线成环 */
     var positions = [];
     for (var i = 0; i < n; i++){
       var a = cities[i];
@@ -925,6 +917,10 @@
     var dx = x - lastX;
     var dy = y - lastY;
     dragMoved += Math.abs(dx) + Math.abs(dy);
+    /* 一旦拖动超过阈值，清除焦点，避免冲突 */
+    if (dragMoved > 30 && focusState.node){
+      clearFocus();
+    }
     if (viewLevel === 'province'){
       targetRotY_p += dx * 0.005;
       targetRotX_p += dy * 0.003;
@@ -957,25 +953,81 @@
   window.addEventListener('touchend', onUp);
   window.addEventListener('touchcancel', onUp);
 
+  /* 屏幕空间找最近节点：解决边缘节点难点的问题 */
+  function findNearestNode(clickX, clickY, nodes, group, maxDist){
+    group.updateMatrixWorld(true);
+    var camDir = new THREE.Vector3();
+    camera.getWorldDirection(camDir);
+    var best = null, bestDist = maxDist;
+
+    nodes.forEach(function(node){
+      var v = node.localPos.clone();
+      v.applyMatrix4(group.matrixWorld);
+      /* 相机背后的点跳过 */
+      var toNode = v.clone().sub(camera.position);
+      if (toNode.dot(camDir) <= 0) return;
+      v.project(camera);
+      var sx = (v.x * 0.5 + 0.5) * window.innerWidth;
+      var sy = (-v.y * 0.5 + 0.5) * window.innerHeight;
+      var dx = clickX - sx;
+      var dy = clickY - sy;
+      var d = Math.sqrt(dx*dx + dy*dy);
+      if (d < bestDist){
+        bestDist = d;
+        best = node;
+      }
+    });
+    return best;
+  }
+
   function handleClick(e){
     var p = (e.changedTouches && e.changedTouches[0]) || e;
-    pointer.x = (p.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = -(p.clientY / window.innerHeight) * 2 + 1;
+    var clickX = p.clientX;
+    var clickY = p.clientY;
+
+    pointer.x = (clickX / window.innerWidth) * 2 - 1;
+    pointer.y = -(clickY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
 
     if (viewLevel === 'province'){
+      /* 先精确射线 */
       var hits = raycaster.intersectObjects(provinceHitMeshes);
       if (hits.length > 0){
         enterProvince(hits[0].object.userData.province);
+        return;
+      }
+      /* 再屏幕空间找 70px 内最近 */
+      var nearest = findNearestNode(clickX, clickY, provinces, provinceGroup, 70);
+      if (nearest){
+        enterProvince(nearest);
       }
     } else {
       var hits2 = raycaster.intersectObjects(cityHitMeshes);
       if (hits2.length > 0){
-        openCityPanel(hits2[0].object.userData.city);
+        focusOnCity(hits2[0].object.userData.city);
+        return;
+      }
+      var nearest2 = findNearestNode(clickX, clickY, currentProvince.cities, cityGroup, 70);
+      if (nearest2){
+        focusOnCity(nearest2);
       } else {
+        clearFocus();
         closePanel();
       }
     }
+  }
+
+  /* ========== 焦点控制 ========== */
+  function focusOnNode(node, group, zoom){
+    focusState.node = node;
+    focusState.group = group;
+    targetDistance = baseDistance * zoom;
+  }
+
+  function clearFocus(){
+    focusState.node = null;
+    focusState.group = null;
+    targetDistance = baseDistance;
   }
 
   /* ========== 视图切换 ========== */
@@ -991,48 +1043,57 @@
   function enterProvince(p){
     if (!p || !p.cities || p.cities.length === 0) return;
 
-    currentProvince = p;
-    viewLevel = 'city';
+    /* 第一步：聚焦到省，让用户看清 */
+    focusOnNode(p, provinceGroup, 0.6);
 
-    buildCityGalaxy(p);
-    cityGroup.visible = true;
+    /* 第二步：稍后过渡到市级视图 */
+    setTimeout(function(){
+      currentProvince = p;
+      viewLevel = 'city';
 
-    provinceGroup.visible = true;
-    var t0 = performance.now();
-    (function fadeOutProvince(){
-      var k = (performance.now() - t0) / 350;
-      if (k >= 1){
-        provinceGroup.visible = false;
-        return;
-      }
-      provinceGroup.scale.setScalar(1 - k * 0.6);
-      requestAnimationFrame(fadeOutProvince);
-    })();
+      buildCityGalaxy(p);
+      cityGroup.visible = true;
 
-    cityGroup.scale.setScalar(0.4);
-    var t1 = performance.now();
-    (function fadeInCity(){
-      var k = (performance.now() - t1) / 550;
-      if (k >= 1){
-        cityGroup.scale.setScalar(1);
-        return;
-      }
-      var e = 1 - Math.pow(1 - k, 3);
-      cityGroup.scale.setScalar(0.4 + e * 0.6);
-      requestAnimationFrame(fadeInCity);
-    })();
+      provinceGroup.visible = true;
+      var t0 = performance.now();
+      (function fadeOutProvince(){
+        var k = (performance.now() - t0) / 350;
+        if (k >= 1){
+          provinceGroup.visible = false;
+          return;
+        }
+        provinceGroup.scale.setScalar(1 - k * 0.6);
+        requestAnimationFrame(fadeOutProvince);
+      })();
 
-    hudTop.classList.add('hide');
-    hudBottom.classList.add('hide');
-    backBtn.classList.add('show');
-    crumb.textContent = p.name + ' · ' + p.cities.length + ' 个市';
-    crumb.classList.add('show');
+      cityGroup.scale.setScalar(0.4);
+      var t1 = performance.now();
+      (function fadeInCity(){
+        var k = (performance.now() - t1) / 550;
+        if (k >= 1){
+          cityGroup.scale.setScalar(1);
+          return;
+        }
+        var e = 1 - Math.pow(1 - k, 3);
+        cityGroup.scale.setScalar(0.4 + e * 0.6);
+        requestAnimationFrame(fadeInCity);
+      })();
 
-    targetRotY_c = 0;
-    targetRotX_c = 0;
-    targetDistance = computeBaseDistance() * 0.9;
+      hudTop.classList.add('hide');
+      hudBottom.classList.add('hide');
+      backBtn.classList.add('show');
+      crumb.textContent = p.name + ' · ' + p.cities.length + ' 个市';
+      crumb.classList.add('show');
 
-    closePanel();
+      /* 清除焦点，相机回到原点，市级视图围绕原点 */
+      focusState.node = null;
+      focusState.group = null;
+      targetRotY_c = 0;
+      targetRotX_c = 0;
+      targetDistance = computeBaseDistance() * 0.9;
+
+      closePanel();
+    }, 260);
   }
 
   function exitProvince(){
@@ -1072,7 +1133,7 @@
     backBtn.classList.remove('show');
     crumb.classList.remove('show');
 
-    targetDistance = computeBaseDistance();
+    clearFocus();
 
     closePanel();
   }
@@ -1082,13 +1143,16 @@
   /* ========== 地级市面板 ========== */
   var selectedCity = null;
 
-  function openCityPanel(c){
+  function focusOnCity(c){
     selectedCity = c;
     if (currentProvince && currentProvince.cities){
       currentProvince.cities.forEach(function(q){
         q.scaleTarget = (q === c) ? 1.9 : 1;
       });
     }
+    /* 让相机对准这个城市 */
+    focusOnNode(c, cityGroup, 0.55);
+
     panelTitle.textContent = c.name;
     panel.classList.add('open');
     renderCityPanel();
@@ -1100,6 +1164,7 @@
       currentProvince.cities.forEach(function(q){ q.scaleTarget = 1; });
     }
     panel.classList.remove('open');
+    clearFocus();
   }
 
   document.getElementById('panelClose').addEventListener('click', closePanel);
@@ -1176,7 +1241,6 @@
       p.core.material.opacity = Math.min(1, 0.8 + val * 0.2);
       p.glow.material.opacity = Math.min(0.95, 0.3 + val * 0.45);
 
-      /* 更新标签里的人数 */
       if (p.labelNode) p.labelNode.draw(provincePeople(p));
     });
 
@@ -1197,7 +1261,6 @@
       c.core.material.opacity = Math.min(1, 0.82 + val * 0.18);
       c.glow.material.opacity = Math.min(0.95, 0.32 + val * 0.42);
 
-      /* 更新标签里的人数 */
       if (c.labelNode) c.labelNode.draw(cityPeople(c));
     });
   }
@@ -1246,7 +1309,9 @@
     renderer.setSize(w, h);
 
     baseDistance = computeBaseDistance();
-    targetDistance = Math.max(MIN_DIST, Math.min(MAX_DIST, targetDistance));
+    if (!focusState.node){
+      targetDistance = baseDistance;
+    }
   }
   window.addEventListener('resize', onResize);
   window.addEventListener('orientationchange', function(){
@@ -1260,7 +1325,8 @@
     requestAnimationFrame(animate);
     var dt = clock.getDelta();
 
-    if (!dragging && !pinching){
+    /* 有焦点时暂停自动旋转，避免相机一直追 */
+    if (!dragging && !pinching && !focusState.node){
       if (viewLevel === 'province') targetRotY_p += dt * 0.09;
       else targetRotY_c += dt * 0.09;
     }
@@ -1271,8 +1337,22 @@
     cityGroup.rotation.x += (targetRotX_c - cityGroup.rotation.x) * 0.06;
 
     currentDistance += (targetDistance - currentDistance) * 0.1;
-    camera.position.set(0, 0, currentDistance);
-    camera.lookAt(0, 0, 0);
+
+    /* 相机跟随焦点 */
+    if (focusState.node && focusState.group){
+      focusState.group.updateMatrixWorld(true);
+      var wp = focusState.node.localPos.clone();
+      wp.applyMatrix4(focusState.group.matrixWorld);
+
+      var targetCamPos = new THREE.Vector3(wp.x, wp.y, wp.z + currentDistance);
+      camera.position.lerp(targetCamPos, 0.15);
+      lookAtPoint.lerp(wp, 0.15);
+    } else {
+      var restPos = new THREE.Vector3(0, 0, currentDistance);
+      camera.position.lerp(restPos, 0.1);
+      lookAtPoint.lerp(new THREE.Vector3(0, 0, 0), 0.1);
+    }
+    camera.lookAt(lookAtPoint);
 
     provinces.forEach(function(p){
       p.scaleCurrent += (p.scaleTarget - p.scaleCurrent) * 0.1;
