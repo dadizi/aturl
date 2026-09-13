@@ -125,6 +125,20 @@
   .pc-hint.show{color:rgba(255,238,222,.28)}
   @media (max-width:900px){ .pc-hint{display:none} }
 
+  .touch-hint{
+    position:fixed;
+    left:50%;bottom:calc(4.5vh + 130px);
+    transform:translateX(-50%);
+    z-index:11;
+    font-size:12px;letter-spacing:.16em;padding-left:.16em;
+    color:rgba(255,238,222,0);
+    font-weight:300;white-space:nowrap;
+    pointer-events:none;
+    transition:color 2s ease;
+  }
+  .touch-hint.show{color:rgba(255,238,222,.28)}
+  @media (min-width:901px){ .touch-hint{display:none} }
+
   .btns{
     display:flex;justify-content:center;
   }
@@ -278,6 +292,7 @@
 <div class="crumb" id="crumb"></div>
 
 <div class="pc-hint" id="pcHint">左键拖动平移 · 右键拖动旋转 · 滚轮缩放</div>
+<div class="touch-hint" id="touchHint">单指拖动旋转 · 双指拖动平移 · 双指捏合缩放</div>
 
 <div class="hud-bottom" id="hudBottom">
   <div class="daily-line" id="dailyLine"></div>
@@ -896,10 +911,11 @@
   var targetRotY_c = 0, targetRotX_c = 0;
 
   var pinching = false;
+  var pinchLock = false;
   var pinchStartDist = 0;
   var pinchStartCamDist = 0;
-  var pinchStartAngle = 0;
-  var pinchStartRotY = 0;
+  var pinchCenterX = 0, pinchCenterY = 0;
+  var pinchStartPanX = 0, pinchStartPanY = 0;
 
   var viewLevel = 'province';
 
@@ -908,29 +924,39 @@
     var dy = touches[0].clientY - touches[1].clientY;
     return Math.sqrt(dx*dx + dy*dy);
   }
-  function getTouchAngle(touches){
-    var dx = touches[1].clientX - touches[0].clientX;
-    var dy = touches[1].clientY - touches[0].clientY;
-    return Math.atan2(dy, dx);
+  function getTouchCenter(touches){
+    return {
+      x: (touches[0].clientX + touches[1].clientX) / 2,
+      y: (touches[0].clientY + touches[1].clientY) / 2
+    };
   }
 
   function onDown(e){
     lastInteractionTime = performance.now();
 
-    if (e.touches && e.touches.length === 2){
+    /* 双指：进入平移 + 缩放模式 */
+    if (e.touches && e.touches.length >= 2){
       pinching = true;
+      pinchLock = true;
       dragging = false;
       pinchStartDist = getTouchDist(e.touches);
       pinchStartCamDist = targetDistance;
-      pinchStartAngle = getTouchAngle(e.touches);
-      pinchStartRotY = (viewLevel === 'province') ? targetRotY_p : targetRotY_c;
+      var c = getTouchCenter(e.touches);
+      pinchCenterX = c.x;
+      pinchCenterY = c.y;
+      pinchStartPanX = targetPanX;
+      pinchStartPanY = targetPanY;
       return;
     }
 
+    if (pinching || pinchLock) return;
+
+    /* 鼠标：区分左右键 */
     if (e.type === 'mousedown'){
       mouseMode = (e.button === 2) ? 'rotate' : 'pan';
     } else {
-      mouseMode = 'pan';
+      /* 触摸单指：旋转 */
+      mouseMode = 'rotate';
     }
 
     dragging = true;
@@ -941,26 +967,42 @@
   }
 
   function onMove(e){
-    if (pinching && e.touches && e.touches.length === 2){
-      lastInteractionTime = performance.now();
+    /* 双指：平移 + 缩放 */
+    if (e.touches && e.touches.length >= 2){
+      if (!pinching){
+        pinching = true;
+        pinchLock = true;
+        dragging = false;
+        pinchStartDist = getTouchDist(e.touches);
+        pinchStartCamDist = targetDistance;
+        var c0 = getTouchCenter(e.touches);
+        pinchCenterX = c0.x;
+        pinchCenterY = c0.y;
+        pinchStartPanX = targetPanX;
+        pinchStartPanY = targetPanY;
+      }
+
+      /* 缩放 */
       var d = getTouchDist(e.touches);
       var ratio = pinchStartDist / d;
       targetDistance = Math.max(MIN_DIST, Math.min(MAX_DIST, pinchStartCamDist * ratio));
 
-      var angle = getTouchAngle(e.touches);
-      var deltaAngle = angle - pinchStartAngle;
-      if (deltaAngle > Math.PI) deltaAngle -= 2 * Math.PI;
-      if (deltaAngle < -Math.PI) deltaAngle += 2 * Math.PI;
+      /* 平移：中心点位移 */
+      var c = getTouchCenter(e.touches);
+      var dcx = c.x - pinchCenterX;
+      var dcy = c.y - pinchCenterY;
+      var wpp = 0.975 * currentDistance / window.innerHeight;
+      var limit = baseDistance * 1.5;
+      targetPanX = Math.max(-limit, Math.min(limit, pinchStartPanX - dcx * wpp));
+      targetPanY = Math.max(-limit, Math.min(limit, pinchStartPanY + dcy * wpp));
 
-      if (viewLevel === 'province'){
-        targetRotY_p = pinchStartRotY + deltaAngle;
-      } else {
-        targetRotY_c = pinchStartRotY + deltaAngle;
-      }
+      lastInteractionTime = performance.now();
       return;
     }
 
+    if (pinchLock) return;
     if (!dragging) return;
+
     lastInteractionTime = performance.now();
     var p = e.touches ? e.touches[0] : e;
     var x = p.clientX, y = p.clientY;
@@ -969,6 +1011,7 @@
     dragMoved += Math.abs(dx) + Math.abs(dy);
 
     if (mouseMode === 'rotate'){
+      /* 单指 / 右键：旋转 */
       if (viewLevel === 'province'){
         targetRotY_p += dx * 0.005;
         targetRotX_p += dy * 0.003;
@@ -978,15 +1021,17 @@
         targetRotX_c += dy * 0.003;
         targetRotX_c = Math.max(-0.6, Math.min(0.6, targetRotX_c));
       }
+      if (dragMoved > 30 && focusState.node){
+        clearFocus();
+      }
     } else {
-      var wpp = 0.975 * currentDistance / window.innerHeight;
-      targetPanX -= dx * wpp;
-      targetPanY += dy * wpp;
-
-      var limit = baseDistance * 1.5;
-      targetPanX = Math.max(-limit, Math.min(limit, targetPanX));
-      targetPanY = Math.max(-limit, Math.min(limit, targetPanY));
-
+      /* 左键：平移 */
+      var wpp2 = 0.975 * currentDistance / window.innerHeight;
+      targetPanX -= dx * wpp2;
+      targetPanY += dy * wpp2;
+      var limit2 = baseDistance * 1.5;
+      targetPanX = Math.max(-limit2, Math.min(limit2, targetPanX));
+      targetPanY = Math.max(-limit2, Math.min(limit2, targetPanY));
       if (dragMoved > 30 && focusState.node){
         clearFocus();
       }
@@ -997,11 +1042,15 @@
 
   function onUp(e){
     if (pinching){
-      if (e.touches && e.touches.length < 2){
+      if (!e.touches || e.touches.length < 2){
         pinching = false;
       }
       return;
     }
+    if (!e.touches || e.touches.length === 0){
+      pinchLock = false;
+    }
+    if (pinchLock) return;
     if (!dragging) return;
     dragging = false;
     if (dragMoved < 12) handleClick(e);
@@ -1015,7 +1064,6 @@
   window.addEventListener('touchend', onUp);
   window.addEventListener('touchcancel', onUp);
 
-  /* PC 滚轮缩放 */
   renderer.domElement.addEventListener('wheel', function(e){
     e.preventDefault();
     lastInteractionTime = performance.now();
@@ -1023,7 +1071,6 @@
     targetDistance = Math.max(MIN_DIST, Math.min(MAX_DIST, targetDistance * factor));
   }, {passive:false});
 
-  /* 屏蔽右键菜单 */
   renderer.domElement.addEventListener('contextmenu', function(e){
     e.preventDefault();
   });
@@ -1469,11 +1516,17 @@
     shareHint.classList.add('show');
   }, 20000);
 
-  /* PC 端操作提示：5 秒后出现，12 秒后消失 */
+  /* 操作提示 */
   var pcHint = document.getElementById('pcHint');
-  if (window.matchMedia && window.matchMedia('(pointer:fine)').matches){
+  var touchHint = document.getElementById('touchHint');
+  var isFinePointer = window.matchMedia && window.matchMedia('(pointer:fine)').matches;
+
+  if (isFinePointer){
     setTimeout(function(){ pcHint.classList.add('show'); }, 5000);
     setTimeout(function(){ pcHint.classList.remove('show'); }, 17000);
+  } else {
+    setTimeout(function(){ touchHint.classList.add('show'); }, 5000);
+    setTimeout(function(){ touchHint.classList.remove('show'); }, 17000);
   }
 
 })();
