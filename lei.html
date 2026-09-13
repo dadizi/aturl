@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#050408">
 <title>累了吗？- leilema.cn</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -10,79 +11,112 @@
     height:100%;overflow:hidden;background:#050408;
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
     -webkit-tap-highlight-color:transparent;color:#fff;user-select:none;
+    touch-action:none;
   }
-  #scene{position:fixed;inset:0;z-index:1}
+  #scene{position:fixed;inset:0;z-index:1;touch-action:none}
 
   .hud-top{
     position:fixed;top:0;left:0;right:0;
-    padding:4vh 5vw 0;text-align:center;
+    padding:5vh 5vw 0;text-align:center;
     z-index:10;pointer-events:none;
   }
   .hud-label{
     font-size:clamp(11px,1.4vmin,13px);
-    letter-spacing:.28em;padding-left:.28em;
-    color:rgba(255,238,222,.32);font-weight:300;
+    letter-spacing:.3em;padding-left:.3em;
+    color:rgba(255,238,222,.35);font-weight:300;
   }
   .hud-num{
-    display:block;margin-top:8px;
-    font-size:clamp(34px,8.5vmin,64px);
-    font-weight:200;letter-spacing:.04em;
-    color:rgba(255,232,210,.95);
-    text-shadow:0 0 50px rgba(255,190,140,.35);
+    display:block;margin:10px 0 12px;
+    font-size:clamp(46px,12vmin,88px);
+    font-weight:200;letter-spacing:.03em;
+    color:rgba(255,236,218,.98);
+    text-shadow:0 0 60px rgba(255,195,145,.45),
+                0 0 120px rgba(255,170,120,.2);
     transition:transform .25s ease;
+    line-height:1;
   }
   .hud-num.pop{transform:scale(1.06)}
+  .hud-sub{
+    display:block;
+    font-size:clamp(12px,1.6vmin,14px);
+    letter-spacing:.28em;padding-left:.28em;
+    color:rgba(255,238,222,.45);font-weight:300;
+  }
 
+  /* 底部区域：统计在上，按钮在最下，不会被挡住 */
   .hud-bottom{
     position:fixed;bottom:0;left:0;right:0;
-    padding:0 5vw 4vh;text-align:center;
+    padding:0 5vw 4.5vh;text-align:center;
     z-index:10;
   }
-  .btns{
-    display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
-    margin-bottom:14px;
-  }
-  .btn{
-    padding:12px 22px;
-    border:1px solid rgba(255,225,200,.14);
-    border-radius:100px;
-    background:rgba(20,14,10,.5);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-    color:rgba(255,238,222,.65);
-    font-size:clamp(12px,1.6vmin,14px);
-    letter-spacing:.14em;padding-left:calc(22px + .14em);
-    font-weight:300;cursor:pointer;
-    transition:all .35s ease;
-  }
-  .btn:hover{
-    border-color:rgba(255,225,200,.3);
-    color:rgba(255,238,222,.9);
-    background:rgba(30,20,14,.7);
-  }
-  .btn:active{transform:scale(.97)}
-  .btn.done{
-    border-color:rgba(255,204,166,.4);
-    color:rgba(255,212,172,.95);
-    background:rgba(60,35,20,.6);
-    cursor:default;
+  .daily-line{
+    font-size:clamp(11px,1.5vmin,13px);
+    letter-spacing:.22em;padding-left:.22em;
+    color:rgba(255,222,190,.5);font-weight:300;
+    margin-bottom:8px;
+    min-height:1.4em;
   }
   .hud-stats{
     font-size:clamp(10px,1.3vmin,12px);
     letter-spacing:.18em;padding-left:.18em;
-    color:rgba(255,238,222,.26);font-weight:300;
+    color:rgba(255,238,222,.24);font-weight:300;
     line-height:1.9;
+    margin-bottom:16px;
   }
-  .hud-stats .top-prov{color:rgba(255,215,175,.7)}
+  .hud-stats .top-prov{color:rgba(255,215,175,.65)}
+
+  /* 单个按钮 */
+  .btns{
+    display:flex;justify-content:center;
+  }
+  .btn{
+    padding:14px 38px;
+    border:1px solid rgba(255,225,200,.18);
+    border-radius:100px;
+    background:rgba(20,14,10,.55);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    color:rgba(255,238,222,.75);
+    font-size:clamp(13px,1.7vmin,15px);
+    letter-spacing:.2em;padding-left:calc(38px + .2em);
+    font-weight:300;cursor:pointer;
+    transition:all .35s ease;
+  }
+  .btn:hover{
+    border-color:rgba(255,225,200,.35);
+    color:rgba(255,238,222,.95);
+    background:rgba(30,20,14,.75);
+  }
+  .btn:active{transform:scale(.97)}
+  .btn.done{
+    border-color:rgba(255,204,166,.45);
+    color:rgba(255,212,172,.98);
+    background:rgba(60,35,20,.65);
+    cursor:default;
+  }
+
+  .share-hint{
+    position:fixed;
+    left:0;right:0;
+    bottom:calc(4.5vh + 78px);
+    text-align:center;
+    font-size:11px;letter-spacing:.2em;padding-left:.2em;
+    color:rgba(255,238,222,0);
+    font-weight:300;
+    transition:color 2s ease;
+    z-index:10;pointer-events:none;
+  }
+  .share-hint.show{color:rgba(255,238,222,.22)}
 
   .disclaimer{
-    position:fixed;left:0;right:0;bottom:1.2vh;
-    text-align:center;font-size:9.5px;
+    position:fixed;left:0;right:0;bottom:0.8vh;
+    text-align:center;font-size:8.5px;
     letter-spacing:.1em;
-    color:rgba(255,238,222,.12);
-    line-height:1.7;z-index:10;pointer-events:none;
+    color:rgba(255,238,222,.09);
+    line-height:1.6;z-index:10;pointer-events:none;
   }
 
+  /* 面板 */
   .panel{
     position:fixed;top:0;right:0;bottom:0;
     width:min(360px,86vw);
@@ -118,10 +152,14 @@
     margin-bottom:20px;
   }
   .panel-total{
-    font-size:12px;letter-spacing:.1em;
-    color:rgba(255,210,170,.6);
-    margin-bottom:18px;font-weight:300;
+    font-size:13px;letter-spacing:.08em;
+    color:rgba(255,215,175,.7);
+    margin-bottom:20px;font-weight:300;
     line-height:1.7;
+  }
+  .panel-total strong{
+    font-weight:400;
+    color:rgba(255,232,210,.95);
   }
   .panel-list{
     flex:1;overflow-y:auto;
@@ -175,6 +213,7 @@
     .panel{transition:none}
     .hud-num{transition:none}
     .city-bar-fill{transition:none}
+    .share-hint{transition:none}
   }
 </style>
 </head>
@@ -185,18 +224,19 @@
 <div class="hud-top">
   <span class="hud-label">此刻，有</span>
   <span class="hud-num" id="num">12,847</span>
-  <span class="hud-label">人和你一起停了一下</span>
+  <span class="hud-sub">人和你一起停了一下</span>
 </div>
 
+<div class="share-hint" id="shareHint">截图发给你想到的那个人</div>
+
 <div class="hud-bottom">
-  <div class="btns">
-    <button class="btn" data-level="pause">我停一下</button>
-    <button class="btn" data-level="here">我也在这里</button>
-    <button class="btn" data-level="rest">我选择歇会儿</button>
-  </div>
+  <div class="daily-line" id="dailyLine"></div>
   <div class="hud-stats">
     此刻最多人停下来的省份：<span class="top-prov" id="topProv">四川</span><br>
     今天已有 <span id="todayTotal">89,231</span> 人选择了不硬撑
+  </div>
+  <div class="btns">
+    <button class="btn" id="pauseBtn">我停一下</button>
   </div>
 </div>
 
@@ -206,7 +246,7 @@
     <button class="panel-close" id="panelClose">×</button>
   </div>
   <div class="panel-sub">此刻，他们在这里</div>
-  <div class="panel-total" id="panelTotal">该省此刻有 8,432 人停了一下</div>
+  <div class="panel-total" id="panelTotal"></div>
   <div class="panel-list" id="panelList"></div>
 </div>
 
@@ -220,7 +260,6 @@
 (function(){
   'use strict';
 
-  /* ========== 34 个省级行政区数据 ========== */
   var provinces = [
     { name:'新疆',   x:120, y:200, base:250,  cities:['乌鲁木齐','克拉玛依','吐鲁番','哈密','喀什'] },
     { name:'西藏',   x:200, y:360, base:150,  cities:['拉萨','日喀则','昌都','林芝','山南'] },
@@ -280,14 +319,13 @@
     return Math.max(0, Math.floor(base + wave));
   }
 
-  /* 3D 坐标 */
   provinces.forEach(function(p){
     p.px = (p.x - 400) * 1.15;
     p.py = (300 - p.y) * 1.15;
     p.pz = (pseudo(p.name) * 2 - 1) * 90;
   });
 
-  /* ========== Three.js 场景 ========== */
+  /* ========== Three.js ========== */
   var scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x050408, 0.00055);
 
@@ -300,6 +338,24 @@
 
   var group = new THREE.Group();
   scene.add(group);
+
+  /* 相机距离：支持双指缩放 */
+  var baseDistance = 900;
+  var currentDistance = baseDistance;
+  var targetDistance = baseDistance;
+  var MIN_DIST = 350;
+  var MAX_DIST = 1800;
+
+  function computeBaseDistance(){
+    var w = window.innerWidth, h = window.innerHeight;
+    var d = 900;
+    if (w < h) d = 1150;
+    if (w < 480) d = 1250;
+    return d;
+  }
+  baseDistance = computeBaseDistance();
+  currentDistance = baseDistance;
+  targetDistance = baseDistance;
 
   /* 背景星点 */
   (function(){
@@ -320,7 +376,6 @@
     group.add(new THREE.Points(geo, mat));
   })();
 
-  /* 光晕纹理 */
   var glowTexture = (function(){
     var c = document.createElement('canvas');
     c.width = c.height = 128;
@@ -401,7 +456,6 @@
     nodeMeshes.push(core);
   });
 
-  /* 连线 */
   (function(){
     var positions = [];
     provinces.forEach(function(a, i){
@@ -428,7 +482,7 @@
     group.add(new THREE.LineSegments(geo, mat));
   })();
 
-  /* ========== 交互 ========== */
+  /* ========== 交互：单指旋转 + 双指缩放 ========== */
   var raycaster = new THREE.Raycaster();
   var pointer = new THREE.Vector2();
   var dragging = false;
@@ -436,16 +490,43 @@
   var lastX = 0, lastY = 0;
   var targetRotY = 0, targetRotX = 0;
 
+  // 双指缩放
+  var pinching = false;
+  var pinchStartDist = 0;
+  var pinchStartCamDist = 0;
+
+  function getTouchDist(touches){
+    var dx = touches[0].clientX - touches[1].clientX;
+    var dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+
   function onDown(e){
+    if (e.touches && e.touches.length === 2){
+      pinching = true;
+      dragging = false;
+      pinchStartDist = getTouchDist(e.touches);
+      pinchStartCamDist = targetDistance;
+      return;
+    }
     dragging = true;
     dragMoved = 0;
-    lastX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-    lastY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+    var p = e.touches ? e.touches[0] : e;
+    lastX = p.clientX;
+    lastY = p.clientY;
   }
+
   function onMove(e){
+    if (pinching && e.touches && e.touches.length === 2){
+      var d = getTouchDist(e.touches);
+      var ratio = pinchStartDist / d;
+      var nd = pinchStartCamDist * ratio;
+      targetDistance = Math.max(MIN_DIST, Math.min(MAX_DIST, nd));
+      return;
+    }
     if (!dragging) return;
-    var x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-    var y = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+    var p = e.touches ? e.touches[0] : e;
+    var x = p.clientX, y = p.clientY;
     var dx = x - lastX;
     var dy = y - lastY;
     dragMoved += Math.abs(dx) + Math.abs(dy);
@@ -454,7 +535,14 @@
     targetRotX = Math.max(-0.5, Math.min(0.5, targetRotX));
     lastX = x; lastY = y;
   }
+
   function onUp(e){
+    if (pinching){
+      if (e.touches && e.touches.length < 2){
+        pinching = false;
+      }
+      return;
+    }
     if (!dragging) return;
     dragging = false;
     if (dragMoved < 6) handleClick(e);
@@ -466,12 +554,12 @@
   renderer.domElement.addEventListener('touchstart', onDown, {passive:true});
   window.addEventListener('touchmove', onMove, {passive:true});
   window.addEventListener('touchend', onUp);
+  window.addEventListener('touchcancel', onUp);
 
   function handleClick(e){
-    var x = e.clientX || (e.changedTouches && e.changedTouches[0].clientX) || 0;
-    var y = e.clientY || (e.changedTouches && e.changedTouches[0].clientY) || 0;
-    pointer.x = (x / window.innerWidth) * 2 - 1;
-    pointer.y = -(y / window.innerHeight) * 2 + 1;
+    var p = (e.changedTouches && e.changedTouches[0]) || e;
+    pointer.x = (p.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(p.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
     var hits = raycaster.intersectObjects(nodeMeshes);
     if (hits.length > 0){
@@ -515,7 +603,7 @@
     var total = rows.reduce(function(s, r){ return s + r.value; }, 0);
     var max = Math.max.apply(null, rows.map(function(r){ return r.value; }));
 
-    panelTotal.textContent = '该省此刻有 ' + formatNum(total) + ' 人停了一下';
+    panelTotal.innerHTML = '这里，有 <strong>' + formatNum(total) + '</strong> 人和你一起停了一下';
 
     panelList.innerHTML = rows.map(function(r){
       var pct = max > 0 ? (r.value / max * 100) : 0;
@@ -531,6 +619,8 @@
   var numEl = document.getElementById('num');
   var topProvEl = document.getElementById('topProv');
   var todayEl = document.getElementById('todayTotal');
+  var dailyLineEl = document.getElementById('dailyLine');
+  var shareHint = document.getElementById('shareHint');
   var localAdd = 0;
 
   function getSimulatedCount(){
@@ -580,26 +670,41 @@
     topProvEl.textContent = top.name;
   }
 
-  /* 按钮 */
+  var DAILY_LINES = [
+    '今天不用太用力。',
+    '停一下，也算进度。',
+    '这周你已经很可以了。',
+    '累了就停，不用解释。',
+    '不硬撑，也是一种能力。',
+    '你在这里，就够了。',
+    '慢一点，也没关系。',
+    '今天允许自己松一点。'
+  ];
+
+  function updateDailyLine(){
+    var day = new Date().getDay();
+    var hour = new Date().getHours();
+    var idx = (day * 7 + Math.floor(hour / 3)) % DAILY_LINES.length;
+    dailyLineEl.textContent = DAILY_LINES[idx];
+  }
+
+  /* 单个按钮 */
   var hasClicked = false;
-  var btns = document.querySelectorAll('.btn');
-  btns.forEach(function(btn){
-    btn.addEventListener('click', function(){
-      if (hasClicked) return;
-      hasClicked = true;
-      localAdd++;
-      updateNumbers();
-      numEl.classList.add('pop');
-      setTimeout(function(){ numEl.classList.remove('pop'); }, 260);
-      btns.forEach(function(b){
-        b.classList.add('done');
-        b.style.pointerEvents = 'none';
-      });
-      btn.textContent = '记住了';
-      var rp = provinces[Math.floor(Math.random()*provinces.length)];
-      rp.scaleTarget = 2.4;
-      setTimeout(function(){ rp.scaleTarget = (selectedProv === rp ? 1.9 : 1); }, 700);
-    });
+  var pauseBtn = document.getElementById('pauseBtn');
+  pauseBtn.addEventListener('click', function(){
+    if (hasClicked) return;
+    hasClicked = true;
+    localAdd++;
+    updateNumbers();
+    numEl.classList.add('pop');
+    setTimeout(function(){ numEl.classList.remove('pop'); }, 260);
+    pauseBtn.classList.add('done');
+    pauseBtn.style.pointerEvents = 'none';
+    pauseBtn.textContent = '记住了';
+
+    var rp = provinces[Math.floor(Math.random()*provinces.length)];
+    rp.scaleTarget = 2.4;
+    setTimeout(function(){ rp.scaleTarget = (selectedProv === rp ? 1.9 : 1); }, 700);
   });
 
   /* ========== 尺寸自适应 ========== */
@@ -609,27 +714,32 @@
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
 
-    var dist = 900;
-    if (w < h) dist = 1150;
-    if (w < 480) dist = 1250;
-    camera.position.set(0, 0, dist);
-    camera.lookAt(0, 0, 0);
+    baseDistance = computeBaseDistance();
+    // 不重置用户缩放，但确保在范围内
+    targetDistance = Math.max(MIN_DIST, Math.min(MAX_DIST, targetDistance));
   }
   window.addEventListener('resize', onResize);
-  onResize();
+  window.addEventListener('orientationchange', function(){
+    setTimeout(onResize, 200);
+  });
 
-  /* ========== 动画循环 ========== */
+  /* ========== 动画 ========== */
   var clock = new THREE.Clock();
 
   function animate(){
     requestAnimationFrame(animate);
     var dt = clock.getDelta();
 
-    if (!dragging){
+    if (!dragging && !pinching){
       targetRotY += dt * 0.09;
     }
     group.rotation.y += (targetRotY - group.rotation.y) * 0.06;
     group.rotation.x += (targetRotX - group.rotation.x) * 0.06;
+
+    // 相机距离平滑过渡
+    currentDistance += (targetDistance - currentDistance) * 0.1;
+    camera.position.set(0, 0, currentDistance);
+    camera.lookAt(0, 0, 0);
 
     provinces.forEach(function(p){
       p.scaleCurrent += (p.scaleTarget - p.scaleCurrent) * 0.1;
@@ -643,14 +753,21 @@
   }
   animate();
 
-  /* ========== 定时更新 ========== */
+  /* ========== 启动 ========== */
   updateNumbers();
   updateIntensities();
+  updateDailyLine();
+
   setInterval(updateNumbers, 3000);
   setInterval(function(){
     updateIntensities();
     if (selectedProv) renderPanel();
   }, 3500);
+  setInterval(updateDailyLine, 60000);
+
+  setTimeout(function(){
+    shareHint.classList.add('show');
+  }, 20000);
 
 })();
 </script>
